@@ -206,9 +206,6 @@ sudo apt remove vim vim-runtime gvim
 
 *Linux: Compile From Source*
 
-Note that vim will only use the first python verson loaded, so delete the
-one you dont want.
-
 ```
 cd ~
 git clone https://github.com/vim/vim.git
@@ -217,8 +214,6 @@ sudo make distclean
 ./configure --with-features=huge \
 --enable-multibyte \
 --enable-rubyinterp=yes \
---enable-pythoninterp=yes \
---with-python-config-dir=/usr/lib/python2.7/config-x86_64-linux-gnu \
 --enable-python3interp=yes \
 --with-python3-config-dir=/usr/lib/python3.5/config-3.5m-x86_64-linux-gnu \
 --with-x \
