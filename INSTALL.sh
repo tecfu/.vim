@@ -36,7 +36,7 @@ fi
 # Install Powerline Fonts
 #git clone http://www.github.com/tecfu/fonts
 #cd fonts
-#./install.sh
+./fonts/install.sh
 
 # declare array
 SYMLINKS=()
@@ -67,7 +67,6 @@ done
 OBJECTIVE="Allow ctrl-s, ctrl-q in Vim"
 TARGETFILE1=$HOME"/.bashrc"
 SEARCHSTRING1="stty -ixon > /dev/null 2>/dev/null"
-
 if ! grep -Fxq "$SEARCHSTRING1" $TARGETFILE1;
 then 
   #append code
