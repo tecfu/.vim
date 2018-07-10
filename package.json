@@ -1,0 +1,24 @@
+{
+  "name": "vimfiles",
+  "version": "1.0.0",
+  "description": "Configuration files for the Vim editor.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tecfu/.vim.git"
+  },
+  "author": "tecfu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tecfu/.vim/issues"
+  },
+  "homepage": "https://github.com/tecfu/.vim#readme",
+  "devDependencies": {
+    "follow-redirects": "0.0.3",
+    "grunt": "^1.0.1",
+    "markdown-table": "^0.4.0",
+    "orgy": "^2.0.3"
+  },
+  "dependencies": {
+    "jsdom": "^9.1.0"
+  }
+}
