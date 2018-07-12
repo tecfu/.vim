@@ -189,51 +189,20 @@ sudo add-apt-repository ppa:pi-rho/dev
 
 https://launchpad.net/~pi-rho/+archive/ubuntu/dev
 
-- Building Vim 8 from Source
-
-*Dependencies*
-```
-sudo apt install libncurses5-dev libgnome2-dev libgnomeui-dev \
-libgtk2.0-dev libatk1.0-dev libbonoboui2-dev \
-libcairo2-dev libx11-dev libxpm-dev libxt-dev python-dev \
-python3-dev ruby-dev lua5.1 liblua5.1-dev libperl-dev git
-```
-
-*Remove Existing Vim*
-```
-sudo apt remove vim vim-runtime gvim
-```
-
-*Linux: Compile From Source*
+- Installing Vim 8 on Ubuntu 18.04:
 
 ```
-cd ~
-git clone https://github.com/vim/vim.git
-cd vim
-sudo make distclean
-./configure --with-features=huge \
---enable-multibyte \
---enable-rubyinterp=yes \
---enable-python3interp=yes \
---with-python3-config-dir=/usr/lib/python3.5/config-3.5m-x86_64-linux-gnu \
---with-x \
---enable-perlinterp=yes \
---enable-luainterp=yes \
---with-luajit \
---enable-gui=gtk2 \
---enable-cscope \
---enable-largefile \
---prefix=/usr/local
-make 
-sudo checkinstall
+sudo apt install vim-gtk
 ```
 
-**To remove**
+- Building Vim 8 from Source on Ubuntu 18.04
 
-```
-dpkg -r vim
-```
+- Just use apt packge (good luck getting +lua to work)
 
+See: 
+
+    https://github.com/Shougo/neocomplete.vim/issues/31
+    https://stackoverflow.com/questions/19472554/build-vim-with-lua-on-linux-mint
 ## Todo
 
 - When opened, make unite traverse up the directory structure incrementally with each "f" keypress.
