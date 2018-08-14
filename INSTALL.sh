@@ -10,6 +10,9 @@
 #
 ###
 
+### Get scripts parent directory
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+
 ### Check for npm
 if ! [ -x "$(which npm)" ]; then
   echo "ERROR! You must install \"NPM (Nodejs Package Manager)\" prior to installing."
@@ -36,12 +39,11 @@ fi
 # Install Powerline Fonts
 #git clone http://www.github.com/tecfu/fonts
 #cd fonts
-./fonts/install.sh
+$DIR/fonts/install.sh
 
 # declare array
 SYMLINKS=()
-SYMLINKS+=("$HOME/dotfiles/.vim $HOME/.vim")
-SYMLINKS+=("$HOME/dotfiles/.vim/.vimrc $HOME/.vimrc")
+SYMLINKS+=("$DIR/.vimrc $HOME/.vimrc")
 #printf '%s\n' "${SYMLINKS[@]}"
 
 for i in "${SYMLINKS[@]}"; do
