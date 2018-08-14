@@ -17,16 +17,16 @@ page](https://github.com/tecfu/.vim/pulls).
 
 ## Quick start
 
-### Clone this repository into your home directory.
+### Clone this repository and its submodules into your home directory.
 
 ```
-git clone git://github.com/tecfu/dotfiles ~/dotfiles
+git clone --recurse-submodules git://github.com/tecfu/.vim ~/.vim
 ```
 
 ### Run Install Script
 
 ```
-$ . ~/dotfiles/.vim/INSTALL.sh
+$ . ~/.vim/INSTALL.sh
 ```
 
 ### Run Vim
