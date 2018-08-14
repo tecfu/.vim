@@ -53,7 +53,7 @@ for i in "${SYMLINKS[@]}"; do
   # ${OUT[1]} is path config file should be at
   
   #no config, create symlink to one
-  if [ ! -f "${OUT[1]}" ] && [ ! -d "${OUT[1]}" ]; then
+  if [ ! -f "${OUT[1]}" ] && [ ! -d "${OUT[1]}" ] && [ ! -L "${OUT[1]}" ]; then
     echo "${OUT[1]} not found, creating configs..."
     ln -s $i 
   
