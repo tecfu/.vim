@@ -226,6 +226,13 @@ set tm=500
 " Add a bit extra margin to the left
 set foldcolumn=1
 
+" Syntax Highlighting
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+let g:markdown_fenced_languages = ['html', 'python', 'javascript', 'bash=sh']
+let g:markdown_minlines = 100
+" Disable spell check highlighting for markdown files
+let g:markdown_enable_spell_checking = 0
+
 " Code folding
 set foldmethod=indent
 set foldlevel=2
