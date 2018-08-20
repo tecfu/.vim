@@ -194,9 +194,6 @@ nnoremap <leader>w :ArgWrap<CR>
 Plug 'fs111/pydoc.vim'
 
 
-Plug 'gabrielelana/vim-markdown'
-
-
 Plug 'godlygeek/csapprox'
 
 
