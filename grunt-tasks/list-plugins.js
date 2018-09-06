@@ -6,7 +6,7 @@ var fn = function(){
   var https = require('follow-redirects').https;
   var Orgy = require('orgy');
   var deferreds = [];
-  var contents = fs.readFileSync('./.vim/plugins.vim',{
+  var contents = fs.readFileSync('./plugins.vim',{
     'encoding' : 'utf-8'
   });
   var jquery = fs.readFileSync("./grunt-tasks/libs/jquery.js", "utf-8");
@@ -103,7 +103,7 @@ var fn = function(){
     var mdtable = require('markdown-table');
 
     //Get README
-    var readme = fs.readFileSync("./.vim/README.md",{
+    var readme = fs.readFileSync("./README.md",{
       encoding : "utf-8"
     });
 
@@ -113,7 +113,7 @@ var fn = function(){
     readme = readme.replace(/<!---PLUGINS-->((?:.|[\r\n])*)<!---ENDPLUGINS-->/m,
       '<!---PLUGINS-->\n'+plugins+'\n<!---ENDPLUGINS-->');
 
-    fs.writeFileSync("./.vim/README.md",readme);
+    fs.writeFileSync("./README.md",readme);
   });
 
   return queue;
