@@ -60,46 +60,51 @@ endif
 
 Plug 'altercation/vim-colors-solarized'
 
+"check jshint is installed
+if(system('command -v task') == '')
+  "taskwarror not installed
+else
+  "taskwarrior installed
+  Plug 'blindFS/vim-taskwarrior'
 
-Plug 'blindFS/vim-taskwarrior'
-
-"set code folding for plugin
-au Filetype taskreport 
-  \ setlocal foldmethod=marker |
-  \ setlocal foldlevel=0 |
-  \ setlocal foldlevelstart=0
+  "set code folding for plugin
+  au Filetype taskreport 
+    \ setlocal foldmethod=marker |
+    \ setlocal foldlevel=0 |
+    \ setlocal foldlevelstart=0
 
 
-"unmap <S-j>, <S-k> in plugin so can map it to tabprev,tabnext
+  "unmap <S-j>, <S-k> in plugin so can map it to tabprev,tabnext
 
-"Found three different techniques to do this, since
-"autocmd FileType taskreport unmap K
-"won't work because keys are mapped later.
-"
-" 1 - Comment out keymapping directly in plugin 
-" :verbose map K
-" 
-" 2 - Create||edit .vim/after/ftplugin/filetype.vim
-" unmap k
-"
-" 3 - Make async call via a job (as below)
-function! TWUnmap(a,b)
-  unmap <buffer><silent> J
-  unmap <buffer><silent> K
-endfunction
+  "Found three different techniques to do this, since
+  "autocmd FileType taskreport unmap K
+  "won't work because keys are mapped later.
+  "
+  " 1 - Comment out keymapping directly in plugin 
+  " :verbose map K
+  " 
+  " 2 - Create||edit .vim/after/ftplugin/filetype.vim
+  " unmap k
+  "
+  " 3 - Make async call via a job (as below)
+  function! TWUnmap(a,b)
+    unmap <buffer><silent> J
+    unmap <buffer><silent> K
+  endfunction
 
-function! TWUnmapChooser()
-  if has("nvim")
-    call jobstart(['bash','-c','echo "-"; exit;'],{'on_stdout':'TWUnmap'})
-  else
-    call job_start(['bash','-c','echo "-"; exit;'],{'out_cb':'TWUnmap'})
-  endif
-endfunction
+  function! TWUnmapChooser()
+    if has("nvim")
+      call jobstart(['bash','-c','echo "-"; exit;'],{'on_stdout':'TWUnmap'})
+    else
+      call job_start(['bash','-c','echo "-"; exit;'],{'out_cb':'TWUnmap'})
+    endif
+  endfunction
 
-augroup TaskwarriorMapping
-  autocmd!
-  autocmd FileType taskreport :call TWUnmapChooser() 
-augroup END
+  augroup TaskwarriorMapping
+    autocmd!
+    autocmd FileType taskreport :call TWUnmapChooser() 
+  augroup END
+endif
 
 
 Plug 'bling/vim-airline'
