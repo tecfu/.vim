@@ -60,7 +60,7 @@ endif
 
 Plug 'altercation/vim-colors-solarized'
 
-"check jshint is installed
+"check taskwarrior is installed
 if(system('command -v task') == '')
   "taskwarror not installed
 else
@@ -306,12 +306,6 @@ let g:eregex_backward_delim = '?'
 
 Plug 'pangloss/vim-javascript'
 let b:javascript_fold = 1
-
-
-Plug 'm2mdas/phpcomplete-extended'
-"{{{
-let g:phpcomplete_index_composer_command = "composer"
-"}}}
 
 
 "Cool plugin, but useless in terminal vim because no alt key
@@ -715,7 +709,15 @@ if !has('nvim')
 endif
 
 
-Plug 'shawncplus/phpcomplete.vim'
+"only run if php is installed
+if(system('command -v php') == '')
+else
+  Plug 'shawncplus/phpcomplete.vim'
+  Plug 'm2mdas/phpcomplete-extended'
+  "{{{
+  let g:phpcomplete_index_composer_command = "composer"
+  "}}}
+endif
 
 
 Plug 'sickill/vim-pasta'
