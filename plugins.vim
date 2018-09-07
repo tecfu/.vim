@@ -190,6 +190,8 @@ au FileType go nmap <leader>r <Plug>(go-run)
 au FileType go nmap <leader>b <Plug>(go-build)
 au FileType go nmap <leader>t <Plug>(go-test)
 au FileType go nmap <leader>c <Plug>(go-coverage)
+"Disable version waring if Vim version old
+let g:go_version_warning = 0
 
 
 Plug 'FooSoft/vim-argwrap'
