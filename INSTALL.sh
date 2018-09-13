@@ -13,12 +13,6 @@
 ### Get scripts parent directory
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
-### Check for npm
-if ! [ -x "$(which npm)" ]; then
-  echo "ERROR! You must install \"NPM (Nodejs Package Manager)\" prior to installing."
-  exit
-fi
-
 #### shougo-vimproc
 
 ### Check for make

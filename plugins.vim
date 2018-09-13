@@ -2,6 +2,16 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Neo Bundle
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+function! DetectCommand(name)
+  if(system('command -v '.a:name) != '')
+    return 1
+  else
+    echom 'Plugin dependency not found: '.a:name
+    return 0
+  endif
+endfunction
+
 "requires grep
 function! DetectPlugin(name)
   "
@@ -60,10 +70,8 @@ endif
 
 Plug 'altercation/vim-colors-solarized'
 
-"check taskwarrior is installed
-if(system('command -v task') == '')
-  "taskwarror not installed
-else
+"only run if taskwarrior installed
+if(DetectCommand('task'))
   "taskwarrior installed
   Plug 'blindFS/vim-taskwarrior'
 
@@ -345,16 +353,11 @@ function! SyntasticPostInstall(info)
   "install jshint
   "!npm install jshint -g
 
-  "check jshint is installed
-  if(system('command -v jshint') == '')
+  "if jshint not installed
+  if(!DetectCommand('jshint'))
     "remove plugin
     !rm -rf ~/dotfiles/.vim/bundle/syntastic
-    throw 'Warning: jshint not installed. Plugin removed.'
-  else
-    echom 'jshint found'
   endif
-
-  echom 'End postinstall'
 endfunction
 
 Plug 'scrooloose/syntastic', {
@@ -712,8 +715,7 @@ endif
 
 
 "only run if php is installed
-if(system('command -v php') == '')
-else
+if(DetectCommand('php'))
   Plug 'shawncplus/phpcomplete.vim'
   Plug 'm2mdas/phpcomplete-extended'
   "{{{
@@ -725,9 +727,13 @@ endif
 Plug 'sickill/vim-pasta'
 
 
-Plug 'sidorares/node-vim-debugger', {
+"only run if npm is installed
+if(DetectCommand('npm'))
+  Plug 'sidorares/node-vim-debugger', {
       \ 'do' : 'npm i vimdebug -g'
       \ }
+endif
+
 
 Plug 'StanAngeloff/php.vim'
 
