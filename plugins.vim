@@ -3,11 +3,15 @@
 " => Neo Bundle
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-function! DetectCommand(name)
+function! DetectCommand(name, ...)
+  " see: https://vi.stackexchange.com/a/2437/5223
+  let warn = a:0 >= 1 ? a:1 : 1
   if(system('command -v '.a:name) != '')
     return 1
   else
-    echom 'Plugin dependency not found: '.a:name
+    if(warn)
+      echom 'Plugin dependency not found: '.a:name
+    endif
     return 0
   endif
 endfunction
@@ -71,7 +75,7 @@ endif
 Plug 'altercation/vim-colors-solarized'
 
 "only run if taskwarrior installed
-if(DetectCommand('task'))
+if(DetectCommand('task',0))
   "taskwarrior installed
   Plug 'blindFS/vim-taskwarrior'
 
@@ -283,8 +287,10 @@ nmap t :TagbarToggle<CR>
 Plug 'maksimr/vim-jsbeautify'
 
 
-Plug 'marijnh/tern_for_vim', {
-    \ 'do' :  'cd ~/.vim/bundle/tern_for_vim; npm install'}
+if(DetectCommand('npm'))
+  Plug 'marijnh/tern_for_vim', {
+      \ 'do' :  'cd ~/.vim/bundle/tern_for_vim; npm install'}
+endif
 
 "Awesome feature if your machine can handle it.
 let g:tern_show_argument_hints = 'on_move'
