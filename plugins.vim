@@ -1,4 +1,3 @@
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Neo Bundle
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -73,50 +72,6 @@ endif
 
 
 Plug 'altercation/vim-colors-solarized'
-
-"only run if taskwarrior installed
-if(DetectCommand('task',0))
-  "taskwarrior installed
-  Plug 'blindFS/vim-taskwarrior'
-
-  "set code folding for plugin
-  au Filetype taskreport 
-    \ setlocal foldmethod=marker |
-    \ setlocal foldlevel=0 |
-    \ setlocal foldlevelstart=0
-
-
-  "unmap <S-j>, <S-k> in plugin so can map it to tabprev,tabnext
-
-  "Found three different techniques to do this, since
-  "autocmd FileType taskreport unmap K
-  "won't work because keys are mapped later.
-  "
-  " 1 - Comment out keymapping directly in plugin 
-  " :verbose map K
-  " 
-  " 2 - Create||edit .vim/after/ftplugin/filetype.vim
-  " unmap k
-  "
-  " 3 - Make async call via a job (as below)
-  function! TWUnmap(a,b)
-    unmap <buffer><silent> J
-    unmap <buffer><silent> K
-  endfunction
-
-  function! TWUnmapChooser()
-    if has("nvim")
-      call jobstart(['bash','-c','echo "-"; exit;'],{'on_stdout':'TWUnmap'})
-    else
-      call job_start(['bash','-c','echo "-"; exit;'],{'out_cb':'TWUnmap'})
-    endif
-  endfunction
-
-  augroup TaskwarriorMapping
-    autocmd!
-    autocmd FileType taskreport :call TWUnmapChooser() 
-  augroup END
-endif
 
 
 Plug 'bling/vim-airline'
@@ -717,16 +672,6 @@ if !has('nvim')
     autocmd FileType vimshell :call VSmapChooser() 
   augroup END
 "}}}
-endif
-
-
-"only run if php is installed
-if(DetectCommand('php'))
-  Plug 'shawncplus/phpcomplete.vim'
-  Plug 'm2mdas/phpcomplete-extended'
-  "{{{
-  let g:phpcomplete_index_composer_command = "composer"
-  "}}}
 endif
 
 
