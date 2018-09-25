@@ -45,6 +45,8 @@ if has("nvim")
   let g:python_host_prog = '/usr/bin/python'
 endif
 
+"Read environment variables
+source ${HOME}/.vim/.env
 
 if filereadable($HOME."/.vim/plugins.vim")
   source ${HOME}/.vim/plugins.vim
@@ -61,6 +63,9 @@ let $NVIM_TUI_ENABLE_CURSOR_SHAPE = 0
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "{{{
+
+" Announce the configuration mode
+autocmd VimEnter * echo "Vim running in ".$MODE." mode"
 
 " Never run in vi-compatible mode
 set nocompatible

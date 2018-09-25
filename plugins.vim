@@ -8,7 +8,7 @@ function! DetectCommand(name, ...)
   if(system('command -v '.a:name) != '')
     return 1
   else
-    if(warn)
+    if(warn && $WARN_MISSING_PLUGINS)
       echom 'Plugin dependency not found: '.a:name
     endif
     return 0
