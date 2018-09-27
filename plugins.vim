@@ -232,9 +232,6 @@ Plug 'gregsexton/gitv'
 Plug 'heavenshell/vim-jsdoc'
 
 
-"Plug 'hhvm/vim-hack'
-
-
 Plug 'int3/vim-extradite'
 
 

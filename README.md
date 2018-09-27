@@ -5,7 +5,7 @@ Configuration files for the Vim editor.
 - Setup for development in the following languages: 
 	- go
 	- nodejs / javascript
-	- PHP / Hack
+	- PHP 
 
 - It includes editor preferences, colorscheme, plugins, custom functions and more.
 
@@ -110,13 +110,11 @@ For more information on grunt see gruntjs.com.
 | <a href="http://github.com/fatih/vim-go">fatih/vim-go</a>                                                         | Go development plugin for Vim                                                                                  | http://github.com/fatih/vim-go                             |
 | <a href="http://github.com/FooSoft/vim-argwrap">FooSoft/vim-argwrap</a>                                           | Wrap and unwrap function arguments, lists, and dictionaries in Vim                                             | http://github.com/FooSoft/vim-argwrap                      |
 | <a href="http://github.com/fs111/pydoc.vim">fs111/pydoc.vim</a>                                                   | pydoc integration for the best text editor on earth                                                            | http://github.com/fs111/pydoc.vim                          |
-| <a href="http://github.com/gabrielelana/vim-markdown">gabrielelana/vim-markdown</a>                               | Markdown for Vim: a complete environment to create Markdown files with a syntax highlight that doesn't suck!   | http://github.com/gabrielelana/vim-markdown                |
 | <a href="http://github.com/godlygeek/csapprox">godlygeek/csapprox</a>                                             | Make gvim-only colorschemes work transparently in terminal vim                                                 | http://github.com/godlygeek/csapprox                       |
 | <a href="http://github.com/godlygeek/tabular">godlygeek/tabular</a>                                               | Vim script for text filtering and alignment                                                                    | http://github.com/godlygeek/tabular                        |
 | <a href="http://github.com/gorkunov/smartpairs.vim">gorkunov/smartpairs.vim</a>                                   | Enchanted visual (selection) mode for Vim                                                                      | http://github.com/gorkunov/smartpairs.vim                  |
 | <a href="http://github.com/gregsexton/gitv">gregsexton/gitv</a>                                                   | gitk for Vim.                                                                                                  | http://github.com/gregsexton/gitv                          |
 | <a href="http://github.com/heavenshell/vim-jsdoc">heavenshell/vim-jsdoc</a>                                       | Generate JSDoc to your JavaScript code.                                                                        | http://github.com/heavenshell/vim-jsdoc                    |
-| <a href="http://github.com/hhvm/vim-hack">hhvm/vim-hack</a>                                                       | Syntax highlighting and typechecker integration for Hack.                                                      | http://github.com/hhvm/vim-hack                            |
 | <a href="http://github.com/int3/vim-extradite">int3/vim-extradite</a>                                             | A git commit browser for vim. Extends fugitive.vim.                                                            | http://github.com/int3/vim-extradite                       |
 | <a href="http://github.com/itchyny/calendar.vim">itchyny/calendar.vim</a>                                         | A calendar application for Vim                                                                                 | http://github.com/itchyny/calendar.vim                     |
 | <a href="http://github.com/kien/ctrlp.vim">kien/ctrlp.vim</a>                                                     | Fuzzy file, buffer, mru, tag, etc finder.                                                                      | http://github.com/kien/ctrlp.vim                           |
