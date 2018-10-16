@@ -196,13 +196,15 @@ Plug 'int3/vim-extradite'
 Plug 'itchyny/calendar.vim'
 
 
-Plug 'vim-vdebug/vdebug'
+if(DetectCommand('python3'))
+  Plug 'vim-vdebug/vdebug'
 
-let g:vdebug_options = {
-\   'port':9000, 
-\   'path_maps': {
-\   },
-\}
+  let g:vdebug_options = {
+  \   'port':9000, 
+  \   'path_maps': {
+  \   },
+  \}
+endif
 
 
 Plug 'kshenoy/vim-signature'
@@ -318,56 +320,54 @@ function! SyntasticPostInstall(info)
   if(!DetectCommand('jshint'))
     "remove plugin
     !rm -rf ~/dotfiles/.vim/bundle/syntastic
+  else
+  "{{{
+    function! OnLoadSyntastic()
+      
+      if DetectPlugin('syntastic')
+        
+        set statusline+=%#warningmsg#
+        set statusline+=%{SyntasticStatuslineFlag()}
+        set statusline+=%*
+
+        let g:syntastic_always_populate_loc_list = 1
+        let g:syntastic_auto_loc_list = 1
+        let g:syntastic_check_on_open = 1
+        let g:syntastic_check_on_wq = 0
+        let g:syntastic_reuse_loc_lists = 1
+
+        " javascript  
+        "  let g:syntastic_javascript_checkers = ['eslint']
+        let g:syntastic_javascript_checkers = ['jshint']
+        
+      " java
+        "let g:syntastic_java_checker = 'javac'
+        
+      " manage custom filetypes
+        augroup filetype
+          autocmd! BufRead,BufNewFile  *.gradle  set filetype=gradle
+          au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
+        augroup END
+
+        let g:syntastic_filetype_map = { "gradle": "java" }
+
+        set sessionoptions-=blank
+
+        " Set location list height to n lines
+        let g:syntastic_loc_list_height=5
+
+      endif
+    endfunction
+
+    "Wait until VimEnter to see if plugin loaded
+    autocmd VimEnter * call OnLoadSyntastic()
+  "}}}
   endif
 endfunction
 
 Plug 'scrooloose/syntastic', {
     \ 'do' :  function('SyntasticPostInstall')}
 
-"{{{
-
-
-function! OnLoadSyntastic()
-  
-  if DetectPlugin('syntastic')
-    
-    set statusline+=%#warningmsg#
-    set statusline+=%{SyntasticStatuslineFlag()}
-    set statusline+=%*
-
-    let g:syntastic_always_populate_loc_list = 1
-    let g:syntastic_auto_loc_list = 1
-    let g:syntastic_check_on_open = 1
-    let g:syntastic_check_on_wq = 0
-    let g:syntastic_reuse_loc_lists = 1
-
-    " javascript  
-    "  let g:syntastic_javascript_checkers = ['eslint']
-    let g:syntastic_javascript_checkers = ['jshint']
-    
-  " java
-    "let g:syntastic_java_checker = 'javac'
-    
-  " manage custom filetypes
-    augroup filetype
-      autocmd! BufRead,BufNewFile  *.gradle  set filetype=gradle
-      au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
-    augroup END
-
-    let g:syntastic_filetype_map = { "gradle": "java" }
-
-    set sessionoptions-=blank
-
-    " Set location list height to n lines
-    let g:syntastic_loc_list_height=5
-
-  endif
-endfunction
-
-"Wait until VimEnter to see if plugin loaded
-autocmd VimEnter * call OnLoadSyntastic()
-
-"}}}
 
 
 "{{{
