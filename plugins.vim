@@ -142,7 +142,8 @@ let g:formatterpath = ['/usr/local/bin']
 Plug 'danro/rename.vim'
 
 
-Plug 'dhruvasagar/vim-table-mode'
+"Cool, but conflicts with tabular
+"Plug 'dhruvasagar/vim-table-mode'
 
 
 "If tab completion runs slow, check that you don't have too many

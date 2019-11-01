@@ -1,15 +1,15 @@
-var fn = function(){
-
   //Get list of plugins from .vimrc
-  var jsdom = require('jsdom');
-  var fs = require('fs');
-  var https = require('follow-redirects').https;
-  var Orgy = require('orgy');
-  var deferreds = [];
-  var contents = fs.readFileSync('./plugins.vim',{
+  const jsdom = require('jsdom');
+  const fs = require('fs');
+  const https = require('follow-redirects').https;
+  const Orgy = require('orgy');
+  const deferreds = [];
+  const pluginsFile = `${__dirname}/../plugins.vim`
+  const readmeFile = `${__dirname}/../README.md`
+  const contents = fs.readFileSync(pluginsFile, {
     'encoding' : 'utf-8'
   });
-  var jquery = fs.readFileSync("./grunt-tasks/libs/jquery.js", "utf-8");
+  const jqueryStr = fs.readFileSync(`${__dirname}/../grunt-tasks/libs/jquery.js`, "utf-8");
 
 
   //Set all promises to timeout after 60 seconds
@@ -17,18 +17,19 @@ var fn = function(){
     timeout : 120000
   });
 
-  //var matches = contents.match( /NeoBundle '(.*?)'/g );
-  var matches = contents.match( /Plug '(.*?)'/g );
-  matches = matches.map(function(match){
-    var arr = match.split(' ');
-    var str = arr[1].replace(/'/g,'');
-    return str;
-  });
-
-  //Sort 'em
- matches.sort(function (a, b) {
-   return a.toLowerCase().localeCompare(b.toLowerCase());
- });
+  const pluginsFileArray = contents.split('\n')
+  const matches = pluginsFileArray
+    .filter( line => {
+      return line.match(/^Plug '(.*?)'/)
+    })
+    .map( line => {
+      return line
+        .match(/^Plug '(.*?)'/)[1]
+        .replace(/'/g,'')
+    })
+    .sort((a, b) => {
+      return a.toLowerCase().localeCompare(b.toLowerCase())
+    })
 
   //Visit the github page of each plugin and save its description
   for(var i in matches){
@@ -59,7 +60,7 @@ var fn = function(){
 
           jsdom.env({
             html : str,
-            src : [jquery], //read synchronously from local file
+            src : [jqueryStr], //read synchronously from local file
             done : function (errors, window) {
               
               var githubWs = 'http://github.com/'+match;
@@ -103,20 +104,17 @@ var fn = function(){
     var mdtable = require('markdown-table');
 
     //Get README
-    var readme = fs.readFileSync("./README.md",{
+    var readme = fs.readFileSync(readmeFile, {
       encoding : "utf-8"
     });
 
     r.unshift(['Name','Description','Website']);
     var plugins = mdtable(r);
 
-    readme = readme.replace(/<!---PLUGINS-->((?:.|[\r\n])*)<!---ENDPLUGINS-->/m,
+    readmeContent = readme.replace(/<!---PLUGINS-->((?:.|[\r\n])*)<!---ENDPLUGINS-->/m,
       '<!---PLUGINS-->\n'+plugins+'\n<!---ENDPLUGINS-->');
 
-    fs.writeFileSync("./README.md",readme);
+    fs.writeFileSync(readmeFile, readmeContent);
   });
 
   return queue;
-};
-
-module.exports = fn;
