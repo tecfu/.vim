@@ -771,6 +771,9 @@ endfunction
 Plug 'tpope/vim-surround'
 
 
+Plug 'tpope/vim-unimpaired'
+
+
 "Fork
 "This plugin hijacks the search mappings /,? and thus
 "other plugins that augment search won't work right
