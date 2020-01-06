@@ -152,6 +152,10 @@ Plug 'ervandew/supertab'
 let g:SuperTabDefaultCompletionType = "<c-n>"
 
 
+"Vim syntax highlighting and indentation for Svelte 3 components
+Plug 'evanleck/vim-svelte'
+
+
 "Run commands such as go run for the current file with <leader>r or go build and go test for the current package with <leader>b and <leader>t respectively. Display beautifully annotated source code to see which functions are covered with <leader>c. 
 Plug 'fatih/vim-go'
 au FileType go nmap <leader>r <Plug>(go-run)
