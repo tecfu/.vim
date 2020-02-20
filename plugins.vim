@@ -753,7 +753,7 @@ function! DiffPrev(...)
   endif
 
   let a:hash = system('git log -1 --skip='.a:revnum.' --pretty=format:"%h" ' . a:target)
-  execute 'Gdiff ' . a:hash
+  execute 'Gdiffsplit ' . a:hash
   "echom a:hash
 endfunction
 command! -nargs=1 GdiffPrev call DiffPrev(<f-args>)
