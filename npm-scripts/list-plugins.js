@@ -9,7 +9,7 @@
   const contents = fs.readFileSync(pluginsFile, {
     'encoding' : 'utf-8'
   });
-  const jqueryStr = fs.readFileSync(`${__dirname}/../grunt-tasks/libs/jquery.js`, "utf-8");
+  const jqueryStr = fs.readFileSync(`${__dirname}/../npm-scripts/libs/jquery.js`, "utf-8");
 
 
   //Set all promises to timeout after 60 seconds
@@ -115,6 +115,8 @@
       '<!---PLUGINS-->\n'+plugins+'\n<!---ENDPLUGINS-->');
 
     fs.writeFileSync(readmeFile, readmeContent);
+
+    console.log("README updated")
   });
 
   return queue;

@@ -72,29 +72,18 @@ sudo -S apt-get install silversearcher-ag'
   new plugins by appending them to the file: .vimrc.plugins .
 
 - Once you have added a new plugin, you can auto-generate a tabular brief
-  summary in the README.md file by running a grunt task that does this for you:
+  summary in the README.md file by running a npm script that does this for you:
 
 ```
-$ grunt
+$ npm run readme
 ```
-
-If you don't already have grunt installed you'll need to run the following
-commands:
-
-```
-$ npm install grunt -g
-$ npm install
-$ grunt
-```
-
-For more information on grunt see gruntjs.com. 
 
 ## Plugin List 
 
 <!---PLUGINS-->
 | Name                                                                                                | Description                                                                                                | Website                                             |
 | --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
-| <a href="http://github.com/airblade/vim-gitgutter">airblade/vim-gitgutter</a>                       | A Vim plugin which shows a git diff in the gutter (sign column) and stages/undoes hunks and partial hunks. | http://github.com/airblade/vim-gitgutter            |
+| <a href="http://github.com/airblade/vim-gitgutter">airblade/vim-gitgutter</a>                       | A Vim plugin which shows a git diff in the sign column and stages/previews/undoes hunks and partial hunks. | http://github.com/airblade/vim-gitgutter            |
 | <a href="http://github.com/aklt/plantuml-syntax">aklt/plantuml-syntax</a>                           | vim syntax file for plantuml                                                                               | http://github.com/aklt/plantuml-syntax              |
 | <a href="http://github.com/altercation/vim-colors-solarized">altercation/vim-colors-solarized</a>   | precision colorscheme for the vim text editor                                                              | http://github.com/altercation/vim-colors-solarized  |
 | <a href="http://github.com/bling/vim-airline">bling/vim-airline</a>                                 | lean & mean status/tabline for vim that's light as air                                                     | http://github.com/bling/vim-airline                 |
@@ -103,7 +92,9 @@ For more information on grunt see gruntjs.com.
 | <a href="http://github.com/Chiel92/vim-autoformat">Chiel92/vim-autoformat</a>                       | Provide easy code formatting in Vim by integrating existing code formatters.                               | http://github.com/Chiel92/vim-autoformat            |
 | <a href="http://github.com/danro/rename.vim">danro/rename.vim</a>                                   | Rename the current file in the vim buffer + retain relative path.                                          | http://github.com/danro/rename.vim                  |
 | <a href="http://github.com/Dewdrops/SearchComplete">Dewdrops/SearchComplete</a>                     | Tab completion of words inside of a search ('/')                                                           | http://github.com/Dewdrops/SearchComplete           |
+| <a href="http://github.com/easymotion/vim-easymotion">easymotion/vim-easymotion</a>                 | Vim motions on speed!                                                                                      | http://github.com/easymotion/vim-easymotion         |
 | <a href="http://github.com/ervandew/supertab">ervandew/supertab</a>                                 | Perform all your vim insert mode completions with Tab                                                      | http://github.com/ervandew/supertab                 |
+| <a href="http://github.com/evanleck/vim-svelte">evanleck/vim-svelte</a>                             | Vim syntax highlighting and indentation for Svelte 3 components.                                           | http://github.com/evanleck/vim-svelte               |
 | <a href="http://github.com/fatih/vim-go">fatih/vim-go</a>                                           | Go development plugin for Vim                                                                              | http://github.com/fatih/vim-go                      |
 | <a href="http://github.com/FooSoft/vim-argwrap">FooSoft/vim-argwrap</a>                             | Wrap and unwrap function arguments, lists, and dictionaries in Vim                                         | http://github.com/FooSoft/vim-argwrap               |
 | <a href="http://github.com/fs111/pydoc.vim">fs111/pydoc.vim</a>                                     | pydoc integration for the best text editor on earth                                                        | http://github.com/fs111/pydoc.vim                   |
@@ -111,10 +102,11 @@ For more information on grunt see gruntjs.com.
 | <a href="http://github.com/godlygeek/tabular">godlygeek/tabular</a>                                 | Vim script for text filtering and alignment                                                                | http://github.com/godlygeek/tabular                 |
 | <a href="http://github.com/gregsexton/gitv">gregsexton/gitv</a>                                     | gitk for Vim.                                                                                              | http://github.com/gregsexton/gitv                   |
 | <a href="http://github.com/heavenshell/vim-jsdoc">heavenshell/vim-jsdoc</a>                         | Generate JSDoc to your JavaScript code.                                                                    | http://github.com/heavenshell/vim-jsdoc             |
+| <a href="http://github.com/inkarkat/vim-ArgsAndMore">inkarkat/vim-ArgsAndMore</a>                   | Apply commands to multiple buffers and manage the argument list.                                           | http://github.com/inkarkat/vim-ArgsAndMore          |
 | <a href="http://github.com/int3/vim-extradite">int3/vim-extradite</a>                               | A git commit browser for vim. Extends fugitive.vim.                                                        | http://github.com/int3/vim-extradite                |
 | <a href="http://github.com/itchyny/calendar.vim">itchyny/calendar.vim</a>                           | A calendar application for Vim                                                                             | http://github.com/itchyny/calendar.vim              |
 | <a href="http://github.com/kshenoy/vim-signature">kshenoy/vim-signature</a>                         | Plugin to toggle, display and navigate marks                                                               | http://github.com/kshenoy/vim-signature             |
-| <a href="http://github.com/Lokaltog/vim-easymotion">Lokaltog/vim-easymotion</a>                     | Vim motions on speed!                                                                                      | http://github.com/Lokaltog/vim-easymotion           |
+| <a href="http://github.com/luochen1990/rainbow">luochen1990/rainbow</a>                             | Rainbow Parentheses Improved, shorter code, no level limit, smooth and fast, powerful configuration.       | http://github.com/luochen1990/rainbow               |
 | <a href="http://github.com/majutsushi/tagbar">majutsushi/tagbar</a>                                 | Vim plugin that displays tags in a window, ordered by scope                                                | http://github.com/majutsushi/tagbar                 |
 | <a href="http://github.com/maksimr/vim-jsbeautify">maksimr/vim-jsbeautify</a>                       | vim plugin which formated javascript files by js-beautify                                                  | http://github.com/maksimr/vim-jsbeautify            |
 | <a href="http://github.com/mattn/emmet-vim">mattn/emmet-vim</a>                                     | emmet for vim: http://emmet.io/                                                                            | http://github.com/mattn/emmet-vim                   |
@@ -144,6 +136,7 @@ For more information on grunt see gruntjs.com.
 | <a href="http://github.com/tpope/vim-fugitive">tpope/vim-fugitive</a>                               | fugitive.vim: A Git wrapper so awesome, it should be illegal                                               | http://github.com/tpope/vim-fugitive                |
 | <a href="http://github.com/tpope/vim-obsession">tpope/vim-obsession</a>                             | obsession.vim: continuously updated session files                                                          | http://github.com/tpope/vim-obsession               |
 | <a href="http://github.com/tpope/vim-surround">tpope/vim-surround</a>                               | surround.vim: quoting/parenthesizing made simple                                                           | http://github.com/tpope/vim-surround                |
+| <a href="http://github.com/tpope/vim-unimpaired">tpope/vim-unimpaired</a>                           | unimpaired.vim: Pairs of handy bracket mappings                                                            | http://github.com/tpope/vim-unimpaired              |
 <!---ENDPLUGINS-->
 
 ### Color Scheme
