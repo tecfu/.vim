@@ -146,6 +146,24 @@ Plug 'danro/rename.vim'
 "Plug 'dhruvasagar/vim-table-mode'
 
 
+Plug 'easymotion/vim-easymotion'
+"{{{
+let g:EasyMotion_do_mapping = 0 " Disable default mappings
+
+" Bi-directional find motion
+" Jump to anywhere you want with minimal keystrokes, with just one key binding.
+" `s{char}{label}`
+nmap f <Plug>(easymotion-s)
+" or
+" `s{char}{char}{label}`
+" Need one more keystroke, but on average, it may be more comfortable.
+"nmap f <Plug>(easymotion-s2)
+
+" Turn on case insensitive feature
+let g:EasyMotion_smartcase = 1
+"}}}
+
+
 "If tab completion runs slow, check that you don't have too many
 "open buffers
 Plug 'ervandew/supertab'
@@ -218,23 +236,18 @@ endif
 Plug 'kshenoy/vim-signature'
 
 
-Plug 'Lokaltog/vim-easymotion'
-"{{{
-let g:EasyMotion_do_mapping = 0 " Disable default mappings
-
-" Bi-directional find motion
-" Jump to anywhere you want with minimal keystrokes, with just one key binding.
-" `s{char}{label}`
-nmap f <Plug>(easymotion-s)
-" or
-" `s{char}{char}{label}`
-" Need one more keystroke, but on average, it may be more comfortable.
-"nmap f <Plug>(easymotion-s2)
-
-" Turn on case insensitive feature
-let g:EasyMotion_smartcase = 1
-"}}}
-
+Plug 'luochen1990/rainbow'
+let g:rainbow_active = 1 "set to 0 if you want to enable it later via :RainbowToggle
+let g:rainbow_conf = {
+    \ 'separately': {
+    \    'mustache': {
+    \      'parentheses': ['start=/{{/ end=/}}/','start=/{{{/ end=/}}}/','start=/{{\(\^\|!\|#\).\{-}}}/ end=/{{\/.\{-}}}/ fold','start=/\v\<((area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)[ >])@!\z([-_:a-zA-Z0-9]+)(\s+[-_:a-zA-Z0-9]+(\=("[^"]*"|'."'".'[^'."'".']*'."'".'|[^ '."'".'"><=`]*))?)*\>/ end=#</\z1># fold'],
+    \     },
+    \    'vue': {
+    \      'parentheses': ['start=/{/ end=/}/ fold contains=@javaScript containedin=@javaScript', 'start=/(/ end=/)/ fold contains=@javaScript containedin=@javaScript', 'start=/\v\<((script|style|area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)[ >])@!\z([-_:a-zA-Z0-9]+)(\s+[-_:a-zA-Z0-9]+(\=("[^"]*"|'."'".'[^'."'".']*'."'".'|[^ '."'".'"><=`]*))?)*\>/ end=#</\z1># fold'],
+        \}
+      \}
+    \}
 
 Plug 'majutsushi/tagbar'
 "{{{
@@ -257,8 +270,8 @@ if(DetectCommand('npm'))
       \ 'do' :  'cd ~/.vim/bundle/tern_for_vim; npm install'}
 endif
 
-"Awesome feature if your machine can handle it.
-let g:tern_show_argument_hints = 'on_move'
+"Awesome feature if your machine can handle it. My machine can't handle it
+"let g:tern_show_argument_hints = 'on_move'
 "let g:tern_show_argument_hints=0
 
 
