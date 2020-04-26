@@ -1,6 +1,4 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =4
-let g:netrw_dirhist_1='/etc'
-let g:netrw_dirhist_2='/'
-let g:netrw_dirhist_3='/etc/resolvconf'
-let g:netrw_dirhist_4='/media/shared-1/In_Use/US_Staffing/clients/mark-tahiliani'
+let g:netrw_dirhist_cnt =2
+let g:netrw_dirhist_1='/home/base/dotfiles/.vim/bundle/vim-fugitive'
+let g:netrw_dirhist_2='/home/base/dotfiles/.vim/bundle/vim-fugitive/plugin'

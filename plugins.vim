@@ -315,7 +315,7 @@ endif
 
 
 Plug 'mbbill/undotree'
-nnoremap <leader>t :UndotreeToggle<cr>
+nnoremap <leader>u :UndotreeToggle<cr>
 
 
 Plug 'mustache/vim-mustache-handlebars'
@@ -619,40 +619,7 @@ function! s:unite_settings()
 " Unite custom menus ================================================================
 
   " Fugitive menu in Unite (depends on both Fugitive and Unite.vim) {{{
-  let g:unite_source_menu_menus = {}
-  let g:unite_source_menu_menus.git = {}
-  let g:unite_source_menu_menus.git.description = 'git (Fugitive)'
-  let g:unite_source_menu_menus.git.command_candidates = [
-      \['▷ git status       (Fugitive)',
-          \'Gstatus'],
-      \['▷ git diff         (Fugitive)',
-          \'Gdiff'],
-      \['▷ git commit       (Fugitive)',
-          \'Gcommit'],
-      \['▷ git log          (Fugitive)',
-          \'exe "silent Glog | Unite quickfix"'],
-      \['▷ git blame        (Fugitive)',
-          \'Gblame'],
-      \['▷ git stage        (Fugitive)',
-          \'Gwrite'],
-      \['▷ git checkout     (Fugitive)',
-          \'Gread'],
-      \['▷ git rm           (Fugitive)',
-          \'Gremove'],
-      \['▷ git mv           (Fugitive)',
-          \'exe "Gmove " input("destino: ")'],
-      \['▷ git push         (Fugitive, output buffer)',
-          \'Git! push'],
-      \['▷ git pull         (Fugitive, output buffer)',
-          \'Git! pull'],
-      \['▷ git prompt       (Fugitive, output buffer)',
-          \'exe "Git! " input("comando git: ")'],
-      \['▷ git cd           (Fugitive)',
-          \'Gcd'],
-      \]
-"" }}}
-"
-endfunction
+  endfunction
 "}}}
 
 if !has('nvim')
@@ -769,7 +736,11 @@ function! DiffPrev(...)
   execute 'Gdiffsplit ' . a:hash
   "echom a:hash
 endfunction
-command! -nargs=1 GdiffPrev call DiffPrev(<f-args>)
+command! -nargs=1 Gdiffprev call DiffPrev(<f-args>)
+" You will probably not realize that Gdiff is actually equal to Gdiffsplit
+" and therefore be confused when Vim spits `ambiguous user defined command`
+" So we're going to make Gdiff explicitly equal to Gdiffsplit
+command! Gdiff Gdiffsplit!
 
 Plug 'tpope/vim-obsession'
 "{{{
@@ -806,6 +777,17 @@ Plug 'Dewdrops/SearchComplete'
 "Seems to conflict with issuing [count] macros
 Plug 'tecfu/YankRing.vim'
 
+
+Plug 'valloric/MatchTagAlways'
+let g:mta_filetypes = {
+    \ 'html' : 1,
+    \ 'jinja' : 1,
+    \ 'xhtml' : 1,
+    \ 'xml' : 1,
+    \ 'vue' : 1
+    \}
+nnoremap <leader>t :MtaJumpToOtherTag<cr>
+highlight MatchTag ctermfg=black ctermbg=lightgreen
 
 " Ale replaces syntastic because it lints continuously, i.e. on wordchange <KINDA ANNOYING, SLOW AS SHIT ON BIG PROJECTS>
 "Plug 'w0rp/ale', {
