@@ -164,6 +164,7 @@ https://launchpad.net/~pi-rho/+archive/ubuntu/dev
 
 - Installing Vim 8 on Ubuntu 18.04:
 
+You will want to install `vim-gtk` so that +clipboard is compiled
 ```
 sudo apt install vim-gtk
 ```
