@@ -174,14 +174,14 @@ let g:SuperTabDefaultCompletionType = "<c-n>"
 Plug 'evanleck/vim-svelte'
 
 
-"Run commands such as go run for the current file with <leader>r or go build and go test for the current package with <leader>b and <leader>t respectively. Display beautifully annotated source code to see which functions are covered with <leader>c. 
-Plug 'fatih/vim-go'
-au FileType go nmap <leader>r <Plug>(go-run)
-au FileType go nmap <leader>b <Plug>(go-build)
-au FileType go nmap <leader>t <Plug>(go-test)
-au FileType go nmap <leader>c <Plug>(go-coverage)
-"Disable version waring if Vim version old
-let g:go_version_warning = 0
+""Run commands such as go run for the current file with <leader>r or go build and go test for the current package with <leader>b and <leader>t respectively. Display beautifully annotated source code to see which functions are covered with <leader>c. 
+"Plug 'fatih/vim-go'
+"au FileType go nmap <leader>r <Plug>(go-run)
+"au FileType go nmap <leader>b <Plug>(go-build)
+"au FileType go nmap <leader>t <Plug>(go-test)
+"au FileType go nmap <leader>c <Plug>(go-coverage)
+""Disable version waring if Vim version old
+"let g:go_version_warning = 0
 
 
 Plug 'FooSoft/vim-argwrap'
@@ -321,7 +321,7 @@ nnoremap <leader>u :UndotreeToggle<cr>
 Plug 'mustache/vim-mustache-handlebars'
 
 
-Plug 'OrangeT/vim-csharp'
+"Plug 'OrangeT/vim-csharp'
 
 
 Plug 'Peeja/vim-cdo'

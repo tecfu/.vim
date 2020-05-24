@@ -2,10 +2,14 @@
 
 Configuration files for the Vim editor.
 
-- Setup for development in the following languages: 
-  - go
+- Syntax highlighting / debugging for the following:
   - nodejs / javascript
+    - handlebars / mustache
+    - svelte
+    - vue
   - PHP / Hack
+  - Plantuml
+  - Python
 
 - It includes editor preferences, colorscheme, plugins, custom functions and more.
 
@@ -95,7 +99,6 @@ $ npm run readme
 | <a href="http://github.com/easymotion/vim-easymotion">easymotion/vim-easymotion</a>                 | Vim motions on speed!                                                                                            | http://github.com/easymotion/vim-easymotion         |
 | <a href="http://github.com/ervandew/supertab">ervandew/supertab</a>                                 | Perform all your vim insert mode completions with Tab                                                            | http://github.com/ervandew/supertab                 |
 | <a href="http://github.com/evanleck/vim-svelte">evanleck/vim-svelte</a>                             | Vim syntax highlighting and indentation for Svelte 3 components.                                                 | http://github.com/evanleck/vim-svelte               |
-| <a href="http://github.com/fatih/vim-go">fatih/vim-go</a>                                           | Go development plugin for Vim                                                                                    | http://github.com/fatih/vim-go                      |
 | <a href="http://github.com/FooSoft/vim-argwrap">FooSoft/vim-argwrap</a>                             | Wrap and unwrap function arguments, lists, and dictionaries in Vim                                               | http://github.com/FooSoft/vim-argwrap               |
 | <a href="http://github.com/fs111/pydoc.vim">fs111/pydoc.vim</a>                                     | pydoc integration for the best text editor on earth                                                              | http://github.com/fs111/pydoc.vim                   |
 | <a href="http://github.com/godlygeek/csapprox">godlygeek/csapprox</a>                               | Make gvim-only colorschemes work transparently in terminal vim                                                   | http://github.com/godlygeek/csapprox                |
@@ -116,7 +119,6 @@ $ npm run readme
 | <a href="http://github.com/mustache/vim-mustache-handlebars">mustache/vim-mustache-handlebars</a>   | mustache and handlebars mode for vim                                                                             | http://github.com/mustache/vim-mustache-handlebars  |
 | <a href="http://github.com/mxw/vim-jsx">mxw/vim-jsx</a>                                             | React JSX syntax highlighting and indenting for vim.                                                             | http://github.com/mxw/vim-jsx                       |
 | <a href="http://github.com/nathanaelkane/vim-indent-guides">nathanaelkane/vim-indent-guides</a>     | A Vim plugin for visually displaying indent levels in code                                                       | http://github.com/nathanaelkane/vim-indent-guides   |
-| <a href="http://github.com/OrangeT/vim-csharp">OrangeT/vim-csharp</a>                               | Enhancement's to Vim's C-Sharp Functionality                                                                     | http://github.com/OrangeT/vim-csharp                |
 | <a href="http://github.com/othree/eregex.vim">othree/eregex.vim</a>                                 | Perl/Ruby style regexp notation for Vim                                                                          | http://github.com/othree/eregex.vim                 |
 | <a href="http://github.com/pangloss/vim-javascript">pangloss/vim-javascript</a>                     | Vastly improved Javascript indentation and syntax support in Vim.                                                | http://github.com/pangloss/vim-javascript           |
 | <a href="http://github.com/Peeja/vim-cdo">Peeja/vim-cdo</a>                                         | Vim commands to run a command over every entry in the quickfix list (:Cdo) or location list (:Ldo).              | http://github.com/Peeja/vim-cdo                     |
