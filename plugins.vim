@@ -142,6 +142,25 @@ let g:formatterpath = ['/usr/local/bin']
 Plug 'danro/rename.vim'
 
 
+" For js projects, eslint should be installed locally
+Plug 'dense-analysis/ale' 
+
+"let g:ale_linters = {
+"\ 'javascript': ['eslint'],
+"\}
+" Show warnings/errors in status line
+let g:airline#extensions#ale#enabled = 1
+let g:ale_sign_column_always = 1
+let g:ale_open_list = 1
+let g:ale_completion_max_suggestions = 10
+let g:ale_cursor_detail = 1
+" Run linters only when files saved
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_insert_leave = 0
+" Ddon't run linters on opening a file
+let g:ale_lint_on_enter = 0
+
+
 "Cool, but conflicts with tabular
 "Plug 'dhruvasagar/vim-table-mode'
 
@@ -164,24 +183,8 @@ let g:EasyMotion_smartcase = 1
 "}}}
 
 
-"If tab completion runs slow, check that you don't have too many
-"open buffers
-Plug 'ervandew/supertab'
-let g:SuperTabDefaultCompletionType = "<c-n>"
-
-
 "Vim syntax highlighting and indentation for Svelte 3 components
 Plug 'evanleck/vim-svelte'
-
-
-""Run commands such as go run for the current file with <leader>r or go build and go test for the current package with <leader>b and <leader>t respectively. Display beautifully annotated source code to see which functions are covered with <leader>c. 
-"Plug 'fatih/vim-go'
-"au FileType go nmap <leader>r <Plug>(go-run)
-"au FileType go nmap <leader>b <Plug>(go-build)
-"au FileType go nmap <leader>t <Plug>(go-test)
-"au FileType go nmap <leader>c <Plug>(go-coverage)
-""Disable version waring if Vim version old
-"let g:go_version_warning = 0
 
 
 Plug 'FooSoft/vim-argwrap'
@@ -195,8 +198,6 @@ Plug 'godlygeek/csapprox'
 
 
 Plug 'godlygeek/tabular'
-
-
 "Cool, but just use native vim selection
 ":help object-select
 "Conflicts with vim-multiple-cursors
@@ -208,9 +209,6 @@ Plug 'gregsexton/gitv'
 
 
 Plug 'heavenshell/vim-jsdoc'
-
-
-"Plug 'hhvm/vim-hack'
 
 
 Plug 'inkarkat/vim-ArgsAndMore'
@@ -321,9 +319,6 @@ nnoremap <leader>u :UndotreeToggle<cr>
 Plug 'mustache/vim-mustache-handlebars'
 
 
-"Plug 'OrangeT/vim-csharp'
-
-
 Plug 'Peeja/vim-cdo'
 
 
@@ -333,147 +328,24 @@ Plug 'posva/vim-vue'
 Plug 'scrooloose/vim-slumlord'
 
 
-function! SyntasticPostInstall(info)
-  "install jshint
-  "!npm install jshint -g
-
-  "if jshint not installed
-  if(!DetectCommand('jshint'))
-    "remove plugin
-    !rm -rf ~/dotfiles/.vim/bundle/syntastic
-  else
-  "{{{
-    function! OnLoadSyntastic()
-      
-      if DetectPlugin('syntastic')
-        
-        set statusline+=%#warningmsg#
-        set statusline+=%{SyntasticStatuslineFlag()}
-        set statusline+=%*
-
-        let g:syntastic_always_populate_loc_list = 1
-        let g:syntastic_auto_loc_list = 1
-        let g:syntastic_check_on_open = 1
-        let g:syntastic_check_on_wq = 0
-        let g:syntastic_reuse_loc_lists = 1
-
-        " javascript  
-        "  let g:syntastic_javascript_checkers = ['eslint']
-        let g:syntastic_javascript_checkers = ['jshint']
-        
-      " java
-        "let g:syntastic_java_checker = 'javac'
-        
-      " manage custom filetypes
-        augroup filetype
-          autocmd! BufRead,BufNewFile  *.gradle  set filetype=gradle
-          au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
-        augroup END
-
-        let g:syntastic_filetype_map = { "gradle": "java" }
-
-        set sessionoptions-=blank
-
-        " Set location list height to n lines
-        let g:syntastic_loc_list_height=5
-
-      endif
-    endfunction
-
-    "Wait until VimEnter to see if plugin loaded
-    autocmd VimEnter * call OnLoadSyntastic()
-  "}}}
-  endif
-endfunction
-
-Plug 'scrooloose/syntastic', {
-    \ 'do' :  function('SyntasticPostInstall')}
-
-
-
 "{{{
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Shougo/neocomplete Plugin
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Use deoplete with nvim
-if has("nvim")
-  Plug 'Shougo/deoplete.nvim'
-  let g:deoplete#enable_at_startup = 1
-" Use neomplete with vim
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 else
-  Plug 'Shougo/neocomplete'
-
-  "Note: This option must set it in .vimrc(_vimrc).  NOT IN .gvimrc(_gvimrc)!
-  " Disable AutoComplPop.
-  let g:acp_enableAtStartup = 0
-  " Use neocomplete.
-  let g:neocomplete#enable_at_startup = 1
-  " Use smartcase.
-  let g:neocomplete#enable_smart_case = 1
-  " Set minimum syntax keyword length.
-  let g:neocomplete#sources#syntax#min_keyword_length = 3
-  let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
-
-  " Define dictionary.
-  let g:neocomplete#sources#dictionary#dictionaries = {
-  \ 'default' : '',
-  \ 'vimshell' : $HOME.'/.vimshell_hist',
-  \ 'scheme' : $HOME.'/.gosh_completions'
-  \ }
-
-  " Define keyword.
-  if !exists('g:neocomplete#keyword_patterns')
-  let g:neocomplete#keyword_patterns = {}
-  endif
-  let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-
-  " Plugin key-mappings.
-  inoremap <expr><C-g>     neocomplete#undo_completion()
-  inoremap <expr><C-l>     neocomplete#complete_common_string()
-
-  " Recommended key-mappings.
-  " <CR>: close popup and save indent.
-  "inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-  function! s:my_cr_function()
-  return neocomplete#close_popup() . "\<CR>"
-  " For no inserting <CR> key.
-  "return pumvisible() ? neocomplete#close_popup() : "\<CR>"
-  endfunction
-
-  " <TAB>: completion.
-  inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-  " <C-h>, <BS>: close popup and delete backword char.
-  inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-  inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-  inoremap <expr><C-y>  neocomplete#close_popup()
-  inoremap <expr><C-e>  neocomplete#cancel_popup()
-  
-  " Enable omni completion.
-  autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-  autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-  autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-  autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-  autocmd FileType php setlocal omnifunc=phpcomplete#CompletePHP
-  " autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-  " autocmd FileType javascript setlocal omnifunc=tern#Complete
-
-  " Enable heavy omni completion.
-  if !exists('g:neocomplete#sources#omni#input_patterns')
-    let g:neocomplete#sources#omni#input_patterns = {}
-  endif
-  "let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-  "let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-  "let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-  let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
-  "let g:neocomplete#sources#omni#input_patterns.javascript = '[^. \t]\.\w*'
-  "}}}
-
-  if !exists('g:neocomplete#force_omni_input_patterns')
-    let g:neocomplete#force_omni_input_patterns = {}
-  endif
-  let g:neocomplete#force_omni_input_patterns.go = '[^.[:digit:] *\t]\.'
-
+  Plug 'Shougo/deoplete.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
 endif
+let g:deoplete#enable_at_startup = 1
+" Use tab for autocomplete
+inoremap <silent><expr> <TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" Add ALE completion results
+call deoplete#custom#source('ale', 'rank', 999)
+
 
 Plug 'Shougo/neomru.vim'
 
@@ -557,11 +429,7 @@ function! s:unite_settings()
   "imap <silent><buffer> <tab> <c-x><c-f>
   " iunmap <silent><buffer> <c-n>
   " iunmap <silent><buffer> <c-p>
-  imap <silent><buffer> <Tab>   <Plug>SuperTabForward
-  imap <silent><buffer> <S-Tab>  <Plug>SuperTabBackward
-  nnoremap <silent><buffer> <S-Tab> <Plug>SuperTabBackward
   "imap <buffer> <S-Tab> <c-p>
-
   
   " exit with esc
   " nmap <buffer> <ESC> <Plug>(unite_exit)
@@ -676,6 +544,7 @@ endif
 
 Plug 'StanAngeloff/php.vim'
 
+
 "Plug 'supermomonga/vimshell-inline-history.vim', { 'depends' : [ 'Shougo/vimshell.vim' ] }
 Plug 'tecfu/vimshell-inline-history.vim', { 'depends' : [ 'Shougo/vimshell.vim' ] }
 
@@ -742,6 +611,7 @@ command! -nargs=1 Gdiffprev call DiffPrev(<f-args>)
 " So we're going to make Gdiff explicitly equal to Gdiffsplit
 command! Gdiff Gdiffsplit!
 
+
 Plug 'tpope/vim-obsession'
 "{{{
 
@@ -758,6 +628,7 @@ endfunction
 
 " autocmd VimEnter * call RestoreSess()
 "}}}
+
 
 Plug 'tpope/vim-surround'
 
@@ -788,19 +659,6 @@ let g:mta_filetypes = {
     \}
 nnoremap <leader>t :MtaJumpToOtherTag<cr>
 highlight MatchTag ctermfg=black ctermbg=lightgreen
-
-" Ale replaces syntastic because it lints continuously, i.e. on wordchange <KINDA ANNOYING, SLOW AS SHIT ON BIG PROJECTS>
-"Plug 'w0rp/ale', {
-"    \ 'do' :  'npm install jshint -g'}
-"
-""let g:ale_linters = {
-""\ 'javascript': ['jshint'],
-""\}
-"" Show warnings/errors in status line
-"let g:airline#extensions#ale#enabled = 1
-"let g:ale_sign_column_always = 1
-"let g:ale_open_list = 1
-
 
 call plug#end()
 

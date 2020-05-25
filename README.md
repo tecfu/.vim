@@ -1,13 +1,13 @@
 # vimrc
 
-Configuration files for the Vim editor.
+Configuration files for the Vim > 8
 
 - Syntax highlighting / debugging for the following:
   - nodejs / javascript
     - handlebars / mustache
     - svelte
     - vue
-  - PHP / Hack
+  - PHP 7
   - Plantuml
   - Python
 
@@ -95,9 +95,9 @@ $ npm run readme
 | <a href="http://github.com/brookhong/DBGPavim">brookhong/DBGPavim</a>                               | This is a plugin to enable php debug in VIM with Xdebug, with a new debug engine.                                | http://github.com/brookhong/DBGPavim                |
 | <a href="http://github.com/Chiel92/vim-autoformat">Chiel92/vim-autoformat</a>                       | Provide easy code formatting in Vim by integrating existing code formatters.                                     | http://github.com/Chiel92/vim-autoformat            |
 | <a href="http://github.com/danro/rename.vim">danro/rename.vim</a>                                   | Rename the current file in the vim buffer + retain relative path.                                                | http://github.com/danro/rename.vim                  |
+| <a href="http://github.com/dense-analysis/ale">dense-analysis/ale</a>                               | Check syntax in Vim asynchronously and fix files, with Language Server Protocol (LSP) support                    | http://github.com/dense-analysis/ale                |
 | <a href="http://github.com/Dewdrops/SearchComplete">Dewdrops/SearchComplete</a>                     | Tab completion of words inside of a search ('/')                                                                 | http://github.com/Dewdrops/SearchComplete           |
 | <a href="http://github.com/easymotion/vim-easymotion">easymotion/vim-easymotion</a>                 | Vim motions on speed!                                                                                            | http://github.com/easymotion/vim-easymotion         |
-| <a href="http://github.com/ervandew/supertab">ervandew/supertab</a>                                 | Perform all your vim insert mode completions with Tab                                                            | http://github.com/ervandew/supertab                 |
 | <a href="http://github.com/evanleck/vim-svelte">evanleck/vim-svelte</a>                             | Vim syntax highlighting and indentation for Svelte 3 components.                                                 | http://github.com/evanleck/vim-svelte               |
 | <a href="http://github.com/FooSoft/vim-argwrap">FooSoft/vim-argwrap</a>                             | Wrap and unwrap function arguments, lists, and dictionaries in Vim                                               | http://github.com/FooSoft/vim-argwrap               |
 | <a href="http://github.com/fs111/pydoc.vim">fs111/pydoc.vim</a>                                     | pydoc integration for the best text editor on earth                                                              | http://github.com/fs111/pydoc.vim                   |
@@ -123,7 +123,6 @@ $ npm run readme
 | <a href="http://github.com/pangloss/vim-javascript">pangloss/vim-javascript</a>                     | Vastly improved Javascript indentation and syntax support in Vim.                                                | http://github.com/pangloss/vim-javascript           |
 | <a href="http://github.com/Peeja/vim-cdo">Peeja/vim-cdo</a>                                         | Vim commands to run a command over every entry in the quickfix list (:Cdo) or location list (:Ldo).              | http://github.com/Peeja/vim-cdo                     |
 | <a href="http://github.com/posva/vim-vue">posva/vim-vue</a>                                         | Syntax Highlight for Vue.js components                                                                           | http://github.com/posva/vim-vue                     |
-| <a href="http://github.com/scrooloose/syntastic">scrooloose/syntastic</a>                           | Syntax checking hacks for vim                                                                                    | http://github.com/scrooloose/syntastic              |
 | <a href="http://github.com/scrooloose/vim-slumlord">scrooloose/vim-slumlord</a>                     | Inline previews for Plantuml sequence diagrams. OMG!                                                             | http://github.com/scrooloose/vim-slumlord           |
 | <a href="http://github.com/Shougo/neomru.vim">Shougo/neomru.vim</a>                                 | MRU plugin includes unite.vim/denite.nvim MRU sources                                                            | http://github.com/Shougo/neomru.vim                 |
 | <a href="http://github.com/Shougo/neoyank.vim">Shougo/neoyank.vim</a>                               | Saves yank history includes unite.vim/denite.nvim history/yank source.                                           | http://github.com/Shougo/neoyank.vim                |
