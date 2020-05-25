@@ -9,19 +9,16 @@
 "
 " Sections:
 "    -> Load Plugins
+"    -> Neovim Specific
 "    -> General
+"    -> Helper functions
 "    -> VIM user interface
-"    -> Printer setup
 "    -> Colors and Fonts
 "    -> Files, backups, and sessions
 "    -> Text, tab and indent related
-"    -> Visual mode related
-"    -> Moving around, tabs and buffers
 "    -> Status line
 "    -> Key mappings
-"    -> vimgrep searching and cope displaying
 "    -> Misc
-"    -> Helper functions
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
@@ -51,6 +48,7 @@ source ${HOME}/.vim/.env
 if filereadable($HOME."/.vim/plugins.vim")
   source ${HOME}/.vim/plugins.vim
 endif
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Neovim Specific
@@ -90,23 +88,7 @@ filetype indent on
 " Set to auto read when a file is changed from the outside
 set autoread
 
-" map leader to spacebar
-"nnoremap <Space> <nop>
-"let mapleader = " "
-"let g:mapleader = " "
-map <space> <leader>
-imap <space><space> <C-O><leader>
 set showcmd
-
-
-" http://stackoverflow.com/questions/6778961/alt-key-shortcuts-not-working-on-gnome-terminal-with-vim/10216459#10216459
-" Useless, because setting the alt-somekey will always work like esc-sokekey
- " while c <= 'z'
- "   let c='a'
- "   exec "set <A-".c.">=\e".c
- "   exec "imap \e".c." <A-".c.">"
- "   let c = nr2char(1+char2nr(c))
- " endw
 
 
 " Tell Vim to look for a tags file in the directory of the current file as well as in the working directory, and up, and up, and…
@@ -116,6 +98,68 @@ set tags=./tags,tags;/
 " Set shell instances to use globstar
 set shell=/bin/bash\ -O\ globstar
 
+"}}}
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Helper functions
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"{{{
+function! CmdLine(str)
+    exe "menu Foo.Bar :" . a:str
+    emenu Foo.Bar
+    unmenu Foo
+endfunction
+
+function! VisualSelection(direction, extra_filter) range
+    let l:saved_reg = @"
+    execute "normal! vgvy"
+
+    let l:pattern = escape(@", '\\/.*$^~[]')
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
+
+    if a:direction == 'b'
+        execute "normal ?" . l:pattern . "^M"
+    elseif a:direction == 'gv'
+        call CmdLine("Ack \"" . l:pattern . "\" " )
+    elseif a:direction == 'replace'
+        call CmdLine("%s" . '/'. l:pattern . '/')
+    elseif a:direction == 'f'
+        execute "normal /" . l:pattern . "^M"
+    endif
+
+    let @/ = l:pattern
+    let @" = l:saved_reg
+endfunction
+
+" Returns true if paste mode is enabled
+function! HasPaste()
+    if &paste
+        return 'PASTE MODE  '
+    en
+    return ''
+endfunction
+
+" Don't close window, when deleting a buffer
+command! Bclose call <SID>BufcloseCloseIt()
+function! <SID>BufcloseCloseIt()
+   let l:currentBufNum = bufnr("%")
+   let l:alternateBufNum = bufnr("#")
+
+   if buflisted(l:alternateBufNum)
+     buffer #
+   else
+     bnext
+   endif
+
+   if bufnr("%") == l:currentBufNum
+     new
+   endif
+
+   if buflisted(l:currentBufNum)
+     execute("bdelete! ".l:currentBufNum)
+   endif
+endfunction
 "}}}
 
 
@@ -172,26 +216,6 @@ set whichwrap+=<,>,h,l
 if has('mouse')
   set mouse=a
 endif
-
-" Search for visually selected text by pressing // in visual mode
-vnoremap // y/<C-R>"<CR>
-
-" Search within range in visual mode
-" http://vim.wikia.com/wiki/Search_only_over_a_visual_range
-function! RangeSearch(direction)
-  call inputsave()
-  let g:srchstr = input(a:direction)
-  call inputrestore()
-  if strlen(g:srchstr) > 0
-    let g:srchstr = g:srchstr.
-          \ '\%>'.(line("'<")-1).'l'.
-          \ '\%<'.(line("'>")+1).'l'
-  else
-    let g:srchstr = ''
-  endif
-endfunction
-vnoremap <silent> / :<C-U>call RangeSearch('/')<CR>:if strlen(g:srchstr) > 0\|exec '/'.g:srchstr\|endif<CR>
-vnoremap <silent> ? :<C-U>call RangeSearch('?')<CR>:if strlen(g:srchstr) > 0\|exec '?'.g:srchstr\|endif<CR>
 
 " Ignore case when searching
 set ignorecase
@@ -281,9 +305,52 @@ endif
 
 "}}}
 
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Key mappings """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Key mappings 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "{{{
+
+" map leader to spacebar
+"nnoremap <Space> <nop>
+"let mapleader = " "
+"let g:mapleader = " "
+map <space> <leader>
+imap <space><space> <C-O><leader>
+
+
+" http://stackoverflow.com/questions/6778961/alt-key-shortcuts-not-working-on-gnome-terminal-with-vim/10216459#10216459
+" Useless, because setting the alt-somekey will always work like esc-sokekey
+ " while c <= 'z'
+ "   let c='a'
+ "   exec "set <A-".c.">=\e".c
+ "   exec "imap \e".c." <A-".c.">"
+ "   let c = nr2char(1+char2nr(c))
+ " endw
+
+
+" Search for visually selected text by pressing // in visual mode
+vnoremap // y/<C-R>"<CR>
+
+
+" Search within range in visual mode
+" http://vim.wikia.com/wiki/Search_only_over_a_visual_range
+function! RangeSearch(direction)
+  call inputsave()
+  let g:srchstr = input(a:direction)
+  call inputrestore()
+  if strlen(g:srchstr) > 0
+    let g:srchstr = g:srchstr.
+          \ '\%>'.(line("'<")-1).'l'.
+          \ '\%<'.(line("'>")+1).'l'
+  else
+    let g:srchstr = ''
+  endif
+endfunction
+vnoremap <silent> / :<C-U>call RangeSearch('/')<CR>:if strlen(g:srchstr) > 0\|exec '/'.g:srchstr\|endif<CR>
+vnoremap <silent> ? :<C-U>call RangeSearch('?')<CR>:if strlen(g:srchstr) > 0\|exec '?'.g:srchstr\|endif<CR>
+
+
 " Clear highlighting on escape in normal mode
 " http://stackoverflow.com/questions/11940801/mapping-esc-in-vimrc-causes-bizzare-arrow-behaviour
 nnoremap <esc>^[ <esc>^[
@@ -367,71 +434,6 @@ command! DeleteInactiveBuffers :call DeleteInactiveBufs()
 if has("nvim")
   tnoremap <Esc> <C-\><C-n>
 endif
-"}}}
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Files, backups, undo, and sessions
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"{{{
-" Turn backup off, since most stuff is in SVN, git et.c anyway...
-set nobackup
-set nowb
-set noswapfile
-
-" Automatic <EOL> detection
-set fileformats=unix,dos,mac
-
-"}}}
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Text, tab and indent related
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"{{{
-" Show invisibles by default
-set list
-
-" Use the same symbols as TextMate for tabstops and EOLs
-set listchars=tab:▸\ ,eol:¬
-
-" Replace tab character with empty spaces
-set expandtab
-" Use tabs, not spaces
-" set noexpandtab
-
-" Make "tab" insert indents instead of tabs at the beginning of a line
-set smarttab
-
-" Prefer spaces to tabs and set size to 2
-set tabstop=2
-set softtabstop=2
-set shiftwidth=2
-
-" Syntax of these languages is fussy over tabs Vs spaces
-autocmd FileType make setlocal ts=8 sts=8 sw=8 noexpandtab
-autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
-
-" Linebreak on 500 characters
-set lbr
-set tw=500
-
-" Indentation tweaks:
-set ai "Auto indent
-"set si "Smart indent
-set wrap "Wrap lines
-
-" Reselect visual block after indent/outdent
-vnoremap < <gv
-vnoremap > >gv
-
-" Select all
-function! SelectAll()
-  :mark l  
-  ":exe 'normal ggVG'
-  :%
-endfunction
-nnoremap <C-a> :call SelectAll()<CR>
 
 " Allow pasting from clipboard without autoindenting
 " If your ssh session has X11 forwarding enabled, and the remote terminal Vim has +xclipboard support, then you can use the "+P keystroke to paste directly from the clipboard into Vim.
@@ -445,17 +447,6 @@ inoremap <leader>p <C-O>:set noai<CR> <C-R>+ <C-O>:set ai<CR>
 " Paste a space in normal mode
 " nnoremap <leader>l a<space><esc> 
 nnoremap <leader>l $a<space><esc> 
-
-"}}} 
-
-""""""""""""""""""""""""""""""
-" => Visual mode related
-""""""""""""""""""""""""""""""
-  
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Moving around, tabs, windows and buffers
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"{{{
 
 " Command mode mappings
 cnoremap <C-a> <Home>
@@ -534,6 +525,72 @@ map <C-t> :tabnew<CR>
 " Switch CWD to the directory of the open buffer
 map <leader>cd :cd %:p:h<cr>:pwd<cr>
 
+
+" Reselect visual block after indent/outdent
+vnoremap < <gv
+vnoremap > >gv
+
+" Select all
+function! SelectAll()
+  :mark l  
+  ":exe 'normal ggVG'
+  :%
+endfunction
+nnoremap <C-a> :call SelectAll()<CR>
+
+"}}}
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Files, backups, undo, and sessions
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"{{{
+" Turn backup off, since most stuff is in SVN, git et.c anyway...
+set nobackup
+set nowb
+set noswapfile
+
+" Automatic <EOL> detection
+set fileformats=unix,dos,mac
+"}}}
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Text, tab and indent related
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"{{{
+" Show invisibles by default
+set list
+
+" Use the same symbols as TextMate for tabstops and EOLs
+set listchars=tab:▸\ ,eol:¬
+
+" Replace tab character with empty spaces
+set expandtab
+" Use tabs, not spaces
+" set noexpandtab
+
+" Make "tab" insert indents instead of tabs at the beginning of a line
+set smarttab
+
+" Prefer spaces to tabs and set size to 2
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
+
+" Syntax of these languages is fussy over tabs Vs spaces
+autocmd FileType make setlocal ts=8 sts=8 sw=8 noexpandtab
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+
+" Linebreak on 500 characters
+set lbr
+set tw=500
+
+" Indentation tweaks:
+set ai "Auto indent
+"set si "Smart indent
+set wrap "Wrap lines
+
 " Specify the behavior when switching between buffers
 try
   set switchbuf=useopen,usetab,newtab
@@ -587,66 +644,4 @@ set laststatus=2
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "{{{
 " Remove the Windows ^M - when the encodings gets messed up noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
-"}}}
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Helper functions
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"{{{
-function! CmdLine(str)
-    exe "menu Foo.Bar :" . a:str
-    emenu Foo.Bar
-    unmenu Foo
-endfunction
-
-function! VisualSelection(direction, extra_filter) range
-    let l:saved_reg = @"
-    execute "normal! vgvy"
-
-    let l:pattern = escape(@", '\\/.*$^~[]')
-    let l:pattern = substitute(l:pattern, "\n$", "", "")
-
-    if a:direction == 'b'
-        execute "normal ?" . l:pattern . "^M"
-    elseif a:direction == 'gv'
-        call CmdLine("Ack \"" . l:pattern . "\" " )
-    elseif a:direction == 'replace'
-        call CmdLine("%s" . '/'. l:pattern . '/')
-    elseif a:direction == 'f'
-        execute "normal /" . l:pattern . "^M"
-    endif
-
-    let @/ = l:pattern
-    let @" = l:saved_reg
-endfunction
-
-" Returns true if paste mode is enabled
-function! HasPaste()
-    if &paste
-        return 'PASTE MODE  '
-    en
-    return ''
-endfunction
-
-" Don't close window, when deleting a buffer
-command! Bclose call <SID>BufcloseCloseIt()
-function! <SID>BufcloseCloseIt()
-   let l:currentBufNum = bufnr("%")
-   let l:alternateBufNum = bufnr("#")
-
-   if buflisted(l:alternateBufNum)
-     buffer #
-   else
-     bnext
-   endif
-
-   if bufnr("%") == l:currentBufNum
-     new
-   endif
-
-   if buflisted(l:currentBufNum)
-     execute("bdelete! ".l:currentBufNum)
-   endif
-endfunction
 "}}}
