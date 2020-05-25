@@ -343,8 +343,6 @@ endif
 let g:deoplete#enable_at_startup = 1
 " Use tab for autocomplete
 inoremap <silent><expr> <TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-" Add ALE completion results
-call deoplete#custom#source('ale', 'rank', 999)
 
 
 Plug 'Shougo/neomru.vim'
@@ -661,6 +659,17 @@ nnoremap <leader>t :MtaJumpToOtherTag<cr>
 highlight MatchTag ctermfg=black ctermbg=lightgreen
 
 call plug#end()
+
+
+" Add ALE completion results to deoplete
+" You must call deoplete#custom#source() after plug#end()
+" https://github.com/Shougo/deoplete.nvim/issues/766#issuecomment-498465161
+" call deoplete#custom#source('ale', 'rank', 999)
+" Use ALE and also some plugin 'foobar' as completion sources for all code.
+call deoplete#custom#option('sources', {
+\ '_': ['ale'],
+\})
+
 
 " Required:
 filetype plugin indent on
