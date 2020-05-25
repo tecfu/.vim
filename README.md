@@ -179,7 +179,10 @@ See:
 
     https://github.com/Shougo/neocomplete.vim/issues/31
     https://stackoverflow.com/questions/19472554/build-vim-with-lua-on-linux-mint
+
 ## Todo
 
+- Update vim > 8.2
+  - Install LSP support via [coc.vim](https://github.com/neoclide/coc.nvim)
 - When opened, make unite traverse up the directory structure incrementally with each "f" keypress.
 
