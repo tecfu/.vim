@@ -136,8 +136,6 @@ let g:formatterpath = ['/usr/local/bin']
 
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-" Use tab for autocomplete
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :
@@ -332,22 +330,6 @@ Plug 'scrooloose/vim-slumlord'
 
 
 "{{{
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Shougo/neocomplete Plugin
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"" Use deoplete with nvim
-"if has('nvim')
-"  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-"else
-"  Plug 'Shougo/deoplete.nvim'
-"  Plug 'roxma/nvim-yarp'
-"  Plug 'roxma/vim-hug-neovim-rpc'
-"endif
-"let g:deoplete#enable_at_startup = 1
-"" Use tab for autocomplete
-"inoremap <silent><expr> <TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-
-
 Plug 'Shougo/neomru.vim'
 
 
