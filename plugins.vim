@@ -135,30 +135,27 @@ let g:formatterpath = ['/usr/local/bin']
 "npm install js-beautify -g
 
 
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+" Use tab for autocomplete
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+" In coc-settings.json: "suggest.enablePreselect": false
+
+
 "Plug 'kien/ctrlp.vim' "unmaintained
 "Plug 'ctrlpvim/ctrlp.vim' "maintained Fork
 
 
 Plug 'danro/rename.vim'
-
-
-" For js projects, eslint should be installed locally
-Plug 'dense-analysis/ale' 
-
-"let g:ale_linters = {
-"\ 'javascript': ['eslint'],
-"\}
-" Show warnings/errors in status line
-let g:airline#extensions#ale#enabled = 1
-let g:ale_sign_column_always = 1
-let g:ale_open_list = 1
-let g:ale_completion_max_suggestions = 10
-let g:ale_cursor_detail = 1
-" Run linters only when files saved
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_insert_leave = 0
-" Ddon't run linters on opening a file
-let g:ale_lint_on_enter = 0
 
 
 "Cool, but conflicts with tabular
@@ -338,17 +335,17 @@ Plug 'scrooloose/vim-slumlord'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Shougo/neocomplete Plugin
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Use deoplete with nvim
-if has('nvim')
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-  Plug 'Shougo/deoplete.nvim'
-  Plug 'roxma/nvim-yarp'
-  Plug 'roxma/vim-hug-neovim-rpc'
-endif
-let g:deoplete#enable_at_startup = 1
-" Use tab for autocomplete
-inoremap <silent><expr> <TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+"" Use deoplete with nvim
+"if has('nvim')
+"  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+"else
+"  Plug 'Shougo/deoplete.nvim'
+"  Plug 'roxma/nvim-yarp'
+"  Plug 'roxma/vim-hug-neovim-rpc'
+"endif
+"let g:deoplete#enable_at_startup = 1
+"" Use tab for autocomplete
+"inoremap <silent><expr> <TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 
 
 Plug 'Shougo/neomru.vim'
@@ -665,16 +662,6 @@ nnoremap <leader>t :MtaJumpToOtherTag<cr>
 highlight MatchTag ctermfg=black ctermbg=lightgreen
 
 call plug#end()
-
-
-" Add ALE completion results to deoplete
-" You must call deoplete#custom#source() after plug#end()
-" https://github.com/Shougo/deoplete.nvim/issues/766#issuecomment-498465161
-" call deoplete#custom#source('ale', 'rank', 999)
-" Use ALE and also some plugin 'foobar' as completion sources for all code.
-call deoplete#custom#option('sources', {
-\ '_': ['ale'],
-\})
 
 
 " Required:

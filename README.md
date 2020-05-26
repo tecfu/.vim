@@ -41,6 +41,14 @@ $ . ~/.vim/INSTALL.sh
 vim -c "PlugInstall"
 ```
 
+
+### Install Language Servers
+
+```
+CocInstall coc-tsserver
+```
+
+
 ## Optional
 
 ### Configure your terminal to use a powerline font
@@ -95,7 +103,6 @@ $ npm run readme
 | <a href="http://github.com/brookhong/DBGPavim">brookhong/DBGPavim</a>                               | This is a plugin to enable php debug in VIM with Xdebug, with a new debug engine.                                | http://github.com/brookhong/DBGPavim                |
 | <a href="http://github.com/Chiel92/vim-autoformat">Chiel92/vim-autoformat</a>                       | Provide easy code formatting in Vim by integrating existing code formatters.                                     | http://github.com/Chiel92/vim-autoformat            |
 | <a href="http://github.com/danro/rename.vim">danro/rename.vim</a>                                   | Rename the current file in the vim buffer + retain relative path.                                                | http://github.com/danro/rename.vim                  |
-| <a href="http://github.com/dense-analysis/ale">dense-analysis/ale</a>                               | Check syntax in Vim asynchronously and fix files, with Language Server Protocol (LSP) support                    | http://github.com/dense-analysis/ale                |
 | <a href="http://github.com/Dewdrops/SearchComplete">Dewdrops/SearchComplete</a>                     | Tab completion of words inside of a search ('/')                                                                 | http://github.com/Dewdrops/SearchComplete           |
 | <a href="http://github.com/easymotion/vim-easymotion">easymotion/vim-easymotion</a>                 | Vim motions on speed!                                                                                            | http://github.com/easymotion/vim-easymotion         |
 | <a href="http://github.com/evanleck/vim-svelte">evanleck/vim-svelte</a>                             | Vim syntax highlighting and indentation for Svelte 3 components.                                                 | http://github.com/evanleck/vim-svelte               |
@@ -109,6 +116,7 @@ $ npm run readme
 | <a href="http://github.com/int3/vim-extradite">int3/vim-extradite</a>                               | A git commit browser for vim. Extends fugitive.vim.                                                              | http://github.com/int3/vim-extradite                |
 | <a href="http://github.com/itchyny/calendar.vim">itchyny/calendar.vim</a>                           | A calendar application for Vim                                                                                   | http://github.com/itchyny/calendar.vim              |
 | <a href="http://github.com/kshenoy/vim-signature">kshenoy/vim-signature</a>                         | Plugin to toggle, display and navigate marks                                                                     | http://github.com/kshenoy/vim-signature             |
+| <a href="http://github.com/leafgarland/typescript-vim">leafgarland/typescript-vim</a>               | Typescript syntax files for Vim                                                                                  | http://github.com/leafgarland/typescript-vim        |
 | <a href="http://github.com/luochen1990/rainbow">luochen1990/rainbow</a>                             | Rainbow Parentheses Improved, shorter code, no level limit, smooth and fast, powerful configuration.             | http://github.com/luochen1990/rainbow               |
 | <a href="http://github.com/majutsushi/tagbar">majutsushi/tagbar</a>                                 | Vim plugin that displays tags in a window, ordered by scope                                                      | http://github.com/majutsushi/tagbar                 |
 | <a href="http://github.com/maksimr/vim-jsbeautify">maksimr/vim-jsbeautify</a>                       | vim plugin which formated javascript files by js-beautify                                                        | http://github.com/maksimr/vim-jsbeautify            |
@@ -119,6 +127,7 @@ $ npm run readme
 | <a href="http://github.com/mustache/vim-mustache-handlebars">mustache/vim-mustache-handlebars</a>   | mustache and handlebars mode for vim                                                                             | http://github.com/mustache/vim-mustache-handlebars  |
 | <a href="http://github.com/mxw/vim-jsx">mxw/vim-jsx</a>                                             | React JSX syntax highlighting and indenting for vim.                                                             | http://github.com/mxw/vim-jsx                       |
 | <a href="http://github.com/nathanaelkane/vim-indent-guides">nathanaelkane/vim-indent-guides</a>     | A Vim plugin for visually displaying indent levels in code                                                       | http://github.com/nathanaelkane/vim-indent-guides   |
+| <a href="http://github.com/neoclide/coc.nvim">neoclide/coc.nvim</a>                                 | Intellisense engine for Vim8 & Neovim, full language server protocol support as VSCode                           | http://github.com/neoclide/coc.nvim                 |
 | <a href="http://github.com/othree/eregex.vim">othree/eregex.vim</a>                                 | Perl/Ruby style regexp notation for Vim                                                                          | http://github.com/othree/eregex.vim                 |
 | <a href="http://github.com/pangloss/vim-javascript">pangloss/vim-javascript</a>                     | Vastly improved Javascript indentation and syntax support in Vim.                                                | http://github.com/pangloss/vim-javascript           |
 | <a href="http://github.com/Peeja/vim-cdo">Peeja/vim-cdo</a>                                         | Vim commands to run a command over every entry in the quickfix list (:Cdo) or location list (:Ldo).              | http://github.com/Peeja/vim-cdo                     |
@@ -167,13 +176,6 @@ https://launchpad.net/~pi-rho/+archive/ubuntu/dev
 - Installing Vim 8 on Ubuntu 18.04:
 
 You will want to install `vim-gtk` so that +clipboard is compiled
-```
-sudo apt install vim-gtk
-```
-
-- Install vim 8.2 on Ubuntu 18.04
-
-- Just use apt package (good luck getting +lua to work)
 
 ```
 sudo add-apt-repository ppa:jonathonf/vim
@@ -185,10 +187,3 @@ See:
 
     https://github.com/Shougo/neocomplete.vim/issues/31
     https://stackoverflow.com/questions/19472554/build-vim-with-lua-on-linux-mint
-
-## Todo
-
-- Update vim > 8.2
-  - Install LSP support via [coc.vim](https://github.com/neoclide/coc.nvim)
-- When opened, make unite traverse up the directory structure incrementally with each "f" keypress.
-
