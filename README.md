@@ -1,6 +1,6 @@
 # vimrc
 
-Configuration files for the Vim > 8
+Configuration for Vim > 8
 
 - Syntax highlighting / debugging for the following:
   - nodejs / javascript
@@ -11,25 +11,24 @@ Configuration files for the Vim > 8
   - Plantuml
   - Python
 
-- It includes editor preferences, colorscheme, plugins, custom functions and more.
+- Also includes editor preferences, color scheme, plugins, custom functions & more.
 
 **This project is my personal vimrc**. Feel free to send me suggestions through
 the [issues page](https://github.com/tecfu/.vim/issues/new) or to send me
-improvements through the [pull requests
-page](https://github.com/tecfu/.vim/pulls).
+improvements through the [pull requestspage](https://github.com/tecfu/.vim/pulls).
 
 
-## Quick start
+## Installation
 
 ### Clone this repository and its submodules into your home directory.
 
-```
+```sh
 git clone --recurse-submodules git://github.com/tecfu/.vim ~/.vim
 ```
 
 ### Run Install Script
 
-```
+```sh
 $ . ~/.vim/INSTALL.sh
 ```
 
@@ -37,15 +36,15 @@ $ . ~/.vim/INSTALL.sh
 
 - To install plugins on your first run:
 
-```
+```sh
 vim -c "PlugInstall"
 ```
 
-
 ### Install Language Servers
 
-```
-CocInstall coc-tsserver
+- typescript
+```vimscript
+:CocInstall coc-tsserver
 ```
 
 
@@ -57,7 +56,7 @@ CocInstall coc-tsserver
 ### [Optional] Remap ESC to CAPS LOCK
 
 - Linux ~/.xmodmap 
-```
+```vimscript
 ! Swap caps lock and escape
 remove Lock = Caps_Lock
 keysym Escape = Caps_Lock
@@ -66,7 +65,7 @@ add Lock = Caps_Lock
 ```
 
 ### [Configure tern for vim to show argument hints (if your machine can handle it)]
-```
+```vimscript
 g:tern_show_argument_hints="on_move"
 ```
 Default is g:tern_show_argument_hints=0
@@ -74,7 +73,7 @@ Default is g:tern_show_argument_hints=0
 
 ### [Optional/Recommended] Install Silver Searcher
 
-```
+```sh
 sudo -S apt-get install silversearcher-ag'
 ```
 
@@ -86,7 +85,7 @@ sudo -S apt-get install silversearcher-ag'
 - Once you have added a new plugin, you can auto-generate a tabular brief
   summary in the README.md file by running a npm script that does this for you:
 
-```
+```sh
 $ npm run readme
 ```
 
@@ -152,32 +151,16 @@ $ npm run readme
 
 ### Color Scheme
 
-elrodeo		https://github.com/chmllr/elrodeo-colorscheme
+elrodeo  https://github.com/chmllr/elrodeo-colorscheme
 
 
 ### Notes
-- Golang shortcuts
-
-```
-<leader>r <Plug>(go-run)
-<leader>b <Plug>(go-build)
-<leader>t <Plug>(go-test)
-<leader>c <Plug>(go-coverage)
-``` 
-
-- Installing Vim 8 on Ubuntu 14.04:
-
-```
-sudo add-apt-repository ppa:pi-rho/dev
-```
-
-https://launchpad.net/~pi-rho/+archive/ubuntu/dev
 
 - Installing Vim 8 on Ubuntu 18.04:
 
 You will want to install `vim-gtk` so that +clipboard is compiled
 
-```
+```sh
 sudo add-apt-repository ppa:jonathonf/vim
 sudo apt-get update
 sudo apt install vim-gtk
