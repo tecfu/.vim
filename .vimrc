@@ -318,6 +318,73 @@ endif
 map <space> <leader>
 imap <space><space> <C-O><leader>
 
+" Treat long lines as break lines (useful when moving around in them)
+map j gj
+map k gk
+
+" Map ctrl+j, ctrl+k to down/up 10 lines
+" Scroll up/down 10 lines at a time shift+j,shift+k
+noremap <C-j> 10j
+noremap <C-k> 10k
+" 
+" " Scroll ght/left 10 characters
+noremap <C-l> 10l 
+noremap <C-h> 10h  
+
+" Remap home and end to "ctrl+;" and ";" in addition to default "1" and "$" 
+noremap <leader>a ^
+noremap <leader>; $
+
+" Disable highlight when <leader><cr> is pressed
+" map <silent> <leader><cr> :noh<cr>
+
+" Navigation shortcuts for location window
+" map <leader>q :lopen <CR>
+"  map q :lclose <CR>
+map <expr> <C-Down> (empty(getloclist(0))  ? "" : ":lnext")."<CR>"
+map <expr> <C-Up> (empty(getloclist(0))  ? "" : ":lp")."<CR>"
+
+" Navigation shortcuts for quickfix window
+map <expr> <A-Down> (empty(getqflist())  ? "" : ":cnext")."<CR>"
+map <expr> <A-Up> (empty(getqflist())  ? "" : ":cprevious")."<CR>"
+
+" Move between buffers with keycodes that match vimperator
+" shift+h => back, shift+l => forward
+" noremap <S-h> :bp<CR>
+" noremap <S-l> :bn<CR>
+
+" Close all the buffers
+map <leader>ba :1,1000 bd!<cr>
+
+" Useful mappings for managing tabs
+"Overwrites jump to prev tag
+"See: http://vim.wikia.com/wiki/Alternative_tab_navigation
+map <S-w> :tabclose<CR>
+"Overwrites man for word under cursor
+map <S-k> :tabnext<CR>
+"Overwrites join lines
+map <S-j> :tabprev<CR>
+"Because C-t is tag navigation
+map <C-t> :tabnew<CR>
+
+" Undo close tab using Shougo/Unite to get MRU file
+"function! UndoCloseTab()
+"  :tabnew  
+"  :tabm -1  
+"  :Unite file_mru
+"  exe "normal! 2ggf/gf"
+"endfunction
+"nmap <C-u> :call UndoCloseTab()<CR><ESC>
+
+" Switch CWD to the directory of the open buffer
+map <leader>cd :cd %:p:h<cr>:pwd<cr>
+
+
+" Reselect visual block after indent/outdent
+vnoremap < <gv
+vnoremap > >gv
+
+
 
 " http://stackoverflow.com/questions/6778961/alt-key-shortcuts-not-working-on-gnome-terminal-with-vim/10216459#10216459
 " Useless, because setting the alt-somekey will always work like esc-sokekey
@@ -459,76 +526,6 @@ cnoremap <C-l> <Right>
 cnoremap <C-S-h> <C-f>5h<C-c>
 "5 right
 cnoremap <C-S-l> <C-f>5l<C-c>
-
-" Treat long lines as break lines (useful when moving around in them)
-map j gj
-map k gk
-
-" Map ctrl+j, ctrl+k to down/up 10 lines
-" Scroll up/down 10 lines at a time shift+j,shift+k
-noremap <C-j> 10j
-noremap <C-k> 10k
-" 
-" " Scroll ght/left 10 characters
-noremap <C-l> 10l 
-noremap <C-h> 10h  
-
-" Remap home and end to "ctrl+;" and ";" in addition to default "1" and "$" 
-noremap <leader>a ^
-noremap <leader>; $
-
-"noremap <C-a> ^
-"<C-;> does not map
-"nmap <C-e> $ 
-
-" Disable highlight when <leader><cr> is pressed
-" map <silent> <leader><cr> :noh<cr>
-
-" Navigation shortcuts for location window
-" map <leader>q :lopen <CR>
-"  map q :lclose <CR>
-map <expr> <C-Down> (empty(getloclist(0))  ? "" : ":lnext")."<CR>"
-map <expr> <C-Up> (empty(getloclist(0))  ? "" : ":lp")."<CR>"
-
-" Navigation shortcuts for quickfix window
-map <expr> <A-Down> (empty(getqflist())  ? "" : ":cnext")."<CR>"
-map <expr> <A-Up> (empty(getqflist())  ? "" : ":cprevious")."<CR>"
-
-" Move between buffers with keycodes that match vimperator
-" shift+h => back, shift+l => forward
-" noremap <S-h> :bp<CR>
-" noremap <S-l> :bn<CR>
-
-" Close all the buffers
-map <leader>ba :1,1000 bd!<cr>
-
-" Useful mappings for managing tabs
-"Overwrites jump to prev tag
-"See: http://vim.wikia.com/wiki/Alternative_tab_navigation
-map <S-w> :tabclose<CR>
-"Overwrites man for word under cursor
-map <S-k> :tabnext<CR>
-"Overwrites join lines
-map <S-j> :tabprev<CR>
-"Because C-t is tag navigation
-map <C-t> :tabnew<CR>
-
-" Undo close tab using Shougo/Unite to get MRU file
-"function! UndoCloseTab()
-"  :tabnew  
-"  :tabm -1  
-"  :Unite file_mru
-"  exe "normal! 2ggf/gf"
-"endfunction
-"nmap <C-u> :call UndoCloseTab()<CR><ESC>
-
-" Switch CWD to the directory of the open buffer
-map <leader>cd :cd %:p:h<cr>:pwd<cr>
-
-
-" Reselect visual block after indent/outdent
-vnoremap < <gv
-vnoremap > >gv
 
 " Select all
 function! SelectAll()
