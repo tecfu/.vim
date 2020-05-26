@@ -253,7 +253,7 @@ set t_vb=
 set tm=500
 
 " Add a bit extra margin to the left
-set foldcolumn=1
+"set foldcolumn=1
 
 " Syntax Highlighting
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
@@ -626,6 +626,9 @@ set splitright
   "let g:solarized_termcolors=256
   set guifont=monospace\ 11 
   set background=dark
+
+" Not a fan of the gray gutter (SignColumn) that comes with the theme
+  highlight SignColumn guibg=black ctermbg=black
   syntax on
 "}}}
 
