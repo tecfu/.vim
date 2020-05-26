@@ -171,9 +171,15 @@ You will want to install `vim-gtk` so that +clipboard is compiled
 sudo apt install vim-gtk
 ```
 
-- Building Vim 8 from Source on Ubuntu 18.04
+- Install vim 8.2 on Ubuntu 18.04
 
-- Just use apt packge (good luck getting +lua to work)
+- Just use apt package (good luck getting +lua to work)
+
+```
+sudo add-apt-repository ppa:jonathonf/vim
+sudo apt-get update
+sudo apt install vim-gtk
+```
 
 See: 
 
