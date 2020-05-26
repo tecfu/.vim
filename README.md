@@ -50,10 +50,15 @@ vim -c "PlugInstall"
 
 ## Optional
 
+
 ### Configure your terminal to use a powerline font
 - i.e.: Ubuntu Mono derivative Powerline
 
-### [Optional] Remap ESC to CAPS LOCK
+```sh
+sudo apt-get install fonts-powerline
+```
+
+### Remap ESC to CAPS LOCK
 
 - Linux ~/.xmodmap 
 ```vimscript
@@ -166,7 +171,6 @@ sudo apt-get update
 sudo apt install vim-gtk
 ```
 
-See: 
+- If some characters dont render correctly
 
-    https://github.com/Shougo/neocomplete.vim/issues/31
-    https://stackoverflow.com/questions/19472554/build-vim-with-lua-on-linux-mint
+Make sure you install powerline fonts
