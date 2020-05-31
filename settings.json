@@ -1,0 +1,44 @@
+{
+    "vim.leader": "<space>",
+    "vim.easymotion": true,
+    "vim.handleKeys": {
+        "<C-c>": false,
+        "<C-v>": false
+    },
+    "keyboard.dispatch": "keyCode",
+    "vim.normalModeKeyBindings": [
+        {
+            "before": ["<leader>", "a"],
+            "after": ["^"]
+        },
+        {
+            "before": ["<leader>", ";"],
+            "after": ["$"]
+        },
+        {
+            "before": ["<leader>", "j"],
+            "after": ["<shift>", "j"]
+        },
+        {
+            "before": ["<leader>", "k"],
+            "after": ["i", "<cr>", "<esc>", "k"]
+        },
+        {
+            "before": ["<leader>", "p"], 
+            "after":  ["\"", "+", "p"]
+        }
+    ],
+    "vim.normalModeKeyBindingsNonRecursive": [
+        {
+            "before": ["f"],
+            "after": ["leader", "leader", "s"]
+        }
+    ],
+    "vim.statusBarColors.insert": "",
+    "vim.commandLineModeKeyBindings": [
+    
+    ],
+    "vim.commandLineModeKeyBindingsNonRecursive": [
+    
+    ]
+}
