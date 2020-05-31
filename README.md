@@ -40,13 +40,19 @@ $ . ~/.vim/INSTALL.sh
 vim -c "PlugInstall"
 ```
 
-### Install Language Servers
+### coc.nvim 
 
-- typescript
+Install Language Servers
+
+- typescript //https://github.com/neoclide/coc-tsserver
 ```vimscript
 :CocInstall coc-tsserver
 ```
 
+Access coc-settings.json
+```vimscript
+:CocConfig 
+```
 
 ## Optional
 
