@@ -612,7 +612,7 @@ set splitright
 
 
 """"""""""""""""""""""""""""""
-" => Color Scheme
+" => Colors and Fonts
 """"""""""""""""""""""""""""""
 "{{{
 
@@ -627,6 +627,10 @@ set splitright
 " Not a fan of the gray gutter (SignColumn) that comes with the theme
   highlight SignColumn guibg=black ctermbg=black
   syntax on
+
+" Not a fan of pink background in popup menu
+highlight Pmenu ctermbg=blue guibg=blue
+
 "}}}
 
 
