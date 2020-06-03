@@ -8,18 +8,26 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "
 " Sections:
-"    -> Load Plugins
-"    -> Neovim Specific
-"    -> General
-"    -> Helper functions
-"    -> VIM user interface
-"    -> Colors and Fonts
-"    -> Files, backups, and sessions
-"    -> Text, tab and indent related
-"    -> Status line
-"    -> Key mappings
-"    -> Misc
+"  -> Fixes
+"  -> Load Plugins
+"  -> Neovim Specific
+"  -> General
+"  -> Helper functions
+"  -> VIM user interface
+"  -> Colors and Fonts
+"  -> Files, backups, and sessions
+"  -> Text, tab and indent related
+"  -> Status line
+"  -> Key mappings
+"  -> Misc
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Fixes
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Strange character since last update (>4;2m)
+" https://www.reddit.com/r/vim/comments/gv410k/strange_character_since_last_update_42m/fsmfxxv/
+set t_TI= t_TE=
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
