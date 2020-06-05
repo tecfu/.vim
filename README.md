@@ -75,13 +75,6 @@ keysym Caps_Lock = Escape
 add Lock = Caps_Lock
 ```
 
-### [Configure tern for vim to show argument hints (if your machine can handle it)]
-```vimscript
-g:tern_show_argument_hints="on_move"
-```
-Default is g:tern_show_argument_hints=0
-
-
 ### [Optional/Recommended] Install Silver Searcher
 
 ```sh
