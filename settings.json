@@ -3,7 +3,9 @@
     "vim.easymotion": true,
     "vim.handleKeys": {
         "<C-c>": false,
-        "<C-v>": false
+        "<C-c>": false,
+        "<C-s>": false,
+        "<C-q>": false
     },
     "keyboard.dispatch": "keyCode",
     "vim.normalModeKeyBindings": [
