@@ -33,7 +33,7 @@ fi
 # Install Powerline Fonts
 #git clone http://www.github.com/tecfu/fonts
 #cd fonts
-$DIR/fonts/install.sh
+#$DIR/fonts/install.sh
 
 # declare array
 SYMLINKS=()
