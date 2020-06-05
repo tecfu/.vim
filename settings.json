@@ -32,6 +32,42 @@
         {
             "before": ["f"],
             "after": ["leader", "leader", "s"]
+        },
+        {
+            "before": ["J"],
+            "commands": [
+                "workbench.action.previousEditorInGroup"
+            ]
+        },
+        {
+            "before": ["K"],
+            "commands": [
+                "workbench.action.nextEditorInGroup"
+            ]
+        },
+        {
+            "before": ["W"],
+            "commands": [
+                ":q!"
+            ]
+        }
+    ],
+    "vim.visualModeKeyBindingsNonRecursive": [
+        {
+            "before": [
+                ">"
+            ],
+            "commands": [
+                "editor.action.indentLines"
+            ]
+        },
+        {
+            "before": [
+                "<"
+            ],
+            "commands": [
+                "editor.action.outdentLines"
+            ]
         }
     ],
     "vim.statusBarColors.insert": "",
