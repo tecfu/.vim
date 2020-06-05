@@ -26,6 +26,14 @@
         {
             "before": ["<leader>", "p"], 
             "after":  ["\"", "+", "p"]
+        },
+        {
+            "before": ["<C-j>"],
+            "after": ["1", "0", "j"]
+        },
+        {
+            "before": ["<C-k>"],
+            "after": ["1", "0", "k"]
         }
     ],
     "vim.normalModeKeyBindingsNonRecursive": [
@@ -68,13 +76,27 @@
             "commands": [
                 "editor.action.outdentLines"
             ]
+        },
+        {
+            "before": ["<leader>", "a"],
+            "after": ["^"]
+        },
+        {
+            "before": ["<leader>", ";"],
+            "after": ["$"]
+        },
+        {
+            "before": ["<C-j>"],
+            "after": ["1", "0", "j"]
+        },
+        {
+            "before": ["<C-k>"],
+            "after": ["1", "0", "k"]
         }
     ],
     "vim.statusBarColors.insert": "",
     "vim.commandLineModeKeyBindings": [
-    
     ],
     "vim.commandLineModeKeyBindingsNonRecursive": [
-    
     ]
 }
