@@ -9,7 +9,7 @@
     },
     "keyboard.dispatch": "keyCode",
     "vim.normalModeKeyBindings": [
-        {
+       {
             "before": ["<leader>", "a"],
             "after": ["^"]
         },
@@ -62,6 +62,26 @@
             ]
         }
     ],
+    "vim.operatorPendingModeKeyBindings": [
+        {
+            "before": ["<leader>", "a"],
+            "after": ["^"]
+        },
+        { 
+            "before": ["<leader>", ";"],
+            "after": ["$"]
+        }
+    ],
+    "vim.visualModeKeyBindings": [
+        {
+            "before": ["<leader>", "a"],
+            "after": ["^"]
+        },
+        {
+            "before": ["<leader>", ";"],
+            "after": ["$"]
+        },
+   ],
     "vim.visualModeKeyBindingsNonRecursive": [
         {
             "before": [
@@ -80,14 +100,6 @@
             ]
         },
         {
-            "before": ["<leader>", "a"],
-            "after": ["^"]
-        },
-        {
-            "before": ["<leader>", ";"],
-            "after": ["$"]
-        },
-        {
             "before": ["<C-j>"],
             "after": ["1", "0", "j"]
         },
@@ -100,5 +112,6 @@
     "vim.commandLineModeKeyBindings": [
     ],
     "vim.commandLineModeKeyBindingsNonRecursive": [
-    ]
+    ],
+    "extensions.autoUpdate": false
 }
