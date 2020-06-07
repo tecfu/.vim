@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Configuration files for the Vim editor.",
   "scripts": {
-    "readme": "node ./npm-scripts/list-plugins.js"
+    "update-readme": "node ./npm-scripts/list-plugins.js"
   },
   "repository": {
     "type": "git",
