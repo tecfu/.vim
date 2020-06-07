@@ -148,6 +148,10 @@ function! s:check_back_space() abort
 endfunction
 " In coc-settings.json: "suggest.enablePreselect": false
 
+" use <c-space>for trigger completion
+inoremap <silent><expr> <c-space> coc#refresh()
+" Some terminals may send <NUL> when you press <c-space>, so you could instead:
+inoremap <silent><expr> <NUL> coc#refresh()
 
 "Plug 'kien/ctrlp.vim' "unmaintained
 "Plug 'ctrlpvim/ctrlp.vim' "maintained Fork
