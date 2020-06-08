@@ -44,9 +44,9 @@ vim -c "PlugInstall"
 
 Install Language Servers
 
-- typescript //https://github.com/neoclide/coc-tsserver
 ```vimscript
 :CocInstall coc-tsserver
+:CocInstall coc-html
 ```
 
 Access coc-settings.json
