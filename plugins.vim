@@ -270,7 +270,7 @@ Plug 'maksimr/vim-jsbeautify'
 
 if(DetectCommand('npm'))
   Plug 'marijnh/tern_for_vim', {
-      \ 'do' :  'cd ~/.vim/bundle/tern_for_vim; npm install'}
+      \ 'do' :  'cd ~/.vim/bundle/tern_for_vim && npm install'}
 endif
 
 "Awesome feature if your machine can handle it. My machine can't handle it
