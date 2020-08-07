@@ -256,7 +256,7 @@ set mat=2
 
 " No annoying sound on errors
 set noerrorbells
-set novisualbell
+set visualbell
 set t_vb=
 set tm=500
 
@@ -515,6 +515,15 @@ endif
   nnoremap <leader>p :execute 'set noai' <bar> execute 'normal "+p' <bar> execute 'set ai' <CR>
   "Paste from clipboard before cursor
   nnoremap <leader>P :execute 'set noai' <bar> execute 'normal "+P' <bar> execute 'set ai' <CR>
+
+"WSL yank support
+let s:clip = '/mnt/c/Windows/System32/clip.exe' " change this path according to your mount point
+if executable(s:clip)
+  augroup WSLYank
+  autocmd!
+  autocmd TextYankPost * if v:event.operator ==# 'y' | call system(s:clip, @0) | endif
+  augroup END
+endif
 
 inoremap <C-v> <C-O>:set noai<CR> <C-R>+ <C-O>:set ai<CR>
 inoremap <leader>p <C-O>:set noai<CR> <C-R>+ <C-O>:set ai<CR>
