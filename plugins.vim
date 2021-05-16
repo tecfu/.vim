@@ -134,8 +134,15 @@ let g:formatterpath = ['/usr/local/bin']
 "For javascript, install js-beautify externally
 "npm install js-beautify -g
 
-
+" coc.nvim is used for file formatting
+" can be configurated to auto format on save in coc-settings.json
+" Use "coc.preferences.formatOnType": true to enable format on type feature.
+" https://vi.stackexchange.com/a/31087/5223
+" https://github.com/neoclide/coc-prettier
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+vmap <S-f>  <Plug>(coc-format-selected)
+" run cmd on range of entire file
+nmap <S-f>  <Plug>(coc-format)%
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
       \ <SID>check_back_space() ? "\<TAB>" :

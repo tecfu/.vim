@@ -3,16 +3,7 @@
   "diagnostic.warningSign": "⚑",
   "diagnostic.infoSign": "⚑",
   "diagnostic.hintSign": "⚑",
-  "coc.preferences.formatOnSaveFiletypes": [
-    "css",
-    "html",
-    "javascript",
-    "javascript.jsx",
-    "json",
-    "typescript",
-    "typescriptreact",
-    "typescript.tsx"
-  ],
+  "coc.preferences.formatOnSaveFiletypes": [],
   "tsserver.formatOnType": false,
   "suggest.enablePreselect": false 
 }
