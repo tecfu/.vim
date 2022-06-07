@@ -2,6 +2,9 @@
   "name": "vimfiles",
   "version": "1.0.0",
   "description": "Configuration files for the Vim editor.",
+  "scripts": {
+    "update": "node ./npm-scripts/list-plugins.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tecfu/.vim.git"
@@ -14,7 +17,6 @@
   "homepage": "https://github.com/tecfu/.vim#readme",
   "devDependencies": {
     "follow-redirects": "0.0.3",
-    "grunt": "^1.0.1",
     "markdown-table": "^0.4.0",
     "orgy": "^2.0.3"
   },

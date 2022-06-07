@@ -1,68 +1,69 @@
 # vimrc
 
-Configuration files for the Vim editor.
+Configuration for Vim > 8
 
-- Setup for development in the following languages: 
-  - go
-  - nodejs / javascript
-  - PHP / Hack
+## Installation
 
-- It includes editor preferences, colorscheme, plugins, custom functions and more.
+### Making sure you are using a compatible version of vim:
 
-**This project is my personal vimrc**. Feel free to send me suggestions through
-the [issues page](https://github.com/tecfu/.vim/issues/new) or to send me
-improvements through the [pull requests
-page](https://github.com/tecfu/.vim/pulls).
+- Vim 8 on Ubuntu 20.04:
+
+```bash
+sudo apt-get install vim -y
+```
+
+- Vim 8.2 on Ubuntu 18.04/20.04:
 
 
-## Quick start
+```bash
+sudo add-apt-repository ppa:jonathonf/vim
+sudo apt-get update
+sudo apt install vim
+```
 
 ### Clone this repository and its submodules into your home directory.
 
-```
+```sh
 git clone --recurse-submodules git://github.com/tecfu/.vim ~/.vim
 ```
 
 ### Run Install Script
 
-```
+```sh
 $ . ~/.vim/INSTALL.sh
 ```
 
-### Run Vim
+### coc.nvim 
 
-- To install plugins on your first run:
+> Why use coc.nvim?
+> 
+> - coc-snippets allows you to use VSCode snippets with vim
 
+> coc.nvim tips
+
+- List all installed extensions
 ```
-vim -c "PlugInstall"
+:CocList extensions
+```
+
+- Access coc-settings.json
+```
+:CocConfig 
 ```
 
 ## Optional
 
+
 ### Configure your terminal to use a powerline font
 - i.e.: Ubuntu Mono derivative Powerline
 
-### [Optional] Remap ESC to CAPS LOCK
-
-- Linux ~/.xmodmap 
+```sh
+sudo apt-get install fonts-powerline
 ```
-! Swap caps lock and escape
-remove Lock = Caps_Lock
-keysym Escape = Caps_Lock
-keysym Caps_Lock = Escape
-add Lock = Caps_Lock
-```
-
-### [Configure tern for vim to show argument hints (if your machine can handle it)]
-```
-g:tern_show_argument_hints="on_move"
-```
-Default is g:tern_show_argument_hints=0
-
 
 ### [Optional/Recommended] Install Silver Searcher
 
-```
+```sh
 sudo -S apt-get install silversearcher-ag'
 ```
 
@@ -72,118 +73,81 @@ sudo -S apt-get install silversearcher-ag'
   new plugins by appending them to the file: .vimrc.plugins .
 
 - Once you have added a new plugin, you can auto-generate a tabular brief
-  summary in the README.md file by running a grunt task that does this for you:
+  summary in the README.md file by running a npm script that does this for you:
 
+```sh
+$ npm run update
 ```
-$ grunt
-```
-
-If you don't already have grunt installed you'll need to run the following
-commands:
-
-```
-$ npm install grunt -g
-$ npm install
-$ grunt
-```
-
-For more information on grunt see gruntjs.com. 
 
 ## Plugin List 
 
 <!---PLUGINS-->
-| Name                                                                                                | Description                                                                                                | Website                                             |
-| --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
-| <a href="http://github.com/airblade/vim-gitgutter">airblade/vim-gitgutter</a>                       | A Vim plugin which shows a git diff in the gutter (sign column) and stages/undoes hunks and partial hunks. | http://github.com/airblade/vim-gitgutter            |
-| <a href="http://github.com/aklt/plantuml-syntax">aklt/plantuml-syntax</a>                           | vim syntax file for plantuml                                                                               | http://github.com/aklt/plantuml-syntax              |
-| <a href="http://github.com/altercation/vim-colors-solarized">altercation/vim-colors-solarized</a>   | precision colorscheme for the vim text editor                                                              | http://github.com/altercation/vim-colors-solarized  |
-| <a href="http://github.com/bling/vim-airline">bling/vim-airline</a>                                 | lean & mean status/tabline for vim that's light as air                                                     | http://github.com/bling/vim-airline                 |
-| <a href="http://github.com/bronson/vim-visual-star-search">bronson/vim-visual-star-search</a>       | Start a * or # search from a visual block                                                                  | http://github.com/bronson/vim-visual-star-search    |
-| <a href="http://github.com/brookhong/DBGPavim">brookhong/DBGPavim</a>                               | This is a plugin to enable php debug in VIM with Xdebug, with a new debug engine.                          | http://github.com/brookhong/DBGPavim                |
-| <a href="http://github.com/Chiel92/vim-autoformat">Chiel92/vim-autoformat</a>                       | Provide easy code formatting in Vim by integrating existing code formatters.                               | http://github.com/Chiel92/vim-autoformat            |
-| <a href="http://github.com/danro/rename.vim">danro/rename.vim</a>                                   | Rename the current file in the vim buffer + retain relative path.                                          | http://github.com/danro/rename.vim                  |
-| <a href="http://github.com/Dewdrops/SearchComplete">Dewdrops/SearchComplete</a>                     | Tab completion of words inside of a search ('/')                                                           | http://github.com/Dewdrops/SearchComplete           |
-| <a href="http://github.com/ervandew/supertab">ervandew/supertab</a>                                 | Perform all your vim insert mode completions with Tab                                                      | http://github.com/ervandew/supertab                 |
-| <a href="http://github.com/fatih/vim-go">fatih/vim-go</a>                                           | Go development plugin for Vim                                                                              | http://github.com/fatih/vim-go                      |
-| <a href="http://github.com/FooSoft/vim-argwrap">FooSoft/vim-argwrap</a>                             | Wrap and unwrap function arguments, lists, and dictionaries in Vim                                         | http://github.com/FooSoft/vim-argwrap               |
-| <a href="http://github.com/fs111/pydoc.vim">fs111/pydoc.vim</a>                                     | pydoc integration for the best text editor on earth                                                        | http://github.com/fs111/pydoc.vim                   |
-| <a href="http://github.com/godlygeek/csapprox">godlygeek/csapprox</a>                               | Make gvim-only colorschemes work transparently in terminal vim                                             | http://github.com/godlygeek/csapprox                |
-| <a href="http://github.com/godlygeek/tabular">godlygeek/tabular</a>                                 | Vim script for text filtering and alignment                                                                | http://github.com/godlygeek/tabular                 |
-| <a href="http://github.com/gregsexton/gitv">gregsexton/gitv</a>                                     | gitk for Vim.                                                                                              | http://github.com/gregsexton/gitv                   |
-| <a href="http://github.com/heavenshell/vim-jsdoc">heavenshell/vim-jsdoc</a>                         | Generate JSDoc to your JavaScript code.                                                                    | http://github.com/heavenshell/vim-jsdoc             |
-| <a href="http://github.com/int3/vim-extradite">int3/vim-extradite</a>                               | A git commit browser for vim. Extends fugitive.vim.                                                        | http://github.com/int3/vim-extradite                |
-| <a href="http://github.com/itchyny/calendar.vim">itchyny/calendar.vim</a>                           | A calendar application for Vim                                                                             | http://github.com/itchyny/calendar.vim              |
-| <a href="http://github.com/kshenoy/vim-signature">kshenoy/vim-signature</a>                         | Plugin to toggle, display and navigate marks                                                               | http://github.com/kshenoy/vim-signature             |
-| <a href="http://github.com/Lokaltog/vim-easymotion">Lokaltog/vim-easymotion</a>                     | Vim motions on speed!                                                                                      | http://github.com/Lokaltog/vim-easymotion           |
-| <a href="http://github.com/majutsushi/tagbar">majutsushi/tagbar</a>                                 | Vim plugin that displays tags in a window, ordered by scope                                                | http://github.com/majutsushi/tagbar                 |
-| <a href="http://github.com/maksimr/vim-jsbeautify">maksimr/vim-jsbeautify</a>                       | vim plugin which formated javascript files by js-beautify                                                  | http://github.com/maksimr/vim-jsbeautify            |
-| <a href="http://github.com/mattn/emmet-vim">mattn/emmet-vim</a>                                     | emmet for vim: http://emmet.io/                                                                            | http://github.com/mattn/emmet-vim                   |
-| <a href="http://github.com/mbbill/undotree">mbbill/undotree</a>                                     | The undo history visualizer for VIM                                                                        | http://github.com/mbbill/undotree                   |
-| <a href="http://github.com/mileszs/ack.vim">mileszs/ack.vim</a>                                     | Vim plugin for the Perl module / CLI script 'ack'                                                          | http://github.com/mileszs/ack.vim                   |
-| <a href="http://github.com/moll/vim-node">moll/vim-node</a>                                         | Tools and environment to make Vim superb for developing with Node.js. Like Rails.vim for Node.             | http://github.com/moll/vim-node                     |
-| <a href="http://github.com/mustache/vim-mustache-handlebars">mustache/vim-mustache-handlebars</a>   | mustache and handlebars mode for vim                                                                       | http://github.com/mustache/vim-mustache-handlebars  |
-| <a href="http://github.com/mxw/vim-jsx">mxw/vim-jsx</a>                                             | React JSX syntax highlighting and indenting for vim.                                                       | http://github.com/mxw/vim-jsx                       |
-| <a href="http://github.com/nathanaelkane/vim-indent-guides">nathanaelkane/vim-indent-guides</a>     | A Vim plugin for visually displaying indent levels in code                                                 | http://github.com/nathanaelkane/vim-indent-guides   |
-| <a href="http://github.com/OrangeT/vim-csharp">OrangeT/vim-csharp</a>                               | Enhancement's to Vim's C-Sharp Functionality                                                               | http://github.com/OrangeT/vim-csharp                |
-| <a href="http://github.com/othree/eregex.vim">othree/eregex.vim</a>                                 | Perl/Ruby style regexp notation for Vim                                                                    | http://github.com/othree/eregex.vim                 |
-| <a href="http://github.com/pangloss/vim-javascript">pangloss/vim-javascript</a>                     | Vastly improved Javascript indentation and syntax support in Vim.                                          | http://github.com/pangloss/vim-javascript           |
-| <a href="http://github.com/Peeja/vim-cdo">Peeja/vim-cdo</a>                                         | Vim commands to run a command over every entry in the quickfix list (:Cdo) or location list (:Ldo).        | http://github.com/Peeja/vim-cdo                     |
-| <a href="http://github.com/posva/vim-vue">posva/vim-vue</a>                                         | Syntax Highlight for Vue.js components                                                                     | http://github.com/posva/vim-vue                     |
-| <a href="http://github.com/scrooloose/syntastic">scrooloose/syntastic</a>                           | Syntax checking hacks for vim                                                                              | http://github.com/scrooloose/syntastic              |
-| <a href="http://github.com/scrooloose/vim-slumlord">scrooloose/vim-slumlord</a>                     | Inline previews for Plantuml sequence diagrams. OMG!                                                       | http://github.com/scrooloose/vim-slumlord           |
-| <a href="http://github.com/Shougo/neomru.vim">Shougo/neomru.vim</a>                                 | MRU plugin includes unite.vim/denite.nvim MRU sources                                                      | http://github.com/Shougo/neomru.vim                 |
-| <a href="http://github.com/Shougo/neoyank.vim">Shougo/neoyank.vim</a>                               | Saves yank history includes unite.vim/denite.nvim history/yank source.                                     | http://github.com/Shougo/neoyank.vim                |
-| <a href="http://github.com/Shougo/unite.vim">Shougo/unite.vim</a>                                   | 🐉 Unite and create user interfaces                                                                        | http://github.com/Shougo/unite.vim                  |
-| <a href="http://github.com/Shougo/vimproc">Shougo/vimproc</a>                                       | Interactive command execution in Vim.                                                                      | http://github.com/Shougo/vimproc                    |
-| <a href="http://github.com/sickill/vim-pasta">sickill/vim-pasta</a>                                 | Pasting in Vim with indentation adjusted to destination context                                            | http://github.com/sickill/vim-pasta                 |
-| <a href="http://github.com/StanAngeloff/php.vim">StanAngeloff/php.vim</a>                           | An up-to-date Vim syntax for PHP (7.x supported)                                                           | http://github.com/StanAngeloff/php.vim              |
-| <a href="http://github.com/tecfu/vimshell-inline-history.vim">tecfu/vimshell-inline-history.vim</a> | Inline history completion for VimShell                                                                     | http://github.com/tecfu/vimshell-inline-history.vim |
-| <a href="http://github.com/tecfu/YankRing.vim">tecfu/YankRing.vim</a>                               | Maintains a history of previous yanks, changes and deletes                                                 | http://github.com/tecfu/YankRing.vim                |
-| <a href="http://github.com/terryma/vim-multiple-cursors">terryma/vim-multiple-cursors</a>           | True Sublime Text style multiple selections for Vim                                                        | http://github.com/terryma/vim-multiple-cursors      |
-| <a href="http://github.com/tomtom/tcomment_vim">tomtom/tcomment_vim</a>                             | An extensible & universal comment vim-plugin that also handles embedded filetypes                          | http://github.com/tomtom/tcomment_vim               |
-| <a href="http://github.com/tpope/vim-fugitive">tpope/vim-fugitive</a>                               | fugitive.vim: A Git wrapper so awesome, it should be illegal                                               | http://github.com/tpope/vim-fugitive                |
-| <a href="http://github.com/tpope/vim-obsession">tpope/vim-obsession</a>                             | obsession.vim: continuously updated session files                                                          | http://github.com/tpope/vim-obsession               |
-| <a href="http://github.com/tpope/vim-surround">tpope/vim-surround</a>                               | surround.vim: quoting/parenthesizing made simple                                                           | http://github.com/tpope/vim-surround                |
+| Name                              | Description                                                                                                      | Website                                             |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| airblade/vim-gitgutter            | A Vim plugin which shows git diff markers in the sign column and stages/previews/undoes hunks and partial hunks. | http://github.com/airblade/vim-gitgutter            |
+| aklt/plantuml-syntax              | vim syntax file for plantuml                                                                                     | http://github.com/aklt/plantuml-syntax              |
+| altercation/vim-colors-solarized  | precision colorscheme for the vim text editor                                                                    | http://github.com/altercation/vim-colors-solarized  |
+| bling/vim-airline                 | lean & mean status/tabline for vim that's light as air                                                           | http://github.com/bling/vim-airline                 |
+| bronson/vim-visual-star-search    | Start a * or # search from a visual block                                                                        | http://github.com/bronson/vim-visual-star-search    |
+| brookhong/DBGPavim                | This is a plugin to enable php debug in VIM with Xdebug, with a new debug engine.                                | http://github.com/brookhong/DBGPavim                |
+| chr4/nginx.vim                    | Improved nginx vim plugin (incl. syntax highlighting)                                                            | http://github.com/chr4/nginx.vim                    |
+| danro/rename.vim                  | Rename the current file in the vim buffer + retain relative path.                                                | http://github.com/danro/rename.vim                  |
+| easymotion/vim-easymotion         | Vim motions on speed!                                                                                            | http://github.com/easymotion/vim-easymotion         |
+| FooSoft/vim-argwrap               | Wrap and unwrap function arguments, lists, and dictionaries in Vim                                               | http://github.com/FooSoft/vim-argwrap               |
+| godlygeek/csapprox                | Make gvim-only colorschemes work transparently in terminal vim                                                   | http://github.com/godlygeek/csapprox                |
+| godlygeek/tabular                 | Vim script for text filtering and alignment                                                                      | http://github.com/godlygeek/tabular                 |
+| hashivim/vim-terraform            | basic vim/terraform integration                                                                                  | http://github.com/hashivim/vim-terraform            |
+| heavenshell/vim-jsdoc             | Generate JSDoc to your JavaScript code.                                                                          | http://github.com/heavenshell/vim-jsdoc             |
+| idanarye/vim-merginal             | Fugitive extension to manage and merge Git branches                                                              | http://github.com/idanarye/vim-merginal             |
+| inkarkat/vim-ArgsAndMore          | Apply commands to multiple buffers and manage the argument list.                                                 | http://github.com/inkarkat/vim-ArgsAndMore          |
+| itchyny/calendar.vim              | A calendar application for Vim                                                                                   | http://github.com/itchyny/calendar.vim              |
+| jupyter-vim/jupyter-vim           | Make Vim talk to Jupyter kernels                                                                                 | http://github.com/jupyter-vim/jupyter-vim           |
+| kshenoy/vim-signature             | Plugin to toggle, display and navigate marks                                                                     | http://github.com/kshenoy/vim-signature             |
+| leafgarland/typescript-vim        | Typescript syntax files for Vim                                                                                  | http://github.com/leafgarland/typescript-vim        |
+| luochen1990/rainbow               | Rainbow Parentheses Improved, shorter code, no level limit, smooth and fast, powerful configuration.             | http://github.com/luochen1990/rainbow               |
+| maksimr/vim-jsbeautify            | vim plugin which formated javascript files by js-beautify                                                        | http://github.com/maksimr/vim-jsbeautify            |
+| mattn/emmet-vim                   | emmet for vim: http://emmet.io/                                                                                  | http://github.com/mattn/emmet-vim                   |
+| mbbill/undotree                   | The undo history visualizer for VIM                                                                              | http://github.com/mbbill/undotree                   |
+| mechatroner/rainbow_csv           | 🌈Rainbow CSV - Vim plugin: Highlight columns in CSV and TSV files and run queries in SQL-like language          | http://github.com/mechatroner/rainbow_csv           |
+| mileszs/ack.vim                   | Vim plugin for the Perl module / CLI script 'ack'                                                                | http://github.com/mileszs/ack.vim                   |
+| moll/vim-node                     | Tools and environment to make Vim superb for developing with Node.js. Like Rails.vim for Node.                   | http://github.com/moll/vim-node                     |
+| mxw/vim-jsx                       | React JSX syntax highlighting and indenting for vim.                                                             | http://github.com/mxw/vim-jsx                       |
+| nathanaelkane/vim-indent-guides   | A Vim plugin for visually displaying indent levels in code                                                       | http://github.com/nathanaelkane/vim-indent-guides   |
+| neoclide/coc.nvim                 | Nodejs extension host for vim & neovim, load extensions like VSCode and host language servers.                   | http://github.com/neoclide/coc.nvim                 |
+| othree/eregex.vim                 | Perl/Ruby style regexp notation for Vim                                                                          | http://github.com/othree/eregex.vim                 |
+| pangloss/vim-javascript           | Vastly improved Javascript indentation and syntax support in Vim.                                                | http://github.com/pangloss/vim-javascript           |
+| Peeja/vim-cdo                     | Vim commands to run a command over every entry in the quickfix list (:Cdo) or location list (:Ldo).              | http://github.com/Peeja/vim-cdo                     |
+| posva/vim-vue                     | Syntax Highlight for Vue.js components                                                                           | http://github.com/posva/vim-vue                     |
+| puremourning/vimspector           | vimspector - A multi-language debugging system for Vim                                                           | http://github.com/puremourning/vimspector           |
+| rbong/vim-flog                    | A lightweight and powerful git branch viewer for vim.                                                            | http://github.com/rbong/vim-flog                    |
+| scrooloose/vim-slumlord           | Inline previews for Plantuml sequence diagrams. OMG!                                                             | http://github.com/scrooloose/vim-slumlord           |
+| sickill/vim-pasta                 | Pasting in Vim with indentation adjusted to destination context                                                  | http://github.com/sickill/vim-pasta                 |
+| StanAngeloff/php.vim              | An up-to-date Vim syntax for PHP (7.x supported)                                                                 | http://github.com/StanAngeloff/php.vim              |
+| stephpy/vim-yaml                  | Override vim syntax for yaml files                                                                               | http://github.com/stephpy/vim-yaml                  |
+| tecfu/vim-move                    | Plugin to move lines and selections up and down                                                                  | http://github.com/tecfu/vim-move                    |
+| tecfu/vimshell-inline-history.vim | Inline history completion for VimShell                                                                           | http://github.com/tecfu/vimshell-inline-history.vim |
+| tecfu/YankRing.vim                | Maintains a history of previous yanks, changes and deletes                                                       | http://github.com/tecfu/YankRing.vim                |
+| tomtom/tcomment_vim               | An extensible & universal comment vim-plugin that also handles embedded filetypes                                | http://github.com/tomtom/tcomment_vim               |
+| tpope/vim-commentary              | commentary.vim: comment stuff out                                                                                | http://github.com/tpope/vim-commentary              |
+| tpope/vim-fugitive                | fugitive.vim: A Git wrapper so awesome, it should be illegal                                                     | http://github.com/tpope/vim-fugitive                |
+| tpope/vim-obsession               | obsession.vim: continuously updated session files                                                                | http://github.com/tpope/vim-obsession               |
+| tpope/vim-surround                | surround.vim: Delete/change/add parentheses/quotes/XML-tags/much more with ease                                  | http://github.com/tpope/vim-surround                |
+| tpope/vim-unimpaired              | unimpaired.vim: Pairs of handy bracket mappings                                                                  | http://github.com/tpope/vim-unimpaired              |
+| valloric/MatchTagAlways           | A Vim plugin that always highlights the enclosing html/xml tags                                                  | http://github.com/valloric/MatchTagAlways           |
 <!---ENDPLUGINS-->
 
 ### Color Scheme
 
-elrodeo		https://github.com/chmllr/elrodeo-colorscheme
+mango   https://github.com/goatslacker/mango.vim
 
 
 ### Notes
-- Golang shortcuts
 
-```
-<leader>r <Plug>(go-run)
-<leader>b <Plug>(go-build)
-<leader>t <Plug>(go-test)
-<leader>c <Plug>(go-coverage)
-``` 
+**This project is my personal vimrc**. Feel free to send me suggestions through
+the [issues page](https://github.com/tecfu/.vim/issues/new) or to send me
+improvements through the [pull requestspage](https://github.com/tecfu/.vim/pulls).
 
-- Installing Vim 8 on Ubuntu 14.04:
 
-```
-sudo add-apt-repository ppa:pi-rho/dev
-```
+- If some characters dont render correctly
 
-https://launchpad.net/~pi-rho/+archive/ubuntu/dev
-
-- Installing Vim 8 on Ubuntu 18.04:
-
-```
-sudo apt install vim-gtk
-```
-
-- Building Vim 8 from Source on Ubuntu 18.04
-
-- Just use apt packge (good luck getting +lua to work)
-
-See: 
-
-    https://github.com/Shougo/neocomplete.vim/issues/31
-    https://stackoverflow.com/questions/19472554/build-vim-with-lua-on-linux-mint
-## Todo
-
-- When opened, make unite traverse up the directory structure incrementally with each "f" keypress.
-
+Make sure you install powerline fonts

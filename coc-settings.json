@@ -1,0 +1,16 @@
+{
+  "diagnostic.virtualTextCurrentLineOnly": false,
+  "diagnostic.messageTarget": "float",
+  "diagnostic.virtualText": true,
+  "diagnostic.checkCurrentLine": true,
+  "diagnostic.enable": true,
+  "diagnostic.autoRefresh": true,
+  "diagnostic.locationlistUpdate": true,
+  "diagnostic.errorSign": "✖",
+  "diagnostic.warningSign": "⚑",
+  "diagnostic.infoSign": "⚑",
+  "diagnostic.hintSign": "⚑",
+  "coc.preferences.formatOnSaveFiletypes": [],
+  "tsserver.formatOnType": false,
+  "suggest.enablePreselect": false 
+}

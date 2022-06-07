@@ -1,7 +1,3 @@
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Neo Bundle
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 function! DetectCommand(name, ...)
   " see: https://vi.stackexchange.com/a/2437/5223
   let warn = a:0 >= 1 ? a:1 : 1
@@ -53,11 +49,8 @@ if 0 | endif
 " - Avoid using standard Vim directory names like 'plugin'
 call plug#begin('~/.vim/bundle')
 
-" Custom Plugins Start Here
-Plug 'Shougo/vimproc', {
-      \ 'do' : 'make'
-      \ }
 
+" Custom Plugins Start Here
 
 " UML syntax highlighting for scrooloose/vim-slumlord
 Plug 'aklt/plantuml-syntax'
@@ -129,14 +122,93 @@ Plug 'brookhong/DBGPavim'
 Plug 'bronson/vim-visual-star-search'
 
 
-Plug 'Chiel92/vim-autoformat'
-let g:formatterpath = ['/usr/local/bin']
+"Plug 'Chiel92/vim-autoformat'
+"let g:formatterpath = ['/usr/local/bin']
 "For javascript, install js-beautify externally
 "npm install js-beautify -g
+
+" coc.nvim is used for file formatting
+" can be configurated to auto format on save in coc-settings.json
+" Use "coc.preferences.formatOnType": true to enable format on type feature.
+" https://vi.stackexchange.com/a/31087/5223
+" https://github.com/neoclide/coc-prettier
+
+" Not a fan of the gray gutter (SignColumn) that comes with the theme
+highlight SignColumn guibg=black ctermbg=black
+
+" Not a fan of pink background in popup menu
+highlight Pmenu ctermbg=DarkGreen guibg=DarkGreen
+" hi CocErrorSign ctermfg=white guifg=white
+"hi CocErrorFloat ctermfg=white guifg=white
+hi CocErrorFloat ctermfg=white guifg=white
+hi CocInfoSign ctermfg=black guifg=black
+hi CocFloating ctermfg=black guifg=black
+hi CocFloating ctermbg=DarkRed guibg=DarkRed
+hi CocHintFloat ctermfg=white guifg=white
+
+"hi CocFloating ctermbg=DarkYellow guibg=DarkYellow
+"hi QuickFixLine ctermbg=DarkRed guibg=DarkRed
+" hi QuickFixLine ctermbg=yellow guibg=yellow
+"hi QuickFixLine ctermfg=white guifg=white
+
+
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+let g:coc_global_extensions = [
+  \ 'coc-eslint',
+  \ 'coc-html',
+  \ 'coc-json',
+  \ 'coc-pairs',
+  \ 'coc-prettier',
+  \ 'coc-snippets', 
+  \ 'coc-tabnine',
+  \ 'coc-tsserver',
+  \ 'https://github.com/andys8/vscode-jest-snippets'
+  \ ]
+
+" Eslint run autofixes hotkey
+noremap <Space>l :CocCommand eslint.executeAutofix<CR><ESC>
+
+
+" Fix diagnostics popup background color
+function! CheckLocationListOpen()
+  if get(getloclist(0, {'winid':0}), 'winid', 0)
+      " the location window is closed
+      return 0
+  else
+      " the location window is open
+      return 1
+  endif
+endfunction
+
+" Shortcut to diagnostics display in location list
+nnoremap <expr> <space>i
+  \ (CheckLocationListOpen() ? ":CocDiagnostics" : ":lclose")."<CR>"
+
+"vmap <S-f>  <Plug>(coc-format-selected)
+"" run cmd on range of entire file
+""nmap <S-f>  <Plug>(coc-format)%
+
+inoremap <silent><expr> <TAB>
+  \ pumvisible() ? coc#_select_confirm() :
+  \ coc#expandableOrJumpable() ?
+  \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+  \ <SID>check_back_space() ? "\<TAB>" :
+  \ coc#refresh()
+
+function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+let g:coc_snippet_next = '<tab>'
+let g:coc_snippet_pre = '<s-tab>'
 
 
 "Plug 'kien/ctrlp.vim' "unmaintained
 "Plug 'ctrlpvim/ctrlp.vim' "maintained Fork
+
+
+Plug 'chr4/nginx.vim'
 
 
 Plug 'danro/rename.vim'
@@ -146,79 +218,7 @@ Plug 'danro/rename.vim'
 "Plug 'dhruvasagar/vim-table-mode'
 
 
-"If tab completion runs slow, check that you don't have too many
-"open buffers
-Plug 'ervandew/supertab'
-let g:SuperTabDefaultCompletionType = "<c-n>"
-
-
-"Vim syntax highlighting and indentation for Svelte 3 components
-Plug 'evanleck/vim-svelte'
-
-
-"Run commands such as go run for the current file with <leader>r or go build and go test for the current package with <leader>b and <leader>t respectively. Display beautifully annotated source code to see which functions are covered with <leader>c. 
-Plug 'fatih/vim-go'
-au FileType go nmap <leader>r <Plug>(go-run)
-au FileType go nmap <leader>b <Plug>(go-build)
-au FileType go nmap <leader>t <Plug>(go-test)
-au FileType go nmap <leader>c <Plug>(go-coverage)
-"Disable version waring if Vim version old
-let g:go_version_warning = 0
-
-
-Plug 'FooSoft/vim-argwrap'
-nnoremap <leader>w :ArgWrap<CR>
-
-
-Plug 'fs111/pydoc.vim'
-
-
-Plug 'godlygeek/csapprox'
-
-
-Plug 'godlygeek/tabular'
-
-
-"Cool, but just use native vim selection
-":help object-select
-"Conflicts with vim-multiple-cursors
-"Plug 'gorkunov/smartpairs.vim'
-"let g:smartpairs_uber_mode=1
-
-
-Plug 'gregsexton/gitv'
-
-
-Plug 'heavenshell/vim-jsdoc'
-
-
-"Plug 'hhvm/vim-hack'
-
-
-Plug 'inkarkat/vim-ArgsAndMore'
-
-
-Plug 'int3/vim-extradite'
-
-
-Plug 'itchyny/calendar.vim'
-
-
-if(DetectCommand('python3'))
-  Plug 'vim-vdebug/vdebug'
-
-  let g:vdebug_options = {
-  \   'port':9000, 
-  \   'path_maps': {
-  \   },
-  \}
-endif
-
-
-Plug 'kshenoy/vim-signature'
-
-
-Plug 'Lokaltog/vim-easymotion'
+Plug 'easymotion/vim-easymotion'
 "{{{
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
 
@@ -236,36 +236,104 @@ let g:EasyMotion_smartcase = 1
 "}}}
 
 
-Plug 'majutsushi/tagbar'
-"{{{
-nmap t :TagbarToggle<CR>
+Plug 'FooSoft/vim-argwrap'
+nnoremap <leader>w :ArgWrap<CR>
 
-"Open tagbar automatically if you're opening Vim with a supported file type
-"autocmd VimEnter * nested :call tagbar#autoopen(1)
 
-"Open Tagbar only for specific filetypes
-"autocmd FileType c,cpp nested :TagbarOpen
+"Doesn't support custom keymaps, interferes with <S-k>
+"Plug 'fs111/pydoc.vim'
 
-"}}}
+
+Plug 'godlygeek/csapprox'
+
+
+Plug 'godlygeek/tabular'
+nmap <leader>a= :Tabularize /=<CR>
+vmap <leader>a= :Tabularize /=<CR>
+nmap <leader>a: :Tabularize /:\zs<CR>
+vmap <leader>a: :Tabularize /:\zs<CR>
+
+
+"Conflicts with vim-multiple-cursors
+"Plug 'gorkunov/smartpairs.vim'
+"let g:smartpairs_uber_mode=1
+
+
+" Syntax highlighting for Terraform
+Plug 'hashivim/vim-terraform'
+
+
+Plug 'heavenshell/vim-jsdoc'
+
+
+Plug 'idanarye/vim-merginal'
+autocmd FileType merginal nnoremap <buffer> <Enter> :MerginalCheckout<CR>
+nnoremap <leader>b :Merginal<CR>
+
+
+Plug 'inkarkat/vim-ArgsAndMore'
+
+
+Plug 'itchyny/calendar.vim'
+
+
+Plug 'jupyter-vim/jupyter-vim'
+
+
+Plug 'kshenoy/vim-signature'
+
+
+" Typescript highlighting
+Plug 'leafgarland/typescript-vim'
+let g:typescript_compiler_binary = 'tsc'
+let g:typescript_compiler_options = ''
+autocmd FileType typescript :set makeprg=tsc
+
+
+Plug 'luochen1990/rainbow'
+
+let g:rainbow_active = 1 "set to 0 if you want to enable it later via :RainbowToggle
+let g:rainbow_conf = {
+    \ 'separately': {
+    \    'mustache': {
+    \      'parentheses': ['start=/{{/ end=/}}/','start=/{{{/ end=/}}}/','start=/{{\(\^\|!\|#\).\{-}}}/ end=/{{\/.\{-}}}/ fold','start=/\v\<((area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)[ >])@!\z([-_:a-zA-Z0-9]+)(\s+[-_:a-zA-Z0-9]+(\=("[^"]*"|'."'".'[^'."'".']*'."'".'|[^ '."'".'"><=`]*))?)*\>/ end=#</\z1># fold'],
+    \     },
+    \    'vue': {
+    \      'parentheses': ['start=/{/ end=/}/ fold contains=@javaScript containedin=@javaScript', 'start=/(/ end=/)/ fold contains=@javaScript containedin=@javaScript', 'start=/\v\<((script|style|area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)[ >])@!\z([-_:a-zA-Z0-9]+)(\s+[-_:a-zA-Z0-9]+(\=("[^"]*"|'."'".'[^'."'".']*'."'".'|[^ '."'".'"><=`]*))?)*\>/ end=#</\z1># fold'],
+        \}
+      \}
+    \}
+
+" doesn't play nice with permissions restricted users
+"Plug 'majutsushi/tagbar'
+""{{{
+"nmap t :TagbarToggle<CR>
+
+""Open tagbar automatically if you're opening Vim with a supported file type
+""autocmd VimEnter * nested :call tagbar#autoopen(1)
+
+""Open Tagbar only for specific filetypes
+""autocmd FileType c,cpp nested :TagbarOpen
+
+""}}}
 
 
 Plug 'maksimr/vim-jsbeautify'
-
-
-if(DetectCommand('npm'))
-  Plug 'marijnh/tern_for_vim', {
-      \ 'do' :  'cd ~/.vim/bundle/tern_for_vim; npm install'}
-endif
-
-"Awesome feature if your machine can handle it.
-let g:tern_show_argument_hints = 'on_move'
-"let g:tern_show_argument_hints=0
 
 
 "Plug 'MattesGroeger/vim-bookmarks'
 
 
 Plug 'mattn/emmet-vim'
+
+
+" Move highlighted text
+Plug 'tecfu/vim-move'
+let g:move_key_modifier_visualmode = 'S'
+
+
+Plug 'mechatroner/rainbow_csv'
+let g:rbql_meta_language='Javascript'
 
 
 Plug 'moll/vim-node'
@@ -275,6 +343,7 @@ Plug 'mxw/vim-jsx'
 
 
 Plug 'nathanaelkane/vim-indent-guides'
+let g:indent_guides_start_level = 2
 
 
 "Must be manually triggered by M:/ when SearchComplete plugin enabled
@@ -289,8 +358,15 @@ Plug 'pangloss/vim-javascript'
 let b:javascript_fold = 1
 
 
-"Cool plugin, but useless in terminal vim because no alt key
-" Plug 'matze/vim-move'
+"Plug 'preservim/nerdtree'
+"Plug 'Xuyuanp/nerdtree-git-plugin'
+"Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+"" Plug 'ryanoasis/vim-devicons'
+"" Start NERDTree, highlight file in buffer, and put the cursor back in the other window.
+"autocmd VimEnter * NERDTreeFind % | wincmd p
+
+
+Plug 'puremourning/vimspector'
 
 
 " Recommended: sudo -S apt-get install silversearcher-ag
@@ -302,13 +378,7 @@ endif
 
 
 Plug 'mbbill/undotree'
-nnoremap <leader>t :UndotreeToggle<cr>
-
-
-Plug 'mustache/vim-mustache-handlebars'
-
-
-Plug 'OrangeT/vim-csharp'
+nnoremap <leader>u :UndotreeToggle<cr>
 
 
 Plug 'Peeja/vim-cdo'
@@ -317,333 +387,19 @@ Plug 'Peeja/vim-cdo'
 Plug 'posva/vim-vue'
 
 
+" Git viewer
+Plug 'rbong/vim-flog'
+
+
 Plug 'scrooloose/vim-slumlord'
 
 
-function! SyntasticPostInstall(info)
-  "install jshint
-  "!npm install jshint -g
-
-  "if jshint not installed
-  if(!DetectCommand('jshint'))
-    "remove plugin
-    !rm -rf ~/dotfiles/.vim/bundle/syntastic
-  else
-  "{{{
-    function! OnLoadSyntastic()
-      
-      if DetectPlugin('syntastic')
-        
-        set statusline+=%#warningmsg#
-        set statusline+=%{SyntasticStatuslineFlag()}
-        set statusline+=%*
-
-        let g:syntastic_always_populate_loc_list = 1
-        let g:syntastic_auto_loc_list = 1
-        let g:syntastic_check_on_open = 1
-        let g:syntastic_check_on_wq = 0
-        let g:syntastic_reuse_loc_lists = 1
-
-        " javascript  
-        "  let g:syntastic_javascript_checkers = ['eslint']
-        let g:syntastic_javascript_checkers = ['jshint']
-        
-      " java
-        "let g:syntastic_java_checker = 'javac'
-        
-      " manage custom filetypes
-        augroup filetype
-          autocmd! BufRead,BufNewFile  *.gradle  set filetype=gradle
-          au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
-        augroup END
-
-        let g:syntastic_filetype_map = { "gradle": "java" }
-
-        set sessionoptions-=blank
-
-        " Set location list height to n lines
-        let g:syntastic_loc_list_height=5
-
-      endif
-    endfunction
-
-    "Wait until VimEnter to see if plugin loaded
-    autocmd VimEnter * call OnLoadSyntastic()
-  "}}}
-  endif
-endfunction
-
-Plug 'scrooloose/syntastic', {
-    \ 'do' :  function('SyntasticPostInstall')}
-
-
-
-"{{{
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Shougo/neocomplete Plugin
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Use deoplete with nvim
-if has("nvim")
-  Plug 'Shougo/deoplete.nvim'
-  let g:deoplete#enable_at_startup = 1
-" Use neomplete with vim
-else
-  Plug 'Shougo/neocomplete'
-
-  "Note: This option must set it in .vimrc(_vimrc).  NOT IN .gvimrc(_gvimrc)!
-  " Disable AutoComplPop.
-  let g:acp_enableAtStartup = 0
-  " Use neocomplete.
-  let g:neocomplete#enable_at_startup = 1
-  " Use smartcase.
-  let g:neocomplete#enable_smart_case = 1
-  " Set minimum syntax keyword length.
-  let g:neocomplete#sources#syntax#min_keyword_length = 3
-  let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
-
-  " Define dictionary.
-  let g:neocomplete#sources#dictionary#dictionaries = {
-  \ 'default' : '',
-  \ 'vimshell' : $HOME.'/.vimshell_hist',
-  \ 'scheme' : $HOME.'/.gosh_completions'
-  \ }
-
-  " Define keyword.
-  if !exists('g:neocomplete#keyword_patterns')
-  let g:neocomplete#keyword_patterns = {}
-  endif
-  let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-
-  " Plugin key-mappings.
-  inoremap <expr><C-g>     neocomplete#undo_completion()
-  inoremap <expr><C-l>     neocomplete#complete_common_string()
-
-  " Recommended key-mappings.
-  " <CR>: close popup and save indent.
-  "inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-  function! s:my_cr_function()
-  return neocomplete#close_popup() . "\<CR>"
-  " For no inserting <CR> key.
-  "return pumvisible() ? neocomplete#close_popup() : "\<CR>"
-  endfunction
-
-  " <TAB>: completion.
-  inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-  " <C-h>, <BS>: close popup and delete backword char.
-  inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-  inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-  inoremap <expr><C-y>  neocomplete#close_popup()
-  inoremap <expr><C-e>  neocomplete#cancel_popup()
-  
-  " Enable omni completion.
-  autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-  autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-  autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-  autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-  autocmd FileType php setlocal omnifunc=phpcomplete#CompletePHP
-  " autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-  " autocmd FileType javascript setlocal omnifunc=tern#Complete
-
-  " Enable heavy omni completion.
-  if !exists('g:neocomplete#sources#omni#input_patterns')
-    let g:neocomplete#sources#omni#input_patterns = {}
-  endif
-  "let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-  "let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-  "let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-  let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
-  "let g:neocomplete#sources#omni#input_patterns.javascript = '[^. \t]\.\w*'
-  "}}}
-
-  if !exists('g:neocomplete#force_omni_input_patterns')
-    let g:neocomplete#force_omni_input_patterns = {}
-  endif
-  let g:neocomplete#force_omni_input_patterns.go = '[^.[:digit:] *\t]\.'
-
-endif
-
-Plug 'Shougo/neomru.vim'
-
-
-Plug 'Shougo/neoyank.vim'
-
-
-Plug 'Shougo/unite.vim'
-"{{{
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Shougo/unite.vim Plugin
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Enable history yank source
-let g:unite_source_history_yank_enable = 1
-
-let g:unite_update_time = 1000
-
-" set up mru limit
-let g:unite_source_file_mru_limit = 5
-
-" highlight like my vim
-let g:unite_cursor_line_highlight = 'CursorLine'
-
-" format mru
-let g:unite_source_file_mru_filename_format = ':~:.'
-let g:unite_source_file_mru_time_format = ''
-
-" set up  arrow prompt
-let g:unite_prompt = '➜ '
-
-" Save session automatically.
-let g:unite_source_session_enable_auto_save = 1
-
-" Unite Commands ===============================================================
-
-" No prefix for unite, leader that bish
-" nnoremap [unite] <Nop>
-
-" scroll through available files
-" nnoremap <silent> <leader>n :Unite buffer file file_mru -auto-preview<CR>
-nnoremap <silent> <leader>f :Unite buffer file file_mru<CR>
-
-" key search through available files
-nnoremap <silent> <leader>s :<C-u>Unite -no-split file -start-insert<CR>
-
-" ;f Fuzzy Find Everything
-" files, Buffers, recursive async file search
-" nnoremap <silent> <leader>d :<C-u>Unite -buffer-name=files file_rec/async<CR>
-
-" ;y Yank history
-" Shows all your yanks, when you accidentally overwrite
-nnoremap <silent> <leader>y :<C-u>Unite -buffer-name=yanks history/yank<CR>
-
-" ;o Quick outline, see an overview of this file
-nnoremap <silent> <leader>o :<C-u>Unite -buffer-name=outline -vertical outline<CR>
-
-" ;m MRU All Vim buffers, not file buffer
-nnoremap <silent> <leader>m :<C-u>Unite -buffer-name=mru file_mru<CR>
-
-" ;b view open buffers
-nnoremap <silent> <leader>b :<C-u>Unite -buffer-name=buffer buffer<CR>
-
-" B
-" ;c Quick commands, lists all available vim commands
-" nnoremap <silent> <leader>c :<C-u>Unite -buffer-name=commands command<CR>
-
-
-" Unite motions ================================================================
-
-" Function that only triggers when unite opens
-autocmd FileType unite call s:unite_settings()
-
-function! s:unite_settings()
-  
-  setlocal modifiable
-
-  " Play nice with supertab
-  "let b:SuperTabDisabled=1
-
-  " Support autocompletion with tab at cost of actions menu
-  "imap <silent><buffer> <tab> <c-x><c-f>
-  " iunmap <silent><buffer> <c-n>
-  " iunmap <silent><buffer> <c-p>
-  imap <silent><buffer> <Tab>   <Plug>SuperTabForward
-  imap <silent><buffer> <S-Tab>  <Plug>SuperTabBackward
-  nnoremap <silent><buffer> <S-Tab> <Plug>SuperTabBackward
-  "imap <buffer> <S-Tab> <c-p>
-
-  
-  " exit with esc
-  " nmap <buffer> <ESC> <Plug>(unite_exit)
-  " imap <buffer> <ESC> <Plug>(unite_exit)
-
-  " Ctrl jk mappings
-  nmap <buffer> <C-j> 5j
-  nmap <buffer> <C-k> 5k
-
-  " Enable navigation with shift-j and shift-k in insert mode
-  imap <buffer> <S-j>  <Plug>(unite_select_next_line)
-  imap <buffer> <S-k>  <Plug>(unite_select_previous_line)
-  
-  " refresh unite
-  nmap <buffer> <C-r> <Plug>(unite_redraw)
-  "imap <buffer> <C-r> <Plug>(unite_redraw)
-
-  " split control
-  inoremap <silent><buffer><expr> <C-s> unite#do_action('split')
-  nnoremap <silent><buffer><expr> <C-s> unite#do_action('split')
-  inoremap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
-  nnoremap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
-
-  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-  " => Shougo/unite.vim Plugin Postprocessing
-  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-  "{{{
-  " Use the fuzzy matcher for everything
-  call unite#filters#matcher_default#use(['matcher_fuzzy'])
-
-  " Use the rank sorter for everything
-  call unite#filters#sorter_default#use(['sorter_rank'])
-
-  " Set up some custom ignores
-  call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep',
-        \ 'ignore_pattern', join([
-        \ '\.git/',
-        \ 'git5/review/',
-        \ 'google/obj/',
-        \ 'tmp/',
-        \ 'lib/Cake/',
-        \ 'node_modules/',
-        \ 'vendor/',
-        \ 'Vendor/',
-        \ 'app_old/',
-        \ 'acf-laravel/',
-        \ 'plugins/',
-        \ 'bower_components/',
-        \ '.sass-cache',
-        \ 'web/wp',
-        \ ], '\|'))
-  "}}}
-
-
-" Unite custom menus ================================================================
-
-  " Fugitive menu in Unite (depends on both Fugitive and Unite.vim) {{{
-  let g:unite_source_menu_menus = {}
-  let g:unite_source_menu_menus.git = {}
-  let g:unite_source_menu_menus.git.description = 'git (Fugitive)'
-  let g:unite_source_menu_menus.git.command_candidates = [
-      \['▷ git status       (Fugitive)',
-          \'Gstatus'],
-      \['▷ git diff         (Fugitive)',
-          \'Gdiff'],
-      \['▷ git commit       (Fugitive)',
-          \'Gcommit'],
-      \['▷ git log          (Fugitive)',
-          \'exe "silent Glog | Unite quickfix"'],
-      \['▷ git blame        (Fugitive)',
-          \'Gblame'],
-      \['▷ git stage        (Fugitive)',
-          \'Gwrite'],
-      \['▷ git checkout     (Fugitive)',
-          \'Gread'],
-      \['▷ git rm           (Fugitive)',
-          \'Gremove'],
-      \['▷ git mv           (Fugitive)',
-          \'exe "Gmove " input("destino: ")'],
-      \['▷ git push         (Fugitive, output buffer)',
-          \'Git! push'],
-      \['▷ git pull         (Fugitive, output buffer)',
-          \'Git! pull'],
-      \['▷ git prompt       (Fugitive, output buffer)',
-          \'exe "Git! " input("comando git: ")'],
-      \['▷ git cd           (Fugitive)',
-          \'Gcd'],
-      \]
-"" }}}
-"
-endfunction
-"}}}
-
 if !has('nvim')
- 
+  Plug 'Shougo/vimproc', {
+      \ 'do' : 'make'
+      \ }
+
+
   Plug 'Shougo/vimshell'
   " {{{
   let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
@@ -696,6 +452,10 @@ endif
 
 Plug 'StanAngeloff/php.vim'
 
+
+Plug 'stephpy/vim-yaml'
+
+
 "Plug 'supermomonga/vimshell-inline-history.vim', { 'depends' : [ 'Shougo/vimshell.vim' ] }
 Plug 'tecfu/vimshell-inline-history.vim', { 'depends' : [ 'Shougo/vimshell.vim' ] }
 
@@ -717,7 +477,15 @@ augroup VSHistMapping
 augroup END
 
 
-Plug 'terryma/vim-multiple-cursors'
+"Allows you to cycle through yank history
+"Conflicts with multiple-cursors start command <C-n>
+"To view yank history list, see <leader>y w/ Shougo/Unite
+"To cycle yanks with this, use <c-p>, <c-n> after p
+Plug 'tecfu/YankRing.vim'
+
+
+"<c-p>,<c-n> here cause conflict with svermeulen/vim-yoink
+"Plug 'terryma/vim-multiple-cursors'
 
 
 Plug 'tomtom/tcomment_vim'
@@ -727,7 +495,14 @@ Plug 'tomtom/tcomment_vim'
 "Abolish overwrites :S command in othree/eregex.vim
 
 
+Plug 'tpope/vim-commentary'
+
+
 Plug 'tpope/vim-fugitive'
+
+"Enable legacy commands (Gpush, Gcommit)
+let g:fugitive_legacy_commands=1
+
 "Open split windows vertically
 set diffopt+=vertical
 
@@ -753,10 +528,15 @@ function! DiffPrev(...)
   endif
 
   let a:hash = system('git log -1 --skip='.a:revnum.' --pretty=format:"%h" ' . a:target)
-  execute 'Gdiff ' . a:hash
+  execute 'Gdiffsplit ' . a:hash
   "echom a:hash
 endfunction
-command! -nargs=1 GdiffPrev call DiffPrev(<f-args>)
+command! -nargs=1 Gdiffprev call DiffPrev(<f-args>)
+" You will probably not realize that Gdiff is actually equal to Gdiffsplit
+" and therefore be confused when Vim spits `ambiguous user defined command`
+" So we're going to make Gdiff explicitly equal to Gdiffsplit
+command! Gdiff Gdiffsplit!
+
 
 Plug 'tpope/vim-obsession'
 "{{{
@@ -775,39 +555,35 @@ endfunction
 " autocmd VimEnter * call RestoreSess()
 "}}}
 
+
 Plug 'tpope/vim-surround'
 
 
 Plug 'tpope/vim-unimpaired'
 
 
-"Fork
-"This plugin hijacks the search mappings /,? and thus
-"other plugins that augment search won't work right
-"i.e. othree/eregex
-Plug 'Dewdrops/SearchComplete'
-"Plug 'vim-scripts/SearchComplete'
+Plug 'valloric/MatchTagAlways'
+let g:mta_filetypes = {
+    \ 'html' : 1,
+    \ 'jinja' : 1,
+    \ 'xhtml' : 1,
+    \ 'xml' : 1,
+    \ 'vue' : 1
+    \}
+nnoremap <leader>t :MtaJumpToOtherTag<cr>
+highlight MatchTag ctermfg=black ctermbg=lightgreen
 
 
-"Fucking cool, but using <leader>y w/ Shougo/Unite instead.
-"Seems to conflict with issuing [count] macros
-Plug 'tecfu/YankRing.vim'
+if(DetectCommand('python3'))
+  Plug 'vim-vdebug/vdebug'
 
-
-" Ale replaces syntastic because it lints continuously, i.e. on wordchange <KINDA ANNOYING, SLOW AS SHIT ON BIG PROJECTS>
-"Plug 'w0rp/ale', {
-"    \ 'do' :  'npm install jshint -g'}
-"
-""let g:ale_linters = {
-""\ 'javascript': ['jshint'],
-""\}
-"" Show warnings/errors in status line
-"let g:airline#extensions#ale#enabled = 1
-"let g:ale_sign_column_always = 1
-"let g:ale_open_list = 1
+  let g:vdebug_options = {
+  \   'port':9000, 
+  \   'path_maps': {
+  \   },
+  \}
+endif
 
 
 call plug#end()
 
-" Required:
-filetype plugin indent on

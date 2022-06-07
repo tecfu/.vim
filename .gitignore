@@ -5,3 +5,4 @@ bundle/*
 undo/*
 
 Session.vim
+.netrwhist

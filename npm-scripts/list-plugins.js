@@ -3,13 +3,14 @@
   const fs = require('fs');
   const https = require('follow-redirects').https;
   const Orgy = require('orgy');
+  const mdtable = require('markdown-table');
   const deferreds = [];
   const pluginsFile = `${__dirname}/../plugins.vim`
   const readmeFile = `${__dirname}/../README.md`
   const contents = fs.readFileSync(pluginsFile, {
     'encoding' : 'utf-8'
   });
-  const jqueryStr = fs.readFileSync(`${__dirname}/../grunt-tasks/libs/jquery.js`, "utf-8");
+  const jqueryStr = fs.readFileSync(`${__dirname}/../npm-scripts/libs/jquery.js`, "utf-8");
 
 
   //Set all promises to timeout after 60 seconds
@@ -44,7 +45,7 @@
       var options = {
         host: 'github.com',
         port: 443,
-        path: '/'+match,
+        path: '/' + match,
         method: 'GET'
       };
 
@@ -60,29 +61,29 @@
 
           jsdom.env({
             html : str,
-            src : [jqueryStr], //read synchronously from local file
+            src : [jqueryStr], //load (eval) jquery synchronously from local file
             done : function (errors, window) {
-              
-              var githubWs = 'http://github.com/'+match;
+              const arr = [];
 
-              //Use jQuery to get data we want
-              var arr = [];
-              arr.push('<a href="'+githubWs+'">'+match+'</a>');
-              arr.push(window
-                      .$('span[itemprop="about"]')
-                      .text()
-                      .trim());
+              //save name
+              arr.push(match); //name
+            
+              //save description
+              const description = window
+              //.$('span[itemprop="about"]') //old Github layout
+                .$('h2.h4')
+                .first()
+                .next()
+                .text()
+                .trim();
+              arr.push(description);
                     
-              //If no website use github website
-              var website = window
-                      .$('div.repository-website')
-                      .text()
-                      .trim();
-              if(website.length < 1){
-                website = githubWs; 
-              }
-              arr.push(website);
+              //save github url
+              const githubURL = 'http://github.com/' + match;
+              arr.push(githubURL);
+
               deferred.resolve(arr);
+
             }
           });
         });
@@ -101,8 +102,6 @@
   var queue = Orgy.queue(deferreds);
   queue.then(function(r){
 
-    var mdtable = require('markdown-table');
-
     //Get README
     var readme = fs.readFileSync(readmeFile, {
       encoding : "utf-8"
@@ -115,6 +114,8 @@
       '<!---PLUGINS-->\n'+plugins+'\n<!---ENDPLUGINS-->');
 
     fs.writeFileSync(readmeFile, readmeContent);
+
+    console.log("README updated")
   });
 
   return queue;
