@@ -80,7 +80,7 @@ function! OnLoadAirline(...)
 
     let g:airline_section_a = airline#section#create(['mode'])
     let g:airline_section_b = airline#section#create_left(['branch'])
-    let g:airline_section_c = airline#section#create_left(['%f'])
+    let g:airline_section_c = airline#section#create_left(['%F'])
     let g:airline_section_y = airline#section#create([])
 
     if !exists('g:airline_symbols')
