@@ -211,6 +211,10 @@ let g:coc_snippet_pre = '<s-tab>'
 Plug 'chr4/nginx.vim'
 
 
+Plug 'craigemery/vim-autotag'
+let g:autotagStartMethod='fork'
+
+
 Plug 'danro/rename.vim'
 
 
@@ -304,18 +308,18 @@ let g:rainbow_conf = {
       \}
     \}
 
+
 " doesn't play nice with permissions restricted users
-"Plug 'majutsushi/tagbar'
-""{{{
-"nmap t :TagbarToggle<CR>
+Plug 'preservim/tagbar'
+"{{{
+nmap t :TagbarToggle<CR>
 
-""Open tagbar automatically if you're opening Vim with a supported file type
-""autocmd VimEnter * nested :call tagbar#autoopen(1)
+"Open tagbar automatically if you're opening Vim with a supported file type
+"autocmd VimEnter * nested :call tagbar#autoopen(1)
 
-""Open Tagbar only for specific filetypes
-""autocmd FileType c,cpp nested :TagbarOpen
-
-""}}}
+"Open Tagbar only for specific filetypes
+"autocmd FileType c,cpp nested :TagbarOpen
+"}}}
 
 
 Plug 'maksimr/vim-jsbeautify'
@@ -367,6 +371,9 @@ let b:javascript_fold = 1
 
 
 Plug 'puremourning/vimspector'
+let g:vimspector_enable_mappings = 'HUMAN'
+let g:vimspector_install_gadgets = ['vscode-node-debug2', 'debugger-for-chrome', 'vscode-firefox-debug', 'debugpy', 'delve']
+nmap <Leader>db <Plug>VimspectorBreakpoints
 
 
 " Recommended: sudo -S apt-get install silversearcher-ag
