@@ -194,6 +194,18 @@ noremap <leader>; $
 noremap <leader>f f
 noremap <leader>F F
 
+" Custom function to set the foldlevel of the file to the number entered
+function s:SetFoldLevel()
+    call inputsave()
+    let l:level = input("Enter desired foldlevel: ")
+    call inputrestore()
+    exe "set foldlevel=" . l:level
+    echon "\r\r"
+    echon ''
+    echo "Set foldlevel to ".l:level
+endfunction
+nnoremap <leader>fl :call <SID>SetFoldLevel()<CR><ESC>
+
 " Disable highlight when <leader><cr> is pressed
 " map <silent> <leader><cr> :noh<cr>
 
@@ -242,17 +254,6 @@ map <leader>cd :cd %:p:h<cr>:pwd<cr>
 " Reselect visual block after indent/outdent
 vnoremap < <gv
 vnoremap > >gv
-
-
-
-" http://stackoverflow.com/questions/6778961/alt-key-shortcuts-not-working-on-gnome-terminal-with-vim/10216459#10216459
-" Useless, because setting the alt-somekey will always work like esc-sokekey
- " while c <= 'z'
- "   let c='a'
- "   exec "set <A-".c.">=\e".c
- "   exec "imap \e".c." <A-".c.">"
- "   let c = nr2char(1+char2nr(c))
- " endw
 
 
 " Search for visually selected text by pressing // in visual mode
