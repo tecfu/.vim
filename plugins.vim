@@ -312,7 +312,7 @@ let g:rainbow_conf = {
 " doesn't play nice with permissions restricted users
 Plug 'preservim/tagbar'
 "{{{
-nmap t :TagbarToggle<CR>
+nmap <leader>tt :TagbarToggle<CR>
 
 "Open tagbar automatically if you're opening Vim with a supported file type
 "autocmd VimEnter * nested :call tagbar#autoopen(1)
@@ -320,6 +320,10 @@ nmap t :TagbarToggle<CR>
 "Open Tagbar only for specific filetypes
 "autocmd FileType c,cpp nested :TagbarOpen
 "}}}
+" Folds markdown correctly when codeblocks are used
+Plug 'preservim/vim-markdown'
+" Displays nice headings in markdown
+let g:vim_markdown_folding_style_pythonic = 1
 
 
 Plug 'maksimr/vim-jsbeautify'
