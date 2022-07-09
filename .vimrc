@@ -83,6 +83,9 @@ set wildmode=list:longest
 " http://stackoverflow.com/questions/1276403/simple-vim-commands-you-wish-youd-known-earlier?page=1&tab=votes#tab-top
 set incsearch
 
+" Tell vim to split # between filename and anchor name, thus gF on filename will also hop to anchors in files
+set isfname-=#
+
 " Sets how many lines of history VIM has to remember
 set history=700
 

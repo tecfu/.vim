@@ -337,7 +337,10 @@ nmap <leader>tt :TagbarToggle<CR>
 Plug 'preservim/vim-markdown'
 " Displays nice headings in markdown
 let g:vim_markdown_folding_style_pythonic = 1
-let g:vim_markdown_follow_anchor = 1
+" does a simple search of the anchor text with `silent! execute '/'.l:anchor `
+" not needed given `set isfname-=#`, which will tell vim to split # between filename and anchor name
+" let g:vim_markdown_follow_anchor = 1
+" let g:vim_markdown_edit_url_in = 'tab'
 
 
 Plug 'maksimr/vim-jsbeautify'
