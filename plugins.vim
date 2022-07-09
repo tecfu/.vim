@@ -215,6 +215,9 @@ Plug 'craigemery/vim-autotag'
 let g:autotagStartMethod='fork'
 
 
+"```why
+"- Use `:rename[!] {newname}`to rename a buffer within Vim and on the disk
+"```
 Plug 'danro/rename.vim'
 
 
@@ -284,10 +287,15 @@ Plug 'itchyny/calendar.vim'
 Plug 'jupyter-vim/jupyter-vim'
 
 
+"```why
+"- Displays marks in the gutter
+"```
 Plug 'kshenoy/vim-signature'
 
 
-" Typescript highlighting
+" ```why
+" - Typescript highlighting
+" ```
 Plug 'leafgarland/typescript-vim'
 let g:typescript_compiler_binary = 'tsc'
 let g:typescript_compiler_options = ''
@@ -320,10 +328,16 @@ nmap <leader>tt :TagbarToggle<CR>
 "Open Tagbar only for specific filetypes
 "autocmd FileType c,cpp nested :TagbarOpen
 "}}}
-" Folds markdown correctly when codeblocks are used
+
+
+" ```why
+" - Folds markdown correctly when codeblocks are used
+" - Maps `ge` to follow anchors in markdown
+" ```
 Plug 'preservim/vim-markdown'
 " Displays nice headings in markdown
 let g:vim_markdown_folding_style_pythonic = 1
+let g:vim_markdown_follow_anchor = 1
 
 
 Plug 'maksimr/vim-jsbeautify'
