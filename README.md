@@ -91,6 +91,7 @@ $ npm run update
 | bronson/vim-visual-star-search    | Start a * or # search from a visual block                                                                        | http://github.com/bronson/vim-visual-star-search    |
 | brookhong/DBGPavim                | This is a plugin to enable php debug in VIM with Xdebug, with a new debug engine.                                | http://github.com/brookhong/DBGPavim                |
 | chr4/nginx.vim                    | Improved nginx vim plugin (incl. syntax highlighting)                                                            | http://github.com/chr4/nginx.vim                    |
+| craigemery/vim-autotag            | Automatically discover and "properly" update ctags files on save                                                 | http://github.com/craigemery/vim-autotag            |
 | danro/rename.vim                  | Rename the current file in the vim buffer + retain relative path.                                                | http://github.com/danro/rename.vim                  |
 | easymotion/vim-easymotion         | Vim motions on speed!                                                                                            | http://github.com/easymotion/vim-easymotion         |
 | FooSoft/vim-argwrap               | Wrap and unwrap function arguments, lists, and dictionaries in Vim                                               | http://github.com/FooSoft/vim-argwrap               |
@@ -118,6 +119,8 @@ $ npm run update
 | pangloss/vim-javascript           | Vastly improved Javascript indentation and syntax support in Vim.                                                | http://github.com/pangloss/vim-javascript           |
 | Peeja/vim-cdo                     | Vim commands to run a command over every entry in the quickfix list (:Cdo) or location list (:Ldo).              | http://github.com/Peeja/vim-cdo                     |
 | posva/vim-vue                     | Syntax Highlight for Vue.js components                                                                           | http://github.com/posva/vim-vue                     |
+| preservim/tagbar                  | Vim plugin that displays tags in a window, ordered by scope                                                      | http://github.com/preservim/tagbar                  |
+| preservim/vim-markdown            | Markdown Vim Mode                                                                                                | http://github.com/preservim/vim-markdown            |
 | puremourning/vimspector           | vimspector - A multi-language debugging system for Vim                                                           | http://github.com/puremourning/vimspector           |
 | rbong/vim-flog                    | A lightweight and powerful git branch viewer for vim.                                                            | http://github.com/rbong/vim-flog                    |
 | scrooloose/vim-slumlord           | Inline previews for Plantuml sequence diagrams. OMG!                                                             | http://github.com/scrooloose/vim-slumlord           |
