@@ -188,24 +188,34 @@ nnoremap <expr> <space>i
 "" run cmd on range of entire file
 ""nmap <S-f>  <Plug>(coc-format)%
 
-inoremap <silent><expr> <TAB>
-  \ pumvisible() ? coc#_select_confirm() :
-  \ coc#expandableOrJumpable() ?
-  \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-  \ <SID>check_back_space() ? "\<TAB>" :
-  \ coc#refresh()
+"Coc Popup Completion settings
+"Use <tab> for trigger completion and navigate to the next complete item
+ inoremap <silent><expr> <Tab>
+   \ pumvisible() ? "\<C-n>" :
+   \ coc#expandableOrJumpable() ?
+   \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+   \ <SID>check_back_space() ? "\<Tab>" :
+   \ coc#refresh()
+ 
+ inoremap <silent><expr> <S-Tab>
+   \ pumvisible() ? "\<C-p>" :
+   \ coc#expandableOrJumpable() ?
+   \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-pre',''])\<CR>" :
+   \ <SID>check_back_space() ? "\<Tab>" :
+   \ coc#refresh()
+ 
+ function! s:check_back_space() abort
+   let col = col('.') - 1
+   return !col || getline('.')[col - 1]  =~# '\s'
+ endfunction
 
-function! s:check_back_space() abort
-    let col = col('.') - 1
-    return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
+"Select the first completion item and confirm the completion when no item has been selected:
+inoremap <silent><expr> <CR> pumvisible() ? coc#_select_confirm()
+    \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
-let g:coc_snippet_next = '<tab>'
-let g:coc_snippet_pre = '<s-tab>'
-
-
-"Plug 'kien/ctrlp.vim' "unmaintained
-"Plug 'ctrlpvim/ctrlp.vim' "maintained Fork
+" Remap up/down in popup to <C-j>, <C-k>
+inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
+inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
 
 
 Plug 'chr4/nginx.vim'
@@ -215,7 +225,7 @@ Plug 'craigemery/vim-autotag'
 let g:autotagStartMethod='fork'
 
 
-"```why
+"```
 "- Use `:rename[!] {newname}`to rename a buffer within Vim and on the disk
 "```
 Plug 'danro/rename.vim'
@@ -287,13 +297,13 @@ Plug 'itchyny/calendar.vim'
 Plug 'jupyter-vim/jupyter-vim'
 
 
-"```why
+"```
 "- Displays marks in the gutter
 "```
 Plug 'kshenoy/vim-signature'
 
 
-" ```why
+" ```
 " - Typescript highlighting
 " ```
 Plug 'leafgarland/typescript-vim'
@@ -330,10 +340,8 @@ nmap <leader>tt :TagbarToggle<CR>
 "}}}
 
 
-" ```why
 " - Folds markdown correctly when codeblocks are used
 " - Maps `ge` to follow anchors in markdown
-" ```
 Plug 'preservim/vim-markdown'
 " Displays nice headings in markdown
 let g:vim_markdown_folding_style_pythonic = 1
