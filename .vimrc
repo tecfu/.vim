@@ -8,20 +8,22 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "
 " Sections:
-"  -> Fixes
-"  -> Filetype mappings
 "  -> Load Plugins
+"  -> Filetype Mappings
 "  -> Neovim Specific
 "  -> General
-"  -> Helper functions
-"  -> VIM user interface
+"  -> Helper Functions
+"  -> VIM User Interface
 "  -> Colors and Fonts
-"  -> Files, backups, and sessions
-"  -> Text, tab and indent related
-"  -> Status line
-"  -> Key mappings
+"  -> Files, Backups, and Sessions
+"  -> Text, Tab and Indent Related
+"  -> Filetype Specific Settings
+"  -> Status Line
+"  -> Key Mappings
 "  -> Misc
+"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Load Plugins 
@@ -52,10 +54,13 @@ endif
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Filetype Mapping
+" => Filetype Mappings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Map *.md files to 'markdown' filetype
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+
+" Set filetype for jsonc for known config files that use it
+autocmd BufNewFile,BufRead tsconfig.json set filetype=jsonc
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -103,7 +108,7 @@ set tags=./tags,tags;/
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Helper functions
+" => Helper Functions
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "{{{
 function! CmdLine(str)
@@ -165,7 +170,7 @@ endfunction
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Key mappings 
+" => Key Mappings 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "{{{
 
@@ -410,7 +415,7 @@ nnoremap <C-a> :call SelectAll()<CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => VIM user interface / UI
+" => VIM User Interface / UI
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " {{{
 
@@ -550,7 +555,7 @@ set splitright
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Text folding, tab, indent related
+" => Text Folding, Tab, Indent Related
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "{{{
 " Linebreak on 500 characters
@@ -577,8 +582,8 @@ set expandtab
 " Use tabs, not spaces
 " set noexpandtab
 
-"" Enable filetype plugins
-"" This may override the tabstop, softtabstop, shiftwidth
+" Enable filetype plugins
+" This may override the tabstop, softtabstop, shiftwidth
 "filetype plugin on
 "filetype indent on
 
@@ -594,11 +599,13 @@ set shiftwidth=2
 " Global Code Folding Default
 setlocal foldmethod=indent
 setlocal foldlevel=2
+"}}}
 
 
-""""""""""""""""""""""""""""""
-" => FileType Specific Settings
-""""""""""""""""""""""""""""""
+"{{{
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Filetype Specific Settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Alternatively can use ./after/ftplugin/ to add file specific settings
 " https://vi.stackexchange.com/questions/3177/use-single-ftplugin-for-more-than-one-filetype
 " Easier to apply groupings here
@@ -625,9 +632,9 @@ au Filetype markdown
 "}}}
 
 
-""""""""""""""""""""""""""""""
-" => Status line
-""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Status Line
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " {{{
 " Always show the status line
 set laststatus=2
@@ -635,7 +642,7 @@ set laststatus=2
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Files, backups, undo, and sessions
+" => Files, Backups, Undo, and Sessions
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "{{{
 " Turn backup off, since most stuff is in SVN, git et.c anyway...
