@@ -13,13 +13,12 @@
 "  -> Neovim Specific
 "  -> General
 "  -> Helper Functions
+"  -> Key Mappings
 "  -> VIM User Interface
-"  -> Colors and Fonts
-"  -> Files, Backups, and Sessions
-"  -> Text, Tab and Indent Related
+"  -> Text Folding, Tab, and Indent Related
 "  -> Filetype Specific Settings
 "  -> Status Line
-"  -> Key Mappings
+"  -> Files, Backups, Undo, and Sessions
 "  -> Misc
 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -28,6 +27,7 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Load Plugins 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"{{{
 " Set utf8 as standard encoding and en_US as the standard language
 " Neovim requires it be done here
 set encoding=utf8
@@ -51,30 +51,34 @@ if filereadable($HOME."/.vim/plugins.vim")
    " vim-plug unexpectedly configures indentation. undo this
 "  " https://vi.stackexchange.com/questions/10124/what-is-the-difference-between-filetype-plugin-indent-on-and-filetype-indent"
 endif
+"}}}
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Filetype Mappings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"{{{
 " Map *.md files to 'markdown' filetype
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 
 " Set filetype for jsonc for known config files that use it
 autocmd BufNewFile,BufRead tsconfig.json set filetype=jsonc
+"}}}
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Neovim Specific
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"{{{
 "Fixes unsupported prompt character
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE = 0
+"}}}
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "{{{
-
 " Never run in vi-compatible mode
 set nocompatible
 
@@ -103,7 +107,6 @@ set showcmd
 " Tell Vim to look for a tags file in the directory of the current file as well as in the working directory, and up, and up, and…
 " alt-j
 set tags=./tags,tags;/
-
 "}}}
 
 
@@ -170,7 +173,7 @@ endfunction
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Key Mappings 
+" => Key Mappings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "{{{
 
@@ -371,7 +374,8 @@ if has("nvim")
 endif
 
 " Allow pasting from clipboard without autoindenting
-" If your ssh session has X11 forwarding enabled, and the remote terminal Vim has +xclipboard support, then you can use the "+P keystroke to paste directly from the clipboard into Vim.
+" If your ssh session has X11 forwarding enabled, and the remote terminal Vim has +xclipboard support, then you can use the 
+" "+P keystroke to paste directly from the clipboard into Vim.
   nnoremap <leader>p :execute 'set noai' <bar> execute 'normal "+p' <bar> execute 'set ai' <CR>
   "Paste from clipboard before cursor
   nnoremap <leader>P :execute 'set noai' <bar> execute 'normal "+P' <bar> execute 'set ai' <CR>
@@ -555,7 +559,7 @@ set splitright
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Text Folding, Tab, Indent Related
+" => Text Folding, Tab, and Indent Related
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "{{{
 " Linebreak on 500 characters
@@ -602,10 +606,10 @@ setlocal foldlevel=2
 "}}}
 
 
-"{{{
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Filetype Specific Settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"{{{
 " Alternatively can use ./after/ftplugin/ to add file specific settings
 " https://vi.stackexchange.com/questions/3177/use-single-ftplugin-for-more-than-one-filetype
 " Easier to apply groupings here
@@ -615,18 +619,18 @@ autocmd FileType make setlocal ts=8 sts=8 sw=8 noexpandtab
 autocmd FileType python,yaml setlocal ts=2 sts=2 sw=2 expandtab
 
 " Setting foldmethod=marker disables folding
-au Filetype vim,vimrc,uml
-  \ setlocal foldmethod=marker
+autocmd Filetype vim,vimrc,uml
+  \ setlocal foldmethod=marker foldmarker={{{,}}} foldlevel=0
 
 " Set foldlevel to the deepest level of hte file
 " See: https://superuser.com/questions/567352/how-can-i-set-foldlevelstart-in-vim-to-just-fold-nothing-initially-still-allowi
-au Filetype javascript,typescript
+autocmd Filetype javascript,typescript
   \ let &foldlevel=max(map(range(1, line('$')), 'foldlevel(v:val)'))
 
 " Use native codefolding for markdown
 " See: https://bitcrowd.dev/folding-sections-of-markdown-in-vim
 let g:markdown_folding=1 
-au Filetype markdown
+autocmd Filetype markdown
   \ setlocal foldlevel=2
 
 "}}}
@@ -635,7 +639,7 @@ au Filetype markdown
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Status Line
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" {{{
+"{{{
 " Always show the status line
 set laststatus=2
 "}}}
