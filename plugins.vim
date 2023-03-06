@@ -375,6 +375,9 @@ Plug 'moll/vim-node'
 Plug 'mxw/vim-jsx'
 
 
+Plug 'mustache/vim-mustache-handlebars'
+
+
 Plug 'nathanaelkane/vim-indent-guides'
 let g:indent_guides_start_level = 2
 
