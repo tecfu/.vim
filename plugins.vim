@@ -430,6 +430,11 @@ Plug 'posva/vim-vue'
 Plug 'rbong/vim-flog'
 
 
+if !has('nvim')
+    Plug 'rhysd/vim-healthcheck'
+endif
+
+
 Plug 'scrooloose/vim-slumlord'
 
 
