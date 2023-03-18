@@ -76,7 +76,7 @@ sudo -S apt-get install silversearcher-ag'
   summary in the README.md file by running a npm script that does this for you:
 
 ```sh
-$ npm run update
+$ npm run update-plugin-list
 ```
 
 ## Plugin List 
