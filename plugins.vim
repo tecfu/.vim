@@ -67,6 +67,9 @@ endif
 Plug 'altercation/vim-colors-solarized'
 
 
+Plug 'ap/vim-css-color'
+
+
 Plug 'bling/vim-airline'
 " {{{
 "let g:airline_theme='colors/mango.vim'
@@ -303,6 +306,9 @@ Plug 'jupyter-vim/jupyter-vim'
 Plug 'kshenoy/vim-signature'
 
 
+Plug 'lambdalisue/fern.vim'
+
+
 " ```
 " - Typescript highlighting
 " ```
@@ -392,14 +398,6 @@ let g:eregex_backward_delim = '?'
 
 Plug 'pangloss/vim-javascript'
 let b:javascript_fold = 1
-
-
-"Plug 'preservim/nerdtree'
-"Plug 'Xuyuanp/nerdtree-git-plugin'
-"Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-"" Plug 'ryanoasis/vim-devicons'
-"" Start NERDTree, highlight file in buffer, and put the cursor back in the other window.
-"autocmd VimEnter * NERDTreeFind % | wincmd p
 
 
 Plug 'puremourning/vimspector'
@@ -630,4 +628,3 @@ endif
 
 
 call plug#end()
-
