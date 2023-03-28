@@ -87,6 +87,7 @@ $ npm run update-plugin-list
 | airblade/vim-gitgutter            | A Vim plugin which shows git diff markers in the sign column and stages/previews/undoes hunks and partial hunks. | http://github.com/airblade/vim-gitgutter            |
 | aklt/plantuml-syntax              | vim syntax file for plantuml                                                                                     | http://github.com/aklt/plantuml-syntax              |
 | altercation/vim-colors-solarized  | precision colorscheme for the vim text editor                                                                    | http://github.com/altercation/vim-colors-solarized  |
+| ap/vim-css-color                  | Preview colours in source code while editing                                                                     | http://github.com/ap/vim-css-color                  |
 | bling/vim-airline                 | lean & mean status/tabline for vim that's light as air                                                           | http://github.com/bling/vim-airline                 |
 | bronson/vim-visual-star-search    | Start a * or # search from a visual block                                                                        | http://github.com/bronson/vim-visual-star-search    |
 | brookhong/DBGPavim                | This is a plugin to enable php debug in VIM with Xdebug, with a new debug engine.                                | http://github.com/brookhong/DBGPavim                |
@@ -112,6 +113,7 @@ $ npm run update-plugin-list
 | mechatroner/rainbow_csv           | 🌈Rainbow CSV - Vim plugin: Highlight columns in CSV and TSV files and run queries in SQL-like language          | http://github.com/mechatroner/rainbow_csv           |
 | mileszs/ack.vim                   | Vim plugin for the Perl module / CLI script 'ack'                                                                | http://github.com/mileszs/ack.vim                   |
 | moll/vim-node                     | Tools and environment to make Vim superb for developing with Node.js. Like Rails.vim for Node.                   | http://github.com/moll/vim-node                     |
+| mustache/vim-mustache-handlebars  | mustache and handlebars mode for vim                                                                             | http://github.com/mustache/vim-mustache-handlebars  |
 | mxw/vim-jsx                       | React JSX syntax highlighting and indenting for vim.                                                             | http://github.com/mxw/vim-jsx                       |
 | nathanaelkane/vim-indent-guides   | A Vim plugin for visually displaying indent levels in code                                                       | http://github.com/nathanaelkane/vim-indent-guides   |
 | neoclide/coc.nvim                 | Nodejs extension host for vim & neovim, load extensions like VSCode and host language servers.                   | http://github.com/neoclide/coc.nvim                 |
@@ -122,9 +124,11 @@ $ npm run update-plugin-list
 | preservim/tagbar                  | Vim plugin that displays tags in a window, ordered by scope                                                      | http://github.com/preservim/tagbar                  |
 | preservim/vim-markdown            | Markdown Vim Mode                                                                                                | http://github.com/preservim/vim-markdown            |
 | puremourning/vimspector           | vimspector - A multi-language debugging system for Vim                                                           | http://github.com/puremourning/vimspector           |
-| rbong/vim-flog                    | A lightweight and powerful git branch viewer for vim.                                                            | http://github.com/rbong/vim-flog                    |
+| raghur/vim-ghost                  | Vim/Nvim client for GhostText - Edit browser text areas in Vim/Neovim                                            | http://github.com/raghur/vim-ghost                  |
+| rbong/vim-flog                    | A fast, beautiful, and powerful git branch viewer for vim.                                                       | http://github.com/rbong/vim-flog                    |
+| roxma/vim-hug-neovim-rpc          | EXPERIMENTAL                                                                                                     | http://github.com/roxma/vim-hug-neovim-rpc          |
 | scrooloose/vim-slumlord           | Inline previews for Plantuml sequence diagrams. OMG!                                                             | http://github.com/scrooloose/vim-slumlord           |
-| sickill/vim-pasta                 | Pasting in Vim with indentation adjusted to destination context                                                  | http://github.com/sickill/vim-pasta                 |
+| SpaceVim/nvim-yarp                | Yet Another Remote Plugin Framework for Neovim                                                                   | http://github.com/SpaceVim/nvim-yarp                |
 | StanAngeloff/php.vim              | An up-to-date Vim syntax for PHP (7.x supported)                                                                 | http://github.com/StanAngeloff/php.vim              |
 | stephpy/vim-yaml                  | Override vim syntax for yaml files                                                                               | http://github.com/stephpy/vim-yaml                  |
 | tecfu/vim-move                    | Plugin to move lines and selections up and down                                                                  | http://github.com/tecfu/vim-move                    |

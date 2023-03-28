@@ -143,15 +143,16 @@ highlight SignColumn guibg=black ctermbg=black
 highlight Pmenu ctermbg=DarkGreen guibg=DarkGreen
 " hi CocErrorSign ctermfg=white guifg=white
 "hi CocErrorFloat ctermfg=white guifg=white
-hi CocErrorFloat ctermfg=white guifg=white
 hi CocInfoSign ctermfg=black guifg=black
 hi CocFloating ctermfg=black guifg=black
 hi CocFloating ctermbg=DarkRed guibg=DarkRed
 hi CocHintFloat ctermfg=white guifg=white
+hi CocWarningFloat ctermfg=white guifg=white
+hi CocErrorFloat ctermfg=white guifg=white
 
 "hi CocFloating ctermbg=DarkYellow guibg=DarkYellow
 "hi QuickFixLine ctermbg=DarkRed guibg=DarkRed
-" hi QuickFixLine ctermbg=yellow guibg=yellow
+"hi QuickFixLine ctermbg=yellow guibg=yellow
 "hi QuickFixLine ctermfg=white guifg=white
 
 
@@ -165,7 +166,9 @@ let g:coc_global_extensions = [
   \ 'coc-snippets', 
   \ 'coc-tabnine',
   \ 'coc-tsserver',
-  \ 'https://github.com/andys8/vscode-jest-snippets'
+  \ 'https://github.com/andys8/vscode-jest-snippets',
+  \ 'coc-explorer',
+  \ 'coc-marketplace'
   \ ]
 
 " Eslint run autofixes hotkey
@@ -297,16 +300,20 @@ Plug 'inkarkat/vim-ArgsAndMore'
 Plug 'itchyny/calendar.vim'
 
 
+" Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+" Plug 'junegunn/fzf.vim'
+
+
 Plug 'jupyter-vim/jupyter-vim'
+
+
+" Plug 'kien/ctrlp.vim'
 
 
 "```
 "- Displays marks in the gutter
 "```
 Plug 'kshenoy/vim-signature'
-
-
-Plug 'lambdalisue/fern.vim'
 
 
 " ```
@@ -428,6 +435,26 @@ Plug 'posva/vim-vue'
 Plug 'rbong/vim-flog'
 
 
+"{{{
+" Grouped together as vim-hug-neovim-rpc and nvim-yarp are deps of vim-ghost
+Plug 'roxma/vim-hug-neovim-rpc'
+Plug 'SpaceVim/nvim-yarp'
+Plug 'raghur/vim-ghost', {'do': ':GhostInstall'}
+function! s:SetupGhostBuffer()
+    if match(expand("%:a"), '\v/ghost-(github|bitbucket|gitlab)\.com-')
+        set ft=markdown
+    endif
+endfunction
+
+" Automatically open vim
+" let g:ghost_darwin_app = 'vim'
+augroup vim-ghost
+    au!
+    au User vim-ghost#connected call s:SetupGhostBuffer()
+augroup END
+"}}}
+
+
 if !has('nvim')
     Plug 'rhysd/vim-healthcheck'
 endif
@@ -481,7 +508,8 @@ if !has('nvim')
 endif
 
 
-Plug 'sickill/vim-pasta'
+" interferes with remapping default register for `p` in visual mode
+" Plug 'sickill/vim-pasta'
 
 
 "only run if npm is installed
@@ -519,14 +547,11 @@ augroup VSHistMapping
 augroup END
 
 
-"Allows you to cycle through yank history
-"Conflicts with multiple-cursors start command <C-n>
-"To view yank history list, see <leader>y w/ Shougo/Unite
-"To cycle yanks with this, use <c-p>, <c-n> after p
+" YankRing interferes with remapping default register for `p` in visual mode
 Plug 'tecfu/YankRing.vim'
 
 
-"<c-p>,<c-n> here cause conflict with svermeulen/vim-yoink
+"<c-p>,<c-n> here cause conflict with yank plugins (YankRing)
 "Plug 'terryma/vim-multiple-cursors'
 
 

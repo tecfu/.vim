@@ -83,7 +83,7 @@ let $NVIM_TUI_ENABLE_CURSOR_SHAPE = 0
 set nocompatible
 
 " Enable tab autocomplete of commands in command mode"
-set wildmode=list:longest
+set wildmode=longest,list,full
 
 " Set incremental search
 " Makes search act like search in modern browsers
@@ -380,6 +380,14 @@ endif
   "Paste from clipboard before cursor
   nnoremap <leader>P :execute 'set noai' <bar> execute 'normal "+P' <bar> execute 'set ai' <CR>
 
+" Set the 'P' keybinding to paste from the 0 register. This allows you to repeastedly
+" paste the same value instead of subsequent pastes having the previously deleted value
+" Can't set this to 'p' because  
+" See also: https://stackoverflow.com/questions/18391573/how-make-vim-paste-to-always-paste-from-register-0-unless-its-specified
+" -- This is not the solution to the problem - which is not to put deleted text on the unnamed register. This will prevent you from yanking+pasting in visual mode
+"xnoremap <expr> p (v:register ==# '"' ? '"0' : '') . 'p'
+xnoremap <expr> P (v:register ==# '"' ? '"0' : '') . 'P'
+
 "WSL yank support
 let s:clip = '/mnt/c/Windows/System32/clip.exe' " change this path according to your mount point
 if executable(s:clip)
@@ -554,6 +562,9 @@ autocmd BufReadPost *
 " New splits to appear to the right and to the bottom of the current
 set splitbelow
 set splitright
+
+" Vertically center buffer when entering insert mode
+autocmd InsertEnter * norm zz
 
 "}}}
 
