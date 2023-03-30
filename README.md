@@ -79,6 +79,18 @@ sudo -S apt-get install silversearcher-ag'
 $ npm run update-plugin-list
 ```
 
+## Troubleshooting
+
+- CoC can't install plugins because npm registry is private
+    ```
+    npm config set registry https://registry.npmjs.org 
+    ```
+
+### Color Scheme
+
+mango   https://github.com/goatslacker/mango.vim
+
+
 ## Plugin List 
 
 <!---PLUGINS-->
@@ -142,11 +154,6 @@ $ npm run update-plugin-list
 | tpope/vim-unimpaired              | unimpaired.vim: Pairs of handy bracket mappings                                                                  | http://github.com/tpope/vim-unimpaired              |
 | valloric/MatchTagAlways           | A Vim plugin that always highlights the enclosing html/xml tags                                                  | http://github.com/valloric/MatchTagAlways           |
 <!---ENDPLUGINS-->
-
-### Color Scheme
-
-mango   https://github.com/goatslacker/mango.vim
-
 
 ### Notes
 
