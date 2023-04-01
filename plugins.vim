@@ -191,29 +191,21 @@ nnoremap <expr> <space>i
   \ (CheckLocationListOpen() ? ":CocDiagnostics" : ":lclose")."<CR>"
 
 "vmap <S-f>  <Plug>(coc-format-selected)
-"" run cmd on range of entire file
-""nmap <S-f>  <Plug>(coc-format)%
+"run cmd on range of entire file
+"nmap <S-f>  <Plug>(coc-format)%
 
 "Coc Popup Completion settings
 "Use <tab> for trigger completion and navigate to the next complete item
- inoremap <silent><expr> <Tab>
-   \ pumvisible() ? "\<C-n>" :
-   \ coc#expandableOrJumpable() ?
-   \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-   \ <SID>check_back_space() ? "\<Tab>" :
-   \ coc#refresh()
- 
- inoremap <silent><expr> <S-Tab>
-   \ pumvisible() ? "\<C-p>" :
-   \ coc#expandableOrJumpable() ?
-   \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-pre',''])\<CR>" :
-   \ <SID>check_back_space() ? "\<Tab>" :
-   \ coc#refresh()
- 
- function! s:check_back_space() abort
-   let col = col('.') - 1
-   return !col || getline('.')[col - 1]  =~# '\s'
- endfunction
+"Modified from docs due to error: https://github.com/neoclide/coc.nvim/issues/3167
+inoremap <silent><expr> <Tab>
+ \ pumvisible() ? "\<C-n>" :
+ \ coc#expandableOrJumpable() ?
+ \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" : "\<Tab>"
+
+inoremap <silent><expr> <S-Tab>
+ \ pumvisible() ? "\<C-p>" :
+ \ coc#expandableOrJumpable() ?
+ \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-pre',''])\<CR>" : "\<Tab>"
 
 "Select the first completion item and confirm the completion when no item has been selected:
 inoremap <silent><expr> <CR> pumvisible() ? coc#_select_confirm()
