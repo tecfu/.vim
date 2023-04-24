@@ -165,7 +165,6 @@ let g:coc_global_extensions = [
   \ 'coc-prettier',
   \ 'coc-snippets', 
   \ 'coc-tabnine',
-  \ 'coc-tsserver',
   \ 'https://github.com/andys8/vscode-jest-snippets',
   \ 'coc-explorer',
   \ 'coc-marketplace'
