@@ -1,25 +1,6 @@
 # vimrc
 
-Configuration for Vim > 8
-
-## Installation
-
-### Making sure you are using a compatible version of vim:
-
-- Vim 8 on Ubuntu 20.04:
-
-```bash
-sudo apt-get install vim -y
-```
-
-- Vim 8.2 on Ubuntu 18.04/20.04:
-
-
-```bash
-sudo add-apt-repository ppa:jonathonf/vim
-sudo apt-get update
-sudo apt install vim
-```
+## Installation for Vim > 8
 
 ### Clone this repository and its submodules into your home directory.
 
@@ -49,6 +30,15 @@ $ . ~/.vim/INSTALL.sh
 - Access coc-settings.json
 ```
 :CocConfig 
+```
+
+## Additional Configuration Needed for NeoVim
+
+Add the following to ~.conig/nvim/init.vim:
+```
+set runtimepath^=~/.vim runtimepath+=~/.vim/after
+let &packpath = &runtimepath
+source ~/.vimrc
 ```
 
 ## Optional
