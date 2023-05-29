@@ -127,33 +127,16 @@ Plug 'bronson/vim-visual-star-search'
 "For javascript, install js-beautify externally
 "npm install js-beautify -g
 
+
+"{{{
 " coc.nvim is used for file formatting
 " can be configurated to auto format on save in coc-settings.json
 " Use "coc.preferences.formatOnType": true to enable format on type feature.
 " https://vi.stackexchange.com/a/31087/5223
 " https://github.com/neoclide/coc-prettier
 
-" Not a fan of the gray gutter (SignColumn) that comes with the theme
-highlight SignColumn guibg=black ctermbg=black
-
-" Not a fan of pink background in popup menu
-highlight Pmenu ctermbg=DarkGreen guibg=DarkGreen
-" hi CocErrorSign ctermfg=white guifg=white
-"hi CocErrorFloat ctermfg=white guifg=white
-hi CocInfoSign ctermfg=black guifg=black
-hi CocFloating ctermfg=black guifg=black
-hi CocFloating ctermbg=DarkRed guibg=DarkRed
-hi CocHintFloat ctermfg=white guifg=white
-hi CocWarningFloat ctermfg=white guifg=white
-hi CocErrorFloat ctermfg=white guifg=white
-
-"hi CocFloating ctermbg=DarkYellow guibg=DarkYellow
-"hi QuickFixLine ctermbg=DarkRed guibg=DarkRed
-"hi QuickFixLine ctermbg=yellow guibg=yellow
-"hi QuickFixLine ctermfg=white guifg=white
-
-
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" coc extensions
 let g:coc_global_extensions = [
   \ 'coc-eslint',
   \ 'coc-html',
@@ -210,6 +193,30 @@ inoremap <silent><expr> <CR> pumvisible() ? coc#_select_confirm()
 " Remap up/down in popup to <C-j>, <C-k>
 inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
 inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
+
+" coc ui styling
+" Not a fan of the gray gutter (SignColumn) that comes with the theme
+highlight SignColumn guibg=black ctermbg=black
+
+" Not a fan of pink background in popup menu
+highlight Pmenu ctermbg=DarkGreen guibg=DarkGreen
+" hi CocErrorSign ctermfg=white guifg=white
+"hi CocErrorFloat ctermfg=white guifg=white
+hi CocInfoSign ctermfg=black guifg=black
+hi CocFloating ctermfg=black guifg=black
+hi CocFloating ctermbg=DarkRed guibg=DarkRed
+hi CocHintFloat ctermfg=white guifg=white
+hi CocWarningFloat ctermfg=white guifg=white
+hi CocErrorFloat ctermfg=white guifg=white
+
+"hi CocFloating ctermbg=DarkYellow guibg=DarkYellow
+"hi QuickFixLine ctermbg=DarkRed guibg=DarkRed
+"hi QuickFixLine ctermbg=yellow guibg=yellow
+"hi QuickFixLine ctermfg=white guifg=white
+
+
+
+"}}}
 
 
 Plug 'chr4/nginx.vim'
