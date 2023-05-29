@@ -451,49 +451,47 @@ endif
 Plug 'scrooloose/vim-slumlord'
 
 
-if !has('nvim')
-  Plug 'Shougo/vimproc', {
-      \ 'do' : 'make'
-      \ }
+Plug 'Shougo/vimproc', {
+    \ 'do' : 'make'
+    \ }
 
 
-  Plug 'Shougo/vimshell'
-  " {{{
-  let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
-  let g:vimshell_prompt =  '$ '
-  " open new splits actually in new tab
-  let g:vimshell_split_command = "tabnew"
+Plug 'Shougo/vimshell'
+" {{{
+let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
+let g:vimshell_prompt =  '$ '
+" open new splits actually in new tab
+let g:vimshell_split_command = "tabnew"
 
-  if has("gui_running")
-    let g:vimshell_editor_command = "gvim"
-  endif
-
-  " Use same keybindings to go forward and back in prompt as in vim bash
-  "inoremap <buffer> <S-k>  <Plug>(vimshell_previous_prompt)
-  "inoremap <buffer> <S-j>  <Plug>(vimshell_next_prompt)
-
-  " Unmap C-j, C-k in normal mode to use default navigation
-  function! VSmap(a,b)
-    nmap <buffer><silent> <C-J> 10j
-    nmap <buffer><silent> <C-K> 10k
-  endfunction
-
-  function! VSmapChooser()
-    if has("nvim")
-      call jobstart(['bash','-c','echo "-"; exit;'],{'on_stdout':'VSmap'})
-    else
-      call job_start(['bash','-c','echo "-"; exit;'],{'out_cb':'VSmap'})
-    endif
-  endfunction
-
-  "Group name can be arbitrary so long as doesn't conflict with another
-  augroup VimshellMapping
-    autocmd!
-    "Get filetype with :echom &filetype when in buffer
-    autocmd FileType vimshell :call VSmapChooser() 
-  augroup END
-"}}}
+if has("gui_running")
+  let g:vimshell_editor_command = "gvim"
 endif
+
+" Use same keybindings to go forward and back in prompt as in vim bash
+"inoremap <buffer> <S-k>  <Plug>(vimshell_previous_prompt)
+"inoremap <buffer> <S-j>  <Plug>(vimshell_next_prompt)
+
+" Unmap C-j, C-k in normal mode to use default navigation
+function! VSmap(...)
+  nmap <buffer><silent> <C-J> 10j
+  nmap <buffer><silent> <C-K> 10k
+endfunction
+
+function! VSmapChooser()
+  if has("nvim")
+    call jobstart(['bash','-c','echo "-"; exit;'],{'on_stdout':'VSmap'})
+  else
+    call job_start(['bash','-c','echo "-"; exit;'],{'out_cb':'VSmap'})
+  endif
+endfunction
+
+"Group name can be arbitrary so long as doesn't conflict with another
+augroup VimshellMapping
+  autocmd!
+  "Get filetype with :echom &filetype when in buffer
+  autocmd FileType vimshell :call VSmapChooser()
+augroup END
+"}}}
 
 
 " interferes with remapping default register for `p` in visual mode
@@ -509,14 +507,19 @@ Plug 'stephpy/vim-yaml'
 "Plug 'supermomonga/vimshell-inline-history.vim', { 'depends' : [ 'Shougo/vimshell.vim' ] }
 Plug 'tecfu/vimshell-inline-history.vim', { 'depends' : [ 'Shougo/vimshell.vim' ] }
 
-function! VSHistmapCB(a,b)
+function! VSHistmapCB(...)
   let g:vimshell_inline_history#default_mappings = 0
   imap <buffer> <C-j>  <Plug>(vimshell_inline_history#next)
   imap <buffer> <C-k>  <Plug>(vimshell_inline_history#prev)
 endfunction
 
 function! VSHistmap()
-  call job_start(['bash','-c','echo "-"; exit;'],{'out_cb':'VSHistmapCB'})
+  if has("nvim")
+    call jobstart(['bash','-c','echo "-"; exit;'],{'on_stdout':'VSHistmapCB'})
+  else
+    call job_start(['bash','-c','echo "-"; exit;'],{'out_cb':'VSHistmapCB'})
+  endif
+
 endfunction
 
   "Group name can be arbitrary so long as doesn't conflict with another

@@ -139,6 +139,8 @@ mango   https://github.com/goatslacker/mango.vim
 | rbong/vim-flog                    | A fast, beautiful, and powerful git branch viewer for vim.                                                       | http://github.com/rbong/vim-flog                    |
 | roxma/vim-hug-neovim-rpc          | EXPERIMENTAL                                                                                                     | http://github.com/roxma/vim-hug-neovim-rpc          |
 | scrooloose/vim-slumlord           | Inline previews for Plantuml sequence diagrams. OMG!                                                             | http://github.com/scrooloose/vim-slumlord           |
+| Shougo/vimproc                    | Interactive command execution in Vim.                                                                            | http://github.com/Shougo/vimproc                    |
+| Shougo/vimshell                   | 🐚 Powerful shell implemented by vim.                                                                            | http://github.com/Shougo/vimshell                   |
 | SpaceVim/nvim-yarp                | Yet Another Remote Plugin Framework for Neovim                                                                   | http://github.com/SpaceVim/nvim-yarp                |
 | StanAngeloff/php.vim              | An up-to-date Vim syntax for PHP (7.x supported)                                                                 | http://github.com/StanAngeloff/php.vim              |
 | stephpy/vim-yaml                  | Override vim syntax for yaml files                                                                               | http://github.com/stephpy/vim-yaml                  |
