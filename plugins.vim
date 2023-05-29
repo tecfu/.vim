@@ -119,9 +119,6 @@ autocmd VimEnter * call OnLoadAirline()
 " }}}
 
 
-Plug 'brookhong/DBGPavim'
-
-
 Plug 'bronson/vim-visual-star-search'
 
 
@@ -501,14 +498,6 @@ endif
 
 " interferes with remapping default register for `p` in visual mode
 " Plug 'sickill/vim-pasta'
-
-
-"only run if npm is installed
-if(DetectCommand('npm'))
-  Plug 'sidorares/node-vim-debugger', {
-      \ 'do' : 'npm i vimdebug -g'
-      \ }
-endif
 
 
 Plug 'StanAngeloff/php.vim'

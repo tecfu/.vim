@@ -102,7 +102,6 @@ mango   https://github.com/goatslacker/mango.vim
 | ap/vim-css-color                  | Preview colours in source code while editing                                                                     | http://github.com/ap/vim-css-color                  |
 | bling/vim-airline                 | lean & mean status/tabline for vim that's light as air                                                           | http://github.com/bling/vim-airline                 |
 | bronson/vim-visual-star-search    | Start a * or # search from a visual block                                                                        | http://github.com/bronson/vim-visual-star-search    |
-| brookhong/DBGPavim                | This is a plugin to enable php debug in VIM with Xdebug, with a new debug engine.                                | http://github.com/brookhong/DBGPavim                |
 | chr4/nginx.vim                    | Improved nginx vim plugin (incl. syntax highlighting)                                                            | http://github.com/chr4/nginx.vim                    |
 | craigemery/vim-autotag            | Automatically discover and "properly" update ctags files on save                                                 | http://github.com/craigemery/vim-autotag            |
 | danro/rename.vim                  | Rename the current file in the vim buffer + retain relative path.                                                | http://github.com/danro/rename.vim                  |
