@@ -631,16 +631,4 @@ let g:mta_filetypes = {
 nnoremap <leader>t :MtaJumpToOtherTag<cr>
 highlight MatchTag ctermfg=black ctermbg=lightgreen
 
-
-if(DetectCommand('python3'))
-  Plug 'vim-vdebug/vdebug'
-
-  let g:vdebug_options = {
-  \   'port':9000, 
-  \   'path_maps': {
-  \   },
-  \}
-endif
-
-
 call plug#end()
