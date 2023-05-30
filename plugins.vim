@@ -52,12 +52,6 @@ call plug#begin('~/.vim/bundle')
 
 " Custom Plugins Start Here
 
-" UML syntax highlighting for scrooloose/vim-slumlord
-Plug 'aklt/plantuml-syntax'
-" Use a split window to view output
-" let g:slumlord_separate_win=1
-
-
 Plug 'airblade/vim-gitgutter'
 if has('nvim')
   let g:gitgutter_sign_removed_first_line = "^_"
@@ -128,17 +122,74 @@ Plug 'bronson/vim-visual-star-search'
 "npm install js-beautify -g
 
 
+" # Language server/syntax highlighting/autocomplete 
+
+" ## vim-lsp ecosystem
 "{{{
-" coc.nvim is used for file formatting
-" can be configurated to auto format on save in coc-settings.json
+"Plug 'prabirshrestha/vim-lsp'
+"Plug 'mattn/vim-lsp-settings'
+"Plug 'prabirshrestha/asyncomplete.vim'
+"Plug 'prabirshrestha/asyncomplete-lsp.vim'
+"Plug 'github/copilot.vim'
+"
+"" ## config
+"filetype plugin on
+"
+"function! s:on_lsp_buffer_enabled() abort
+"    setlocal omnifunc=lsp#complete
+"    setlocal signcolumn=yes
+"    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+"
+"    let g:lsp_format_sync_timeout = 1000
+"    autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
+"
+"endfunction
+"
+"augroup lsp_install
+"    au!
+"    " call s:on_lsp_buffer_enabled (set the lsp shortcuts) when an lsp server
+"    " is registered for a buffer.
+"    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+"augroup END
+"}}}
+
+
+" ## coc-vim ecosystem
+
+"{{{
 " Use "coc.preferences.formatOnType": true to enable format on type feature.
 " https://vi.stackexchange.com/a/31087/5223
 " https://github.com/neoclide/coc-prettier
 
+" coc ui styling
+" Not a fan of the gray gutter (SignColumn) that comes with the theme
+highlight SignColumn guibg=black ctermbg=black
+
+" Not a fan of pink background in popup menu
+highlight Pmenu ctermbg=DarkGreen guibg=DarkGreen
+" hi CocErrorSign ctermfg=white guifg=white
+"hi CocErrorFloat ctermfg=white guifg=white
+hi CocInfoSign ctermfg=black guifg=black
+hi CocFloating ctermfg=black guifg=black
+hi CocFloating ctermbg=DarkRed guibg=DarkRed
+hi CocHintFloat ctermfg=white guifg=white
+hi CocWarningFloat ctermfg=white guifg=white
+hi CocErrorFloat ctermfg=white guifg=white
+
+"hi CocFloating ctermbg=DarkYellow guibg=DarkYellow
+"hi QuickFixLine ctermbg=DarkRed guibg=DarkRed
+"hi QuickFixLine ctermbg=yellow guibg=yellow
+"hi QuickFixLine ctermfg=white guifg=white
+
+
+
+
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " coc extensions
 let g:coc_global_extensions = [
+  \ 'coc-vimlsp',
   \ 'coc-eslint',
+  \ 'coc-tsserver',
   \ 'coc-html',
   \ 'coc-json',
   \ 'coc-pairs',
@@ -193,29 +244,6 @@ inoremap <silent><expr> <CR> pumvisible() ? coc#_select_confirm()
 " Remap up/down in popup to <C-j>, <C-k>
 inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
 inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
-
-" coc ui styling
-" Not a fan of the gray gutter (SignColumn) that comes with the theme
-highlight SignColumn guibg=black ctermbg=black
-
-" Not a fan of pink background in popup menu
-highlight Pmenu ctermbg=DarkGreen guibg=DarkGreen
-" hi CocErrorSign ctermfg=white guifg=white
-"hi CocErrorFloat ctermfg=white guifg=white
-hi CocInfoSign ctermfg=black guifg=black
-hi CocFloating ctermfg=black guifg=black
-hi CocFloating ctermbg=DarkRed guibg=DarkRed
-hi CocHintFloat ctermfg=white guifg=white
-hi CocWarningFloat ctermfg=white guifg=white
-hi CocErrorFloat ctermfg=white guifg=white
-
-"hi CocFloating ctermbg=DarkYellow guibg=DarkYellow
-"hi QuickFixLine ctermbg=DarkRed guibg=DarkRed
-"hi QuickFixLine ctermbg=yellow guibg=yellow
-"hi QuickFixLine ctermfg=white guifg=white
-
-
-
 "}}}
 
 
@@ -275,10 +303,6 @@ vmap <leader>a: :Tabularize /:\zs<CR>
 "Conflicts with vim-multiple-cursors
 "Plug 'gorkunov/smartpairs.vim'
 "let g:smartpairs_uber_mode=1
-
-
-" Syntax highlighting for Terraform
-Plug 'hashivim/vim-terraform'
 
 
 Plug 'heavenshell/vim-jsdoc'
@@ -456,15 +480,23 @@ endif
 
 
 Plug 'scrooloose/vim-slumlord'
+" Use a split window to view output
+" let g:slumlord_separate_win=1
 
 
+" Syntax  highlighting for a variety of language
+Plug 'sheerun/vim-polyglot'
+
+
+"{{{
+" Bundled together for Shougo's vimshell
 Plug 'Shougo/vimproc', {
     \ 'do' : 'make'
     \ }
 
 
 Plug 'Shougo/vimshell'
-" {{{
+
 let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
 let g:vimshell_prompt =  '$ '
 " open new splits actually in new tab

@@ -87,7 +87,6 @@ mango   https://github.com/goatslacker/mango.vim
 | Name                              | Description                                                                                                      | Website                                             |
 | --------------------------------- | ---------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
 | airblade/vim-gitgutter            | A Vim plugin which shows git diff markers in the sign column and stages/previews/undoes hunks and partial hunks. | http://github.com/airblade/vim-gitgutter            |
-| aklt/plantuml-syntax              | vim syntax file for plantuml                                                                                     | http://github.com/aklt/plantuml-syntax              |
 | altercation/vim-colors-solarized  | precision colorscheme for the vim text editor                                                                    | http://github.com/altercation/vim-colors-solarized  |
 | ap/vim-css-color                  | Preview colours in source code while editing                                                                     | http://github.com/ap/vim-css-color                  |
 | bling/vim-airline                 | lean & mean status/tabline for vim that's light as air                                                           | http://github.com/bling/vim-airline                 |
@@ -99,7 +98,6 @@ mango   https://github.com/goatslacker/mango.vim
 | FooSoft/vim-argwrap               | Wrap and unwrap function arguments, lists, and dictionaries in Vim                                               | http://github.com/FooSoft/vim-argwrap               |
 | godlygeek/csapprox                | Make gvim-only colorschemes work transparently in terminal vim                                                   | http://github.com/godlygeek/csapprox                |
 | godlygeek/tabular                 | Vim script for text filtering and alignment                                                                      | http://github.com/godlygeek/tabular                 |
-| hashivim/vim-terraform            | basic vim/terraform integration                                                                                  | http://github.com/hashivim/vim-terraform            |
 | heavenshell/vim-jsdoc             | Generate JSDoc to your JavaScript code.                                                                          | http://github.com/heavenshell/vim-jsdoc             |
 | idanarye/vim-merginal             | Fugitive extension to manage and merge Git branches                                                              | http://github.com/idanarye/vim-merginal             |
 | inkarkat/vim-ArgsAndMore          | Apply commands to multiple buffers and manage the argument list.                                                 | http://github.com/inkarkat/vim-ArgsAndMore          |
@@ -129,6 +127,7 @@ mango   https://github.com/goatslacker/mango.vim
 | rbong/vim-flog                    | A fast, beautiful, and powerful git branch viewer for vim.                                                       | http://github.com/rbong/vim-flog                    |
 | roxma/vim-hug-neovim-rpc          | EXPERIMENTAL                                                                                                     | http://github.com/roxma/vim-hug-neovim-rpc          |
 | scrooloose/vim-slumlord           | Inline previews for Plantuml sequence diagrams. OMG!                                                             | http://github.com/scrooloose/vim-slumlord           |
+| sheerun/vim-polyglot              | A solid language pack for Vim.                                                                                   | http://github.com/sheerun/vim-polyglot              |
 | Shougo/vimproc                    | Interactive command execution in Vim.                                                                            | http://github.com/Shougo/vimproc                    |
 | Shougo/vimshell                   | 🐚 Powerful shell implemented by vim.                                                                            | http://github.com/Shougo/vimshell                   |
 | SpaceVim/nvim-yarp                | Yet Another Remote Plugin Framework for Neovim                                                                   | http://github.com/SpaceVim/nvim-yarp                |
