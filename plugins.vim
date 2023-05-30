@@ -175,7 +175,6 @@ hi CocFloating ctermbg=DarkRed guibg=DarkRed
 hi CocHintFloat ctermfg=white guifg=white
 hi CocWarningFloat ctermfg=white guifg=white
 hi CocErrorFloat ctermfg=white guifg=white
-
 "hi CocFloating ctermbg=DarkYellow guibg=DarkYellow
 "hi QuickFixLine ctermbg=DarkRed guibg=DarkRed
 "hi QuickFixLine ctermbg=yellow guibg=yellow
@@ -288,6 +287,13 @@ nnoremap <leader>w :ArgWrap<CR>
 
 "Doesn't support custom keymaps, interferes with <S-k>
 "Plug 'fs111/pydoc.vim'
+
+
+" Disabled but saved as a backup
+"Plug 'goatslacker/mango.vim'
+
+
+Plug 'tecfu/tokyonight-vim'
 
 
 Plug 'godlygeek/csapprox'
