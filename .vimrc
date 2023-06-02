@@ -427,13 +427,14 @@ let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
 let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 "}}}
 
+let g:tokyonight_style = 'night' " available: night, storm
+let g:tokyonight_enable_italic = 1
+colorscheme tokyonight
+
 set background=dark
 "https://github.com/goatslacker/mango.vim | see plugins.vim
 "colorscheme mango
 
-let g:tokyonight_style = 'night' " available: night, storm
-let g:tokyonight_enable_italic = 1
-colorscheme tokyonight
 " Set relative line numbers except in insert mode
 " set relativenumber
 " autocmd InsertEnter * :set norelativenumber

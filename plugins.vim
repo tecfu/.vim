@@ -306,8 +306,8 @@ nnoremap <leader>w :ArgWrap<CR>
 "Plug 'fs111/pydoc.vim'
 
 
-" Disabled but saved as a backup
-"Plug 'goatslacker/mango.vim'
+" Load as backup
+Plug 'goatslacker/mango.vim'
 
 
 Plug 'tecfu/tokyonight-vim'
