@@ -186,8 +186,10 @@ hi CocErrorFloat ctermfg=white guifg=white
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " coc extensions
 let g:coc_global_extensions = [
+  \ 'coc-rome',
   \ 'coc-vimlsp',
   \ 'coc-eslint',
+  \ 'coc-markdownlint',
   \ 'coc-tsserver',
   \ 'coc-html',
   \ 'coc-json',
@@ -201,8 +203,23 @@ let g:coc_global_extensions = [
   \ ]
 
 " Eslint run autofixes hotkey
-noremap <Space>l :CocCommand eslint.executeAutofix<CR><ESC>
+function! LintFix()
+  if(&filetype == 'javaScript' || &filetype == 'typescript')
+    :CocCommand eslint.executeAutofix 
+    :CocCommand prettier.forceFormatDocument
+    echom 'Ran ":CocCommand eslint.executeAutofix, prettier.forceFormatDocument"'
+  elseif(&filetype == 'markdown')
+    :CocCommand markdownlint.fixAll
+    echom 'Ran ":CocCommand markdownlint.fixAll"'
+  elseif(&filetype == 'python')
+    :%!python -m json.tool
+    echom 'Ran ":%!python -m json.tool"'
+  else
+    echom 'Filetype "'.&filetype.'" not mapped to an autofix command'
+  endif
+endfunction
 
+nnoremap <leader>l :call LintFix()<CR>
 
 " Fix diagnostics popup background color
 function! CheckLocationListOpen()
@@ -435,7 +452,7 @@ let b:javascript_fold = 1
 Plug 'puremourning/vimspector'
 let g:vimspector_enable_mappings = 'HUMAN'
 let g:vimspector_install_gadgets = ['vscode-node-debug2', 'debugger-for-chrome', 'vscode-firefox-debug', 'debugpy', 'delve']
-nmap <Leader>db <Plug>VimspectorBreakpoints
+nmap <leader>db <Plug>VimspectorBreakpoints
 
 
 " Recommended: sudo -S apt-get install silversearcher-ag

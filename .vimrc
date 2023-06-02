@@ -294,29 +294,6 @@ vnoremap <silent> ? :<C-U>call RangeSearch('?')<CR>:if strlen(g:srchstr) > 0\|ex
 nnoremap <esc>^[ <esc>^[
 nnoremap <esc> <silent> :noh<return><esc>
 
-" ctrl-q to force quit
-noremap <C-Q> :qa!<CR>
-vnoremap <C-Q> <C-C>:qa!<CR>
-inoremap <C-Q> <C-O>:qa!<CR>
-
-" Use CTRL-S for saving
-" Must add the following to ~/.bashrc for this to work
-" alias vim="stty stop '' -ixoff ; vim"
-function! CustomSave()
-  "Save the buffer
-  "execute 'w!'
-  :w!
-endfunction
-  
-"noremap <C-S> :w!<CR>
-noremap <C-S> :call CustomSave()<CR>
-vnoremap <C-S> <C-C>:call CustomSave()<CR><ESC>
-inoremap <C-S> <C-O>:call CustomSave()<CR><ESC>
-
-" Map delete to black hole register
-"nnoremap d "_d
-"vnoremap d "_d
-
 " Split lines leader+k [This frees up <S-k> for tabnext
 noremap <leader>k i<CR><ESC>k
 
@@ -401,7 +378,7 @@ inoremap <C-v> <C-O>:set noai<CR> <C-R>+ <C-O>:set ai<CR>
 inoremap <leader>p <C-O>:set noai<CR> <C-R>+ <C-O>:set ai<CR>
 
 " insert space in normal mode
-nnoremap <leader>l a<space><esc>
+" nnoremap <leader>l a<space><esc>
 
 " Command mode mappings
 cnoremap <C-a> <Home>
@@ -431,18 +408,32 @@ nnoremap <C-a> :call SelectAll()<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " {{{
 
-set t_Co=256
 set guifont=monospace\ 11 
 " See plugins.vim for color scheme selection
-
-set background=dark
-"https://github.com/goatslacker/mango.vim
-colorscheme mango
 
 " Set color column 
 set colorcolumn=80
 syntax on
 
+" Set vim to 256 color
+" set t_Co=256
+
+"{{{
+" Set vim to true color
+" You might have to force true color when using regular vim inside tmux as the
+" colorscheme can appear to be grayscale with "termguicolors" option enabled.
+set termguicolors
+let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+"}}}
+
+set background=dark
+"https://github.com/goatslacker/mango.vim | see plugins.vim
+"colorscheme mango
+
+let g:tokyonight_style = 'night' " available: night, storm
+let g:tokyonight_enable_italic = 1
+colorscheme tokyonight
 " Set relative line numbers except in insert mode
 " set relativenumber
 " autocmd InsertEnter * :set norelativenumber
