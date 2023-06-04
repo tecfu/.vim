@@ -9,23 +9,20 @@
 "
 " Sections:
 "  -> Load Plugins
-"  -> Filetype Mappings
-"  -> Neovim Specific
-"  -> General
-"  -> Helper Functions
-"  -> Key Mappings
-"  -> VIM User Interface
+"  -> User Interface
 "  -> Text Folding, Tab, and Indent Related
+"  -> Key Mappings
 "  -> Filetype Specific Settings
-"  -> Status Line
 "  -> Files, Backups, Undo, and Sessions
+"  -> Status Line
+"  -> Helper Functions
 "  -> Misc
 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Load Plugins 
+" => Load Plugins
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "{{{
 " Set utf8 as standard encoding and en_US as the standard language
@@ -33,142 +30,178 @@
 set encoding=utf8
 set fileencoding=utf8
 
-"Python fix for neovim
-if has("nvim")
-  "set shell=/bin/bash
-  if !has('python') && !has('python3')
-    echoe "ERROR! Manually install python support with:\n"
-          \"pip2 install neovim\n" 
-          \"pip3 install neovim"
-  endif
-
-  let g:python_host_prog = '/usr/bin/python'
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
-
-if filereadable($HOME."/.vim/plugins.vim")
+if !has("nvim")
+  call plug#begin('~/.vim/plugins-vim')
+  source ${HOME}/.vim/common-plugins.vim
   source ${HOME}/.vim/plugins.vim
-   " vim-plug unexpectedly configures indentation. undo this
-"  " https://vi.stackexchange.com/questions/10124/what-is-the-difference-between-filetype-plugin-indent-on-and-filetype-indent"
+  call plug#end()
+else
+  call plug#begin('~/.local/share/nvim/site/plugged')
+  "call plug#begin('~/.vim/plugins-nvim')
+  source ${HOME}/.vim/common-plugins.vim
+  source ${HOME}/.vim/plugins.nvim
+  call plug#end()
+endif
+
+" vim-plug unexpectedly configures indentation. undo this
+" https://vi.stackexchange.com/questions/10124/what-is-the-difference-between-filetype-plugin-indent-on-and-filetype-indent
+"}}}
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => User Interface / UI
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" {{{
+" Set vim to true color
+" You might have to force true color when using regular vim inside tmux as the
+" colorscheme can appear to be grayscale with "termguicolors" option enabled.
+if (has("unix") && !has("macunix"))
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 endif
 "}}}
 
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Filetype Mappings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"{{{
-" Map *.md files to 'markdown' filetype
-autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+if !has('nvim')
+  "set termguicolors
+  set background=dark
+  "colorscheme mango
+  colorscheme onedark
+else
+  set termguicolors
+  set background=dark
+  "colorscheme tokyonight-night
+  "colorscheme catppuccin
+  colorscheme onedark
+endif
 
-" Set filetype for jsonc for known config files that use it
-autocmd BufNewFile,BufRead tsconfig.json set filetype=jsonc
-"}}}
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Neovim Specific
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"{{{
-"Fixes unsupported prompt character
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE = 0
-"}}}
 
+" set guifont=monospace\ 11
+" See plugins.vim for color scheme selection
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => General
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"{{{
-" Never run in vi-compatible mode
-set nocompatible
+" Set color column
+set colorcolumn=80
+syntax on
 
-" Enable tab autocomplete of commands in command mode"
-set wildmode=longest,list,full
+" Set vim to 256 color
+" set t_Co=256
 
-" Set incremental search
-" Makes search act like search in modern browsers
-" This way you can :/findsomething to see all current matches
-" and then :%s//replace will use the last command (:/findsomething)
-" http://stackoverflow.com/questions/1276403/simple-vim-commands-you-wish-youd-known-earlier?page=1&tab=votes#tab-top
-set incsearch
+" Set relative line numbers except in insert mode
+" set relativenumber
+" autocmd InsertEnter * :set norelativenumber
+" autocmd InsertLeave * :set relativenumber
 
-" Tell vim to split # between filename and anchor name, thus gF on filename will also hop to anchors in files
-set isfname-=#
+" Text highlight of words that match that under the cursor
+" http://stackoverflow.com/questions/1551231/highlight-variable-under-cursor-in-vim-like-in-netbeans
+" :autocmd CursorMoved * exe printf('match IncSearch /\V\<%s\>/', escape(expand('<cword>'), '/\'))
 
-" Sets how many lines of history VIM has to remember
-set history=700
+" Avoid garbled characters in Chinese language windows OS
+let $LANG='en'
+set langmenu=en
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
 
-" Set to auto read when a file is changed from the outside
-set autoread
+" Turn on the WiLd menu
+set wildmenu
 
-set showcmd
+" Ignore compiled files
+set wildignore=*.o,*~,*.pyc,.build.*,.so,*.a
+if has("win16") || has("win32")
+    set wildignore+=*/.hg/*,*/.svn/*,*/.DS_Store
+else
+    set wildignore+=.hg\*,.svn\*
+endif
 
+"Show line numbers
+set number
 
-" Tell Vim to look for a tags file in the directory of the current file as well as in the working directory, and up, and up, and…
-" alt-j
-set tags=./tags,tags;/
-"}}}
+"Always show current position
+set ruler
 
+" Height of the command bar
+set cmdheight=2
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Helper Functions
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"{{{
-function! CmdLine(str)
-    exe "menu Foo.Bar :" . a:str
-    emenu Foo.Bar
-    unmenu Foo
-endfunction
+" A buffer becomes hidden when it is abandoned
+set hid
 
-function! VisualSelection(direction, extra_filter) range
-    let l:saved_reg = @"
-    execute "normal! vgvy"
+" Configure backspace so it acts as it should act
+set backspace=eol,start,indent
+set whichwrap+=<,>,h,l
 
-    let l:pattern = escape(@", '\\/.*$^~[]')
-    let l:pattern = substitute(l:pattern, "\n$", "", "")
+" In many terminal emulators the mouse works just fine, thus enable it.
+if has('mouse')
+  set mouse=a
+endif
 
-    if a:direction == 'b'
-        execute "normal ?" . l:pattern . "^M"
-    elseif a:direction == 'gv'
-        call CmdLine("Ack \"" . l:pattern . "\" " )
-    elseif a:direction == 'replace'
-        call CmdLine("%s" . '/'. l:pattern . '/')
-    elseif a:direction == 'f'
-        execute "normal /" . l:pattern . "^M"
-    endif
+" Ignore case when searching
+set ignorecase
 
-    let @/ = l:pattern
-    let @" = l:saved_reg
-endfunction
+" See :help 'smartcase'
+" Assumes lowercase searches insensitive,
+" Uppercase searches sensitive
+" Will also make substitutions insensitive, so
+" set the I flag on a substitution to force the pattern to be case-sensitive. Like :%s/lowercasesearch/replaceString/gI
+set smartcase
 
-" Returns true if paste mode is enabled
-function! HasPaste()
-    if &paste
-        return 'PASTE MODE  '
-    en
-    return ''
-endfunction
+" Highlight search results
+set hlsearch
 
-" Don't close window, when deleting a buffer
-command! Bclose call <SID>BufcloseCloseIt()
-function! <SID>BufcloseCloseIt()
-   let l:currentBufNum = bufnr("%")
-   let l:alternateBufNum = bufnr("#")
+" Don't redraw while executing macros (good performance config)
+set lazyredraw
 
-   if buflisted(l:alternateBufNum)
-     buffer #
-   else
-     bnext
-   endif
+" For regular expressions turn magic on
+set magic
 
-   if bufnr("%") == l:currentBufNum
-     new
-   endif
+" Highlight matching parentheses when cursor is over one
+" Don't use showmatch, use DoMatchParen / NoMatchParen
+"set showmatch
 
-   if buflisted(l:currentBufNum)
-     execute("bdelete! ".l:currentBufNum)
-   endif
-endfunction
+" Change color of opposing highlighted cursor to avoid confusion
+hi MatchParen ctermbg=red guibg=lightblue
+
+" How many tenths of a second to blink when matching brackets
+set mat=2
+
+" No annoying sound on errors
+set noerrorbells
+set visualbell
+set t_vb=
+set tm=500
+
+" Add a bit extra margin to the left
+"set foldcolumn=1
+
+" Specify the behavior when switching between buffers
+try
+  set switchbuf=useopen,usetab,newtab
+  set stal=2
+catch
+endtry
+
+" Return to last edit position when opening files (You want this!)
+autocmd BufReadPost *
+   \ if line("'\"") > 0 && line("'\"") <= line("$") |
+   \   exe "normal! g`\"" |
+   \ endif
+
+" Save buffer list. Slows vim dramatically when in big project.
+" Disabled.
+" set viminfo^=%
+
+" New splits to appear to the right and to the bottom of the current
+set splitbelow
+set splitright
+
+" Vertically center buffer when entering insert mode
+autocmd InsertEnter * norm zz
+
 "}}}
 
 
@@ -192,12 +225,12 @@ map k gk
 " Scroll up/down 10 lines at a time shift+j,shift+k
 noremap <C-j> 10j
 noremap <C-k> 10k
-" 
+"
 " " Scroll ght/left 10 characters
 noremap <C-l> 10l
 noremap <C-h> 10h
 
-" Remap home and end to "ctrl+;" and ";" in addition to default "1" and "$" 
+" Remap home and end to "ctrl+;" and ";" in addition to default "1" and "$"
 noremap <leader>a ^
 noremap <leader>; $
 
@@ -251,8 +284,8 @@ map <C-t> :tabnew<CR>
 
 " Undo close tab using Shougo/Unite to get MRU file
 "function! UndoCloseTab()
-"  :tabnew  
-"  :tabm -1  
+"  :tabnew
+"  :tabm -1
 "  :Unite file_mru
 "  exe "normal! 2ggf/gf"
 "endfunction
@@ -351,7 +384,7 @@ if has("nvim")
 endif
 
 " Allow pasting from clipboard without autoindenting
-" If your ssh session has X11 forwarding enabled, and the remote terminal Vim has +xclipboard support, then you can use the 
+" If your ssh session has X11 forwarding enabled, and the remote terminal Vim has +xclipboard support, then you can use the
 " "+P keystroke to paste directly from the clipboard into Vim.
   nnoremap <leader>p :execute 'set noai' <bar> execute 'normal "+p' <bar> execute 'set ai' <CR>
   "Paste from clipboard before cursor
@@ -359,7 +392,7 @@ endif
 
 " Set the 'P' keybinding to paste from the 0 register. This allows you to repeastedly
 " paste the same value instead of subsequent pastes having the previously deleted value
-" Can't set this to 'p' because  
+" Can't set this to 'p' because
 " See also: https://stackoverflow.com/questions/18391573/how-make-vim-paste-to-always-paste-from-register-0-unless-its-specified
 " -- This is not the solution to the problem - which is not to put deleted text on the unnamed register. This will prevent you from yanking+pasting in visual mode
 "xnoremap <expr> p (v:register ==# '"' ? '"0' : '') . 'p'
@@ -394,171 +427,11 @@ cnoremap <C-S-l> <C-f>5l<C-c>
 
 " Select all
 function! SelectAll()
-  :mark l  
+  :mark l
   :exe 'normal ggVG$'
   ":%
 endfunction
 nnoremap <C-a> :call SelectAll()<CR>
-
-"}}}
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => VIM User Interface / UI
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" {{{
-
-set guifont=monospace\ 11 
-" See plugins.vim for color scheme selection
-
-" Set color column 
-set colorcolumn=80
-syntax on
-
-" Set vim to 256 color
-" set t_Co=256
-
-"{{{
-" Set vim to true color
-" You might have to force true color when using regular vim inside tmux as the
-" colorscheme can appear to be grayscale with "termguicolors" option enabled.
-"if (has("unix") && !has("macunix"))
-" set termguicolors
-"  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-"  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-"endif
-"}}}
-
-"let g:tokyonight_style = 'night' " available: night, storm
-"let g:tokyonight_enable_italic = 1
-"colorscheme tokyonight
-
-set background=dark
-"https://github.com/goatslacker/mango.vim | see plugins.vim
-colorscheme mango
-
-" Set relative line numbers except in insert mode
-" set relativenumber
-" autocmd InsertEnter * :set norelativenumber
-" autocmd InsertLeave * :set relativenumber
-
-" Text highlight of words that match that under the cursor
-" http://stackoverflow.com/questions/1551231/highlight-variable-under-cursor-in-vim-like-in-netbeans
-" :autocmd CursorMoved * exe printf('match IncSearch /\V\<%s\>/', escape(expand('<cword>'), '/\')) 
-
-" Avoid garbled characters in Chinese language windows OS
-let $LANG='en'
-set langmenu=en
-source $VIMRUNTIME/delmenu.vim
-source $VIMRUNTIME/menu.vim
-
-" Turn on the WiLd menu
-set wildmenu
-
-" Ignore compiled files
-set wildignore=*.o,*~,*.pyc,.build.*,.so,*.a
-if has("win16") || has("win32")
-    set wildignore+=*/.hg/*,*/.svn/*,*/.DS_Store
-else
-    set wildignore+=.hg\*,.svn\*
-endif
-
-"Show line numbers
-set number
-
-"Always show current position
-set ruler
-
-" Height of the command bar
-set cmdheight=2
-
-" A buffer becomes hidden when it is abandoned
-set hid
-
-" Configure backspace so it acts as it should act
-set backspace=eol,start,indent
-set whichwrap+=<,>,h,l
-
-" In many terminal emulators the mouse works just fine, thus enable it.
-if has('mouse')
-  set mouse=a
-endif
-
-" Ignore case when searching
-set ignorecase
-
-" See :help 'smartcase'
-" Assumes lowercase searches insensitive,
-" Uppercase searches sensitive
-" Will also make substitutions insensitive, so
-" set the I flag on a substitution to force the pattern to be case-sensitive. Like :%s/lowercasesearch/replaceString/gI
-set smartcase
-
-" Highlight search results
-set hlsearch
-
-" Don't redraw while executing macros (good performance config)
-set lazyredraw
-
-" For regular expressions turn magic on
-set magic
-
-" Highlight matching parentheses when cursor is over one
-" Don't use showmatch, use DoMatchParen / NoMatchParen
-"set showmatch
-
-" Change color of opposing highlighted cursor to avoid confusion
-hi MatchParen ctermbg=red guibg=lightblue
-
-" How many tenths of a second to blink when matching brackets
-set mat=2
-
-" No annoying sound on errors
-set noerrorbells
-set visualbell
-set t_vb=
-set tm=500
-
-" Add a bit extra margin to the left
-"set foldcolumn=1
-
-" Use Vim's persistent undo
-" Put plugins and dictionaries in this dir (also on Windows)
-let vimDir = '$HOME/.vim'
-let &runtimepath.=','.vimDir
-
-" Keep undo history across sessions by storing it in a file
-if has('persistent_undo')
-    call system('mkdir ~/.vim/undo')
-    let &undodir = '~/.vim/undo'
-    set undofile
-    set undolevels=1000         " How many undos
-    set undoreload=10000        " number of lines to save for undo
-endif
-
-" Specify the behavior when switching between buffers
-try
-  set switchbuf=useopen,usetab,newtab
-  set stal=2
-catch
-endtry
-
-" Return to last edit position when opening files (You want this!)
-autocmd BufReadPost *
-   \ if line("'\"") > 0 && line("'\"") <= line("$") |
-   \   exe "normal! g`\"" |
-   \ endif
-
-" Save buffer list. Slows vim dramatically when in big project. 
-" Disabled.
-" set viminfo^=%
-
-" New splits to appear to the right and to the bottom of the current
-set splitbelow
-set splitright
-
-" Vertically center buffer when entering insert mode
-autocmd InsertEnter * norm zz
 
 "}}}
 
@@ -604,7 +477,6 @@ set tabstop=2
 set softtabstop=2
 set shiftwidth=2
 
-
 " Global Code Folding Default
 setlocal foldmethod=indent
 setlocal foldlevel=2
@@ -619,13 +491,19 @@ setlocal foldlevel=2
 " https://vi.stackexchange.com/questions/3177/use-single-ftplugin-for-more-than-one-filetype
 " Easier to apply groupings here
 
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+autocmd BufNewFile,BufRead tsconfig.json,*.jsonc set filetype=jsonc
+autocmd BufNewFile,BufRead *.eslintrc,*.cjs set filetype=javaScript
+autocmd BufEnter *.nvim :setlocal filetype=vim
+
 " Language specific sytax highlighting
 autocmd FileType make setlocal ts=8 sts=8 sw=8 noexpandtab
 autocmd FileType python,yaml setlocal ts=2 sts=2 sw=2 expandtab
 
 " Setting foldmethod=marker disables folding
-autocmd Filetype vim,vimrc,uml
-  \ setlocal foldmethod=marker foldmarker={{{,}}} foldlevel=0
+autocmd Filetype nvim,vim,vimrc,uml
+  \ setlocal foldmethod=marker foldmarker=\"{{{,\"}}} foldlevel=1
+  \ ts=2 sts=2 sw=2 expandtab
 
 " Set foldlevel to the deepest level of hte file
 " See: https://superuser.com/questions/567352/how-can-i-set-foldlevelstart-in-vim-to-just-fold-nothing-initially-still-allowi
@@ -634,19 +512,10 @@ autocmd Filetype javascript,typescript
 
 " Use native codefolding for markdown
 " See: https://bitcrowd.dev/folding-sections-of-markdown-in-vim
-let g:markdown_folding=1 
+let g:markdown_folding=1
 autocmd Filetype markdown
   \ setlocal foldlevel=2
 
-"}}}
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Status Line
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"{{{
-" Always show the status line
-set laststatus=2
 "}}}
 
 
@@ -661,6 +530,97 @@ set noswapfile
 
 " Automatic <EOL> detection
 set fileformats=unix,dos,mac
+
+" Use Vim's persistent undo
+" Put plugins and dictionaries in this dir (also on Windows)
+let vimDir = '$HOME/.vim'
+let &runtimepath.=','.vimDir
+
+" Keep undo history across sessions by storing it in a file
+if has('persistent_undo')
+    if(!has('nvim'))
+        call system('mkdir ~/.vim/undo')
+        let &undodir = '~/.vim/undo'
+    else
+        call system('mkdir ~/.vim/undo-nvim')
+        let &undodir = '~/.vim/undo-nvim'
+    endif
+    set undofile
+    set undolevels=1000         " How many undos
+    set undoreload=10000        " number of lines to save for undo
+endif
+
+"}}}
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Status Line
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"{{{
+" Always show the status line
+set laststatus=2
+"}}}
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Helper Functions
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"{{{
+function! CmdLine(str)
+    exe "menu Foo.Bar :" . a:str
+    emenu Foo.Bar
+    unmenu Foo
+endfunction
+
+function! VisualSelection(direction, extra_filter) range
+    let l:saved_reg = @"
+    execute "normal! vgvy"
+
+    let l:pattern = escape(@", '\\/.*$^~[]')
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
+
+    if a:direction == 'b'
+        execute "normal ?" . l:pattern . "^M"
+    elseif a:direction == 'gv'
+        call CmdLine("Ack \"" . l:pattern . "\" " )
+    elseif a:direction == 'replace'
+        call CmdLine("%s" . '/'. l:pattern . '/')
+    elseif a:direction == 'f'
+        execute "normal /" . l:pattern . "^M"
+    endif
+
+    let @/ = l:pattern
+    let @" = l:saved_reg
+endfunction
+
+" Returns true if paste mode is enabled
+function! HasPaste()
+    if &paste
+        return 'PASTE MODE  '
+    en
+    return ''
+endfunction
+
+" Don't close window, when deleting a buffer
+command! Bclose call <SID>BufcloseCloseIt()
+function! <SID>BufcloseCloseIt()
+   let l:currentBufNum = bufnr("%")
+   let l:alternateBufNum = bufnr("#")
+
+   if buflisted(l:alternateBufNum)
+     buffer #
+   else
+     bnext
+   endif
+
+   if bufnr("%") == l:currentBufNum
+     new
+   endif
+
+   if buflisted(l:currentBufNum)
+     execute("bdelete! ".l:currentBufNum)
+   endif
+endfunction
 "}}}
 
 
@@ -669,4 +629,33 @@ set fileformats=unix,dos,mac
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "{{{
 " Remove the Windows ^M - when the encodings gets messed up noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
+" Never run in vi-compatible mode
+set nocompatible
+
+" Enable tab autocomplete of commands in command mode"
+set wildmode=longest,list,full
+
+" Set incremental search
+" Makes search act like search in modern browsers
+" This way you can :/findsomething to see all current matches
+" and then :%s//replace will use the last command (:/findsomething)
+" http://stackoverflow.com/questions/1276403/simple-vim-commands-you-wish-youd-known-earlier?page=1&tab=votes#tab-top
+set incsearch
+
+" Tell vim to split # between filename and anchor name, thus gF on filename will also hop to anchors in files
+set isfname-=#
+
+" Sets how many lines of history VIM has to remember
+set history=700
+
+" Set to auto read when a file is changed from the outside
+set autoread
+
+set showcmd
+
+
+" Tell Vim to look for a tags file in the directory of the current file as well as in the working directory, and up, and up, and…
+" alt-j
+set tags=./tags,tags;/
+
 "}}}
