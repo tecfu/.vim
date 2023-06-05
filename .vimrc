@@ -542,19 +542,24 @@ let vimDir = '$HOME/.vim'
 let &runtimepath.=','.vimDir
 
 " Keep undo history across sessions by storing it in a file
-if has('persistent_undo')
-    if(!has('nvim'))
-        call system('mkdir ~/.vim/undo')
-        let &undodir = '~/.vim/undo'
-    else
-        call system('mkdir ~/.vim/undo-nvim')
-        let &undodir = '~/.vim/undo-nvim'
-    endif
-    set undofile
-    set undolevels=1000         " How many undos
-    set undoreload=10000        " number of lines to save for undo
+if exists("+undofile")
+  " This, like swap and backup files, uses .vim-undo first, then ~/.vim/undo
+  " https://stackoverflow.com/a/9528322/3751385
+  let vimUndoDir='~/.vim/undo'
+  let nvimUndodir='~/.config/nvim/undo'
+  let undo_dirs = [vimUndoDir, nvimUndodir]
+  for dir in undo_dirs
+    :silent $"!mkdir -p {undo_dir} > /dev/null 2>&1"
+  endfor
+  if has('nvim')
+    set undodir=nvimUndoDir.'//'
+  else
+    set undodir=vimUndoDir.'//'
+  end
+  set undofile
+  set undolevels=1000         " How many undos
+  set undoreload=10000        " number of lines to save for undo
 endif
-
 "}}}
 
 
