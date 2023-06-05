@@ -545,17 +545,18 @@ let &runtimepath.=','.vimDir
 if exists("+undofile")
   " This, like swap and backup files, uses .vim-undo first, then ~/.vim/undo
   " https://stackoverflow.com/a/9528322/3751385
-  let vimUndoDir='~/.vim/undo'
-  let nvimUndodir='~/.config/nvim/undo'
-  let undo_dirs = [vimUndoDir, nvimUndodir]
+  let vimLocalUndoDir='./.vim-undo'
+  let nvimLocalUndoDir='./.nvim-undo'
+  let vimGlobalUndoDir='~/.vim/undo'
+  let nvimGlobalUndoDir='~/.config/nvim/undo'
+  let undo_dirs = has('nvim') ?
+    \ [vimLocalUndoDir, vimGlobalUndoDir] : [nvimLocalUndoDir, nvimGlobalUndoDir]
+
   for dir in undo_dirs
-    :silent $"!mkdir -p {undo_dir} > /dev/null 2>&1"
+    :silent $"!mkdir -p {dir} > /dev/null 2>&1"
+    set undodir+={dir}.'//'
   endfor
-  if has('nvim')
-    set undodir=nvimUndoDir.'//'
-  else
-    set undodir=vimUndoDir.'//'
-  end
+  
   set undofile
   set undolevels=1000         " How many undos
   set undoreload=10000        " number of lines to save for undo
