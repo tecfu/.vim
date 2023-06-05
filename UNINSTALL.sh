@@ -16,6 +16,7 @@
 SYMLINKS=()
 SYMLINKS+=("$HOME/dotfiles/.vim $HOME/.vim")
 SYMLINKS+=("$HOME/dotfiles/.vim/.vimrc $HOME/.vimrc")
+SYMLINKS+=("$HOME/dotfiles/.vim/.vimrc $HOME/config/nvim/init.vim")
 
 for i in "${SYMLINKS[@]}"; do
   #echo $i

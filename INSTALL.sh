@@ -34,6 +34,8 @@ if ! [ -x "$(which node)" ]; then
 fi
 
 # create config directories if they don't exists
+mkdir -p $HOME/.config/nvim
+
 cd $(dirname $0); __DIR__=$(pwd)
 SYMLINKS=()
 SYMLINKS+=("$__DIR__ $HOME/.vim")
@@ -64,6 +66,8 @@ fi
 # declare array
 SYMLINKS=()
 SYMLINKS+=("$__DIR__/.vimrc $HOME/.vimrc")
+SYMLINKS+=("$__DIR__/init.vim $HOME/.config/nvim/init.vim")
+
 #printf '%s\n' "${SYMLINKS[@]}"
 
 for i in "${SYMLINKS[@]}"; do
