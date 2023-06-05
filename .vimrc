@@ -538,25 +538,16 @@ set fileformats=unix,dos,mac
 
 " Use Vim's persistent undo
 " Put plugins and dictionaries in this dir (also on Windows)
-let vimDir = '$HOME/.vim'
-let &runtimepath.=','.vimDir
 
 " Keep undo history across sessions by storing it in a file
-if exists("+undofile")
-  " This, like swap and backup files, uses .vim-undo first, then ~/.vim/undo
-  " https://stackoverflow.com/a/9528322/3751385
-  let vimLocalUndoDir='./.vim-undo'
-  let nvimLocalUndoDir='./.nvim-undo'
-  let vimGlobalUndoDir='~/.vim/undo'
-  let nvimGlobalUndoDir='~/.config/nvim/undo'
-  let undo_dirs = has('nvim') ?
-    \ [vimLocalUndoDir, vimGlobalUndoDir] : [nvimLocalUndoDir, nvimGlobalUndoDir]
-
-  for dir in undo_dirs
-    :silent $"!mkdir -p {dir} > /dev/null 2>&1"
-    set undodir+={dir}.'//'
-  endfor
-  
+if has('persistent_undo')
+  let vimDir = has('nvim') ? '$HOME/.config/nvim' : '$HOME/.vim'
+  let &runtimepath.=','.vimDir
+  let myUndoDir = expand(vimDir . '/undo')
+  " Create dirs
+  call system('mkdir ' . vimDir)
+  call system('mkdir ' . myUndoDir)
+  let &undodir = myUndoDir
   set undofile
   set undolevels=1000         " How many undos
   set undoreload=10000        " number of lines to save for undo
