@@ -67,17 +67,22 @@ if (has("unix") && !has("macunix"))
 endif
 "}}}
 
-
-if !has('nvim')
+"linux vim
+if (!has('nvim') && !has("macunix"))
   "set termguicolors
   set background=dark
   "colorscheme mango
   colorscheme onedark
-else
+"linux nvim
+elseif !has("macunix")
   set termguicolors
   set background=dark
   "colorscheme tokyonight-night
   "colorscheme catppuccin
+  colorscheme onedark
+"mac vim/nvim'
+else
+  set background=dark
   colorscheme onedark
 endif
 
