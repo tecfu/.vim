@@ -2,8 +2,8 @@
 " => LANGUAGE SERVER
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-":lua require('myluamodule')
+" Will fail on first run because plugin  not installed.
+Plug 'nvim-treesitter/nvim-treesitter', {'do': 'TSUpdate'}
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -13,28 +13,20 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-nvim-lsp'
-Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
-Plug 'tzachar/cmp-tabnine', {'do': './install.sh'}
 
-Plug 'zbirenbaum/copilot.lua'
-Plug 'zbirenbaum/copilot-cmp'
-" For vsnip users.
-" Plug 'hrsh7th/cmp-vsnip'
-" Plug 'hrsh7th/vim-vsnip'
+" :MasonUpdate updates registry contents. Will fail on first run because plugin  not installed.
+" Plug 'williamboman/mason.nvim', {'do': 'MasonUpdate'}
+Plug 'williamboman/mason.nvim'
+Plug 'williamboman/mason-lspconfig.nvim'
+Plug 'neovim/nvim-lspconfig'
 
-" For luasnip users.
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
-
-" For ultisnips users.
-" Plug 'SirVer/ultisnips'
-" Plug 'quangnguyen30192/cmp-nvim-ultisnips'
-
-" For snippy users.
-" Plug 'dcampos/nvim-snippy'
-" Plug 'dcampos/cmp-snippy'
+Plug 'tzachar/cmp-tabnine', {'do': './install.sh'}
+Plug 'zbirenbaum/copilot.lua'
+Plug 'zbirenbaum/copilot-cmp'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => GENERAL
@@ -42,20 +34,38 @@ Plug 'saadparwaiz1/cmp_luasnip'
 
 Plug 'windwp/nvim-ts-autotag'
 
-" ```
-" - THEME
-" ```
-Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
-
 
 " ```
 " - THEME
 " ```
 Plug 'joshdick/onedark.vim'
+"Plug 'NLKNguyen/papercolor-theme'
+Plug 'tecfu/dracula.vim'
 
 
 function! VimrcSetupPlugins(timer)
 lua << EOF
+  require("mason").setup({
+      ui = {
+          icons = {
+              package_installed = "✓",
+              package_pending = "➜",
+              package_uninstalled = "✗"
+          }
+      }
+  })
+  
+  -- List of available servers: https://github.com/williamboman/mason-lspconfig.nvim
+  local lspservers = {
+    'rust_analyzer',
+    'clangd',
+    'pyright',
+    'tsserver',
+    'eslint',
+  }
+  require('mason-lspconfig').setup({
+    ensure_installed = lspservers
+  })
 
   require("copilot_cmp").setup()
 
@@ -92,6 +102,7 @@ lua << EOF
       enable = true,                -- Enable syntax highlighting
     },
   }
+  -- nvim-treesitter.install.update()
 
   --
   -- Set up cmp_nvim_lsp
@@ -102,7 +113,7 @@ lua << EOF
     -- following keymap is based on both lspconfig and lsp-zero.nvim:
     -- - https://github.com/neovim/nvim-lspconfig/blob/fd8f18fe819f1049d00de74817523f4823ba259a/README.md?plain=1#L79-L93
     -- - https://github.com/VonHeikemen/lsp-zero.nvim/blob/18a5887631187f3f7c408ce545fd12b8aeceba06/lua/lsp-zero/server.lua#L285-L298
-    vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help                        , bufopts)
+    -- vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help                        , bufopts)
     vim.keymap.set('n', 'K'    , vim.lsp.buf.hover                                 , bufopts)
     vim.keymap.set('n', 'gD'   , vim.lsp.buf.declaration                           , bufopts)
     vim.keymap.set('n', 'gd'   , vim.lsp.buf.definition                            , bufopts)
@@ -114,9 +125,10 @@ lua << EOF
     --m.keymap.set('n', TODO   , vim.lsp.buf.rename                                , bufopts) -- lspconfig: <space>rn; lsp-zero: <F2>
   end
   local lspconfig = require('lspconfig')
+
   -- enable both language-servers for both eslint and typescript:
-  -- for _, server in pairs({ 'eslint', 'tsserver', 'copilot', 'buffer', 'cmp_tabnine' }) do
-  for _, server in pairs({ 'eslint', 'tsserver', 'buffer' }) do
+  for _, server in pairs(lspservers) do
+  -- for _, server in pairs({ 'eslint', 'tsserver', 'buffer' }) do
     lspconfig.tsserver.setup({
       capabilities = lsp_capabilities,
       on_attach = lsp_on_attach,

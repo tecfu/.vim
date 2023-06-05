@@ -42,8 +42,8 @@ if !has("nvim")
   source ${HOME}/.vim/plugins.vim
   call plug#end()
 else
-  call plug#begin('~/.local/share/nvim/site/plugged')
-  "call plug#begin('~/.vim/plugins-nvim')
+  "call plug#begin('~/.local/share/nvim/site/plugged')
+  call plug#begin('~/.vim/plugins-nvim')
   source ${HOME}/.vim/common-plugins.vim
   source ${HOME}/.vim/plugins.nvim
   call plug#end()
@@ -67,23 +67,23 @@ if (has("unix") && !has("macunix"))
 endif
 "}}}
 
-"linux vim
-if (!has('nvim') && !has("macunix"))
+set background=dark
+"linux/max vim
+if !has('nvim')
   "set termguicolors
-  set background=dark
   "colorscheme mango
   colorscheme onedark
 "linux nvim
 elseif !has("macunix")
   set termguicolors
-  set background=dark
   "colorscheme tokyonight-night
   "colorscheme catppuccin
   colorscheme onedark
-"mac vim/nvim'
+"mac nvim
 else
-  set background=dark
-  colorscheme onedark
+  "colorscheme onedark
+  "colorscheme PaperColor
+  colorscheme dracula
 endif
 
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE = 0
