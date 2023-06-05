@@ -41,6 +41,7 @@ Plug 'windwp/nvim-ts-autotag'
 Plug 'joshdick/onedark.vim'
 "Plug 'NLKNguyen/papercolor-theme'
 Plug 'tecfu/dracula.vim'
+Plug 'folke/tokyonight.nvim'
 
 
 function! VimrcSetupPlugins(timer)

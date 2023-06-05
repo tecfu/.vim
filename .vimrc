@@ -76,9 +76,9 @@ if !has('nvim')
 "linux nvim
 elseif !has("macunix")
   set termguicolors
-  "colorscheme tokyonight-night
+  colorscheme tokyonight-night
   "colorscheme catppuccin
-  colorscheme onedark
+  "colorscheme onedark
 "mac nvim
 else
   "colorscheme onedark
