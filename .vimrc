@@ -38,14 +38,14 @@ endif
 
 if !has("nvim")
   call plug#begin('~/.vim/plugins-vim')
-  source ${HOME}/.vim/common-plugins.vim
-  source ${HOME}/.vim/plugins.vim
+  source ${HOME}/.vim/config-common.vim
+  source ${HOME}/.vim/config-vim.vim
   call plug#end()
 else
   "call plug#begin('~/.local/share/nvim/site/plugged')
-  call plug#begin('~/.vim/plugins-nvim')
-  source ${HOME}/.vim/common-plugins.vim
-  source ${HOME}/.vim/plugins.nvim
+  call plug#begin('~/.vim/config-nvim')
+  source ${HOME}/.vim/config-common.vim
+  source ${HOME}/.vim/config-nvim.vim
   call plug#end()
 endif
 
