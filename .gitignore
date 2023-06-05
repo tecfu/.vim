@@ -1,11 +1,10 @@
 package-lock.json
 
 node_modules
-plugins-nvim/*
-plugins-vim/*
+plugins-*
 bundle/*
 undo/*
-undo-nvim/*
 
 Session.vim
 .netrwhist
+.husky

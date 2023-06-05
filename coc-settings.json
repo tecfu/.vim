@@ -1,4 +1,5 @@
 {
+  "coc.preferences.formatOnSaveFiletypes": [],
   "diagnostic.virtualTextCurrentLineOnly": false,
   "diagnostic.messageTarget": "float",
   "diagnostic.virtualText": true,
@@ -10,7 +11,9 @@
   "diagnostic.warningSign": "⚑",
   "diagnostic.infoSign": "⚑",
   "diagnostic.hintSign": "⚑",
-  "coc.preferences.formatOnSaveFiletypes": [],
-  "tsserver.formatOnType": false,
+  "javascript.format.enable": true,
+  "prettier.enable": true,
+  "prettier.formatterPriority": 1,
+  "typescript.format.enable": true,
   "suggest.enablePreselect": false 
 }

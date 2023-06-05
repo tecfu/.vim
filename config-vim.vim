@@ -63,40 +63,27 @@ hi CocErrorFloat ctermfg=white guifg=white
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " coc extensions
 let g:coc_global_extensions = [
-  \ 'coc-rome',
-  \ 'coc-vimlsp',
   \ 'coc-eslint',
-  \ 'coc-markdownlint',
-  \ 'coc-tsserver',
+  \ 'coc-explorer',
   \ 'coc-html',
   \ 'coc-json',
+  \ 'coc-lua',
+  \ 'coc-markdownlint',
+  \ 'coc-marketplace',
   \ 'coc-pairs',
   \ 'coc-prettier',
+  \ 'coc-rome',
   \ 'coc-snippets',
   \ 'coc-tabnine',
+  \ 'coc-tsserver',
+  \ 'coc-vimlsp',
   \ 'https://github.com/andys8/vscode-jest-snippets',
-  \ 'coc-explorer',
-  \ 'coc-marketplace'
   \ ]
 
-" Eslint run autofixes hotkey
-function! LintFix()
-  if(&filetype == 'javaScript' || &filetype == 'typescript')
-    :CocCommand eslint.executeAutofix
-    :CocCommand prettier.forceFormatDocument
-    echom 'Ran ":CocCommand eslint.executeAutofix, prettier.forceFormatDocument"'
-  elseif(&filetype == 'markdown')
-    :CocCommand markdownlint.fixAll
-    echom 'Ran ":CocCommand markdownlint.fixAll"'
-  elseif(&filetype == 'python')
-    :%!python -m json.tool
-    echom 'Ran ":%!python -m json.tool"'
-  else
-    echom 'Filetype "'.&filetype.'" not mapped to an autofix command'
-  endif
-endfunction
-
-nnoremap <leader>l :call LintFix()<CR>
+augroup CustomCocMappings
+  autocmd!
+  autocmd FileType * nmap <silent> <leader> :call CocAction('format')<CR>
+augroup end
 
 " Fix diagnostics popup background color
 function! CheckLocationListOpen()

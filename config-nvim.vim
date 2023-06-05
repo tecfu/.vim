@@ -38,10 +38,10 @@ Plug 'windwp/nvim-ts-autotag'
 " ```
 " - THEME
 " ```
-Plug 'joshdick/onedark.vim'
+"Plug 'joshdick/onedark.vim'
 "Plug 'NLKNguyen/papercolor-theme'
 Plug 'tecfu/dracula.vim'
-Plug 'folke/tokyonight.nvim'
+"Plug 'folke/tokyonight.nvim'
 
 
 function! VimrcSetupPlugins(timer)
@@ -125,7 +125,12 @@ lua << EOF
     --m.keymap.set('n', TODO   , function() vim.lsp.buf.format { async = true } end, bufopts) -- lspconfig: <space>f
     --m.keymap.set('n', TODO   , vim.lsp.buf.rename                                , bufopts) -- lspconfig: <space>rn; lsp-zero: <F2>
   end
+
   local lspconfig = require('lspconfig')
+  local has_words_before = function()
+    local cursor = vim.api.nvim_win_get_cursor(0)
+    return not vim.api.nvim_get_current_line():sub(1, cursor[2]):match('^%s$')
+  end
 
   -- enable both language-servers for both eslint and typescript:
   -- for _, server in pairs(lspservers) do
@@ -140,6 +145,7 @@ lua << EOF
   --
   -- Set up nvim-cmp.
   --
+  local luasnip = require('luasnip')
   local CustomDown = function(fallback,cmp)
     if cmp.visible() then
       cmp.select_next_item()
@@ -177,14 +183,27 @@ lua << EOF
         ['<C-j>'] = cmp.mapping(function(fallback)
             CustomDown(fallback,cmp)  
         end, { 'i', 's' }),
-        ['<Tab>'] = cmp.mapping(function(fallback)
-            CustomDown(fallback,cmp)  
-        end, { 'i', 's' }),
         ['<C-k>'] = cmp.mapping(function(fallback)
             CustomUp(fallback, cmp)   
         end, { 'i', 's' }),
-        ['<S-Tab>'] = cmp.mapping(function(fallback)
-            CustomUp(fallback, cmp)   
+        ['<Tab>'] = cmp.mapping(function(fallback)
+            CustomDown(fallback,cmp)  
+        end, { 'i', 's' }),
+        ['<Tab>'] = cmp.mapping(function(fallback)
+          if vim.fn.pumvisible() == 1 then
+                vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-n>', true, true, true), 'n', true)
+              elseif has_words_before() and luasnip.expand_or_jumpable() then
+                vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-expand-or-jump', true, true, true), '')
+          else
+            fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
+          end
+        end, { 'i', 's' }),
+        ['<S-Tab>'] = cmp.mapping(function()
+          if vim.fn.pumvisible() == 1 then
+            vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-p>', true, true, true), 'n', true)
+          elseif luasnip.jumpable(-1) then
+            vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-jump-prev', true, true, true), '', true)
+          end
         end, { 'i', 's' }),
       }),
       -- optionally, add more completion-sources:
@@ -195,7 +214,7 @@ lua << EOF
         -- REQUIRED - you must specify a snippet engine
         expand = function(args)
           -- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-          require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+          luasnip.lsp_expand(args.body) -- For `luasnip` users.
           -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
           -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
         end,
