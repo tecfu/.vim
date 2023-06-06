@@ -354,6 +354,15 @@ Plug 'Shougo/vimproc', {
 
 Plug 'Shougo/vimshell'
 "{{{
+nnoremap <S-t> :VimShellPop<CR>
+nnoremap <C-Space> :VimShellPop<CR>
+inoremap <C-Space> <esc>:VimShellPop<CR>
+vnoremap <C-Space> :VimShellPop<CR>
+"linux
+nnoremap <C-@> :VimShellPop<CR>
+inoremap <C-@> <esc>:VimShellPop<CR>
+vnoremap <C-@> :VimShellPop<CR>
+
 let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
 let g:vimshell_prompt =  '$ '
 " open new splits actually in new tab
