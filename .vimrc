@@ -215,12 +215,13 @@ autocmd InsertEnter * norm zz
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "{{{
 
+"set notimeout ttimeout 
 " map leader to spacebar
-"nnoremap <Space> <nop>
-"let mapleader = " "
-"let g:mapleader = " "
+nnoremap <Space> <nop>
+let mapleader = " "
+let g:mapleader = " "
 map <space> <leader>
-imap <space><space> <C-O><leader>
+"imap <space><space> <C-O><leader>
 
 " Treat long lines as break lines (useful when moving around in them)
 map j gj
