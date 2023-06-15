@@ -82,7 +82,7 @@ let g:coc_global_extensions = [
 
 augroup CustomCocMappings
   autocmd!
-  autocmd FileType * nmap <silent> <leader> :call CocAction('format')<CR>
+  autocmd FileType * nmap <silent> <leader>l :call CocAction('format')<CR>
 augroup end
 
 " Fix diagnostics popup background color
