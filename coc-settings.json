@@ -12,8 +12,12 @@
   "diagnostic.infoSign": "⚑",
   "diagnostic.hintSign": "⚑",
   "javascript.format.enable": true,
+  "markdownlint.config": {
+    "default": true,
+    "line_length": false
+  },
   "prettier.enable": true,
   "prettier.formatterPriority": 1,
   "typescript.format.enable": true,
-  "suggest.enablePreselect": false 
+  "suggest.enablePreselect": false
 }
