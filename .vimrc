@@ -414,7 +414,6 @@ if executable(s:clip)
 endif
 
 inoremap <C-v> <C-O>:set noai<CR> <C-R>+ <C-O>:set ai<CR>
-inoremap <leader>p <C-O>:set noai<CR> <C-R>+ <C-O>:set ai<CR>
 
 " insert space in normal mode
 " nnoremap <leader>l a<space><esc>
