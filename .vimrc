@@ -516,11 +516,15 @@ autocmd Filetype javascript,typescript
   \ let &foldlevel=max(map(range(1, line('$')), 'foldlevel(v:val)'))
 
 " Use native codefolding for markdown
+" Enable spellchecking for markdown
 " See: https://bitcrowd.dev/folding-sections-of-markdown-in-vim
 let g:markdown_folding=1
 autocmd Filetype markdown
-  \ setlocal foldlevel=2
+  \ setlocal foldlevel=2 spell
 
+" Enable spellchecking for text files
+autocmd Filetype text
+  \ setlocal spell
 "}}}
 
 
