@@ -14,7 +14,8 @@
   "javascript.format.enable": true,
   "markdownlint.config": {
     "default": true,
-    "line_length": false
+    "line_length": false,
+    "no-bare-urls": false
   },
   "prettier.enable": true,
   "prettier.formatterPriority": 1,
