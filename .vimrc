@@ -522,9 +522,13 @@ let g:markdown_folding=1
 autocmd Filetype markdown
   \ setlocal foldlevel=2 spell
 
-" Enable spellchecking for text files
 autocmd Filetype text
   \ setlocal spell
+
+augroup no_filetype
+  autocmd!
+  autocmd BufEnter * if &filetype ==# '' | setlocal spell | endif
+augroup END
 "}}}
 
 
