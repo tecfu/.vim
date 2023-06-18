@@ -157,9 +157,6 @@ nnoremap <leader>w :ArgWrap<CR>
 "Plug 'fs111/pydoc.vim'
 
 
-Plug 'godlygeek/csapprox'
-
-
 Plug 'godlygeek/tabular'
 "{{{
 nmap <leader>a= :Tabularize /=<CR>

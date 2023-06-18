@@ -28,13 +28,6 @@ Plug 'tzachar/cmp-tabnine', {'do': './install.sh'}
 Plug 'zbirenbaum/copilot.lua'
 Plug 'zbirenbaum/copilot-cmp'
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => GENERAL
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-Plug 'windwp/nvim-ts-autotag'
-
-
 " ```
 " - THEME
 " ```
@@ -42,6 +35,13 @@ Plug 'windwp/nvim-ts-autotag'
 "Plug 'NLKNguyen/papercolor-theme'
 Plug 'tecfu/dracula.vim'
 Plug 'folke/tokyonight.nvim'
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => GENERAL
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+Plug 'windwp/nvim-ts-autotag'
 
 
 function! VimrcSetupPlugins(timer)

@@ -145,6 +145,12 @@ let g:autotagStartMethod='fork'
 
 
 " ```
+" - Makes Gvim only colorschems work in term / nc with neovim
+" ```
+Plug 'godlygeek/csapprox'
+
+
+" ```
 " - THEME
 " ```
 Plug 'joshdick/onedark.vim'
