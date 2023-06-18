@@ -43,6 +43,21 @@ let &packpath = &runtimepath
 source ~/.vimrc
 ```
 
+- Install pynvim
+
+*On Ubuntu and derivatives you will need to install python-distutils*
+
+Example for python3.11
+```sh
+sudo apt install python3.11-distutils
+```
+
+*You may need to install a new version of pip (>23.1.2) before installing pynvim*
+
+```sh
+pip3 install pynvim
+```
+
 ## Optional
 
 ### Configure your terminal to use a Powerline font
@@ -85,10 +100,10 @@ npm config set registry https://registry.npmjs.org
   onedark https://github.com/joshdick/onedark.vim
 
 - Neovim (Mac)
-  tokyonight https://github.com/folke/tokyonight.nvim
+  dracula https://github.com/dracula/vim
 
 - Neovim (Other)
-  dracula https://github.com/dracula/vim
+  tokyonight https://github.com/folke/tokyonight.nvim
 
 ## Plugin List
 
