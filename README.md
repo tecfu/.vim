@@ -1,8 +1,8 @@
 # vimrc
 
-## Installation for Vim > 8
+## Installation for Vim
 
-### Clone this repository and its submodules into your home directory.
+### Clone this repository and its submodules into your home directory
 
 ```sh
 git clone --recurse-submodules git://github.com/tecfu/.vim ~/.vim
@@ -11,31 +11,33 @@ git clone --recurse-submodules git://github.com/tecfu/.vim ~/.vim
 ### Run Install Script
 
 ```sh
-$ . ~/.vim/INSTALL.sh
+. ~/.vim/INSTALL.sh
 ```
 
-### coc.nvim 
+### coc.nvim
 
 > Why use coc.nvim?
-> 
+>
 > - coc-snippets allows you to use VSCode snippets with vim
-
-> coc.nvim tips
+> - coc.nvim language server ease of install
 
 - List all installed extensions
-```
+
+```vim
 :CocList extensions
 ```
 
 - Access coc-settings.json
-```
-:CocConfig 
+
+```vim
+:CocConfig
 ```
 
-## Additional Configuration Needed for NeoVim
+## Installation for Neovim
 
-Add the following to ~.conig/nvim/init.vim:
-```
+- Add the following to ~.config/nvim/init.vim:
+
+```sh
 set runtimepath^=~/.vim runtimepath+=~/.vim/after
 let &packpath = &runtimepath
 source ~/.vimrc
@@ -43,54 +45,62 @@ source ~/.vimrc
 
 ## Optional
 
+### Configure your terminal to use a Powerline font
 
-### Configure your terminal to use a powerline font
 - i.e.: Ubuntu Mono derivative Powerline
 
 ```sh
 sudo apt-get install fonts-powerline
 ```
 
-### [Optional/Recommended] Install Silver Searcher
+### Install Silver Searcher
 
 ```sh
-sudo -S apt-get install silversearcher-ag'
+sudo -S apt-get install silversearcher-ag
 ```
 
 ## Adding your own plugins
 
-- This .vimrc uses junegunn/vim-plug to manage plugin installation.  You can add
+- This .vimrc uses junegunn/vim-plug to manage plugin installation. You can add
   new plugins by appending them to the file: .vimrc.plugins .
 
 - Once you have added a new plugin, you can auto-generate a tabular brief
   summary in the README.md file by running a npm script that does this for you:
 
 ```sh
-$ npm run update-plugin-list
+npm run update-plugin-list
 ```
 
 ## Troubleshooting
 
 - CoC can't install plugins because npm registry is private
-    ```
-    npm config set registry https://registry.npmjs.org 
-    ```
+
+```sh
+npm config set registry https://registry.npmjs.org
+```
 
 ### Color Scheme
 
-mango   https://github.com/goatslacker/mango.vim
+- Vim
+  onedark https://github.com/joshdick/onedark.vim
 
+- Neovim (Mac)
+  tokyonight https://github.com/folke/tokyonight.nvim
 
-## Plugin List 
+- Neovim (Other)
+  dracula https://github.com/dracula/vim
+
+## Plugin List
 
 <!---PLUGINS-->
+
 | Name                              | Description                                                                                                                                                                           | Website                                             |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
 | airblade/vim-gitgutter            | A Vim plugin which shows git diff markers in the sign column and stages/previews/undoes hunks and partial hunks.                                                                      | http://github.com/airblade/vim-gitgutter            |
 | altercation/vim-colors-solarized  | precision colorscheme for the vim text editor                                                                                                                                         | http://github.com/altercation/vim-colors-solarized  |
 | ap/vim-css-color                  | Preview colours in source code while editing                                                                                                                                          | http://github.com/ap/vim-css-color                  |
 | bling/vim-airline                 | lean & mean status/tabline for vim that's light as air                                                                                                                                | http://github.com/bling/vim-airline                 |
-| bronson/vim-visual-star-search    | Start a * or # search from a visual block                                                                                                                                             | http://github.com/bronson/vim-visual-star-search    |
+| bronson/vim-visual-star-search    | Start a \* or # search from a visual block                                                                                                                                            | http://github.com/bronson/vim-visual-star-search    |
 | chr4/nginx.vim                    | Improved nginx vim plugin (incl. syntax highlighting)                                                                                                                                 | http://github.com/chr4/nginx.vim                    |
 | craigemery/vim-autotag            | Automatically discover and "properly" update ctags files on save                                                                                                                      | http://github.com/craigemery/vim-autotag            |
 | danro/rename.vim                  | Rename the current file in the vim buffer + retain relative path.                                                                                                                     | http://github.com/danro/rename.vim                  |
@@ -145,6 +155,7 @@ mango   https://github.com/goatslacker/mango.vim
 | tpope/vim-surround                | surround.vim: Delete/change/add parentheses/quotes/XML-tags/much more with ease                                                                                                       | http://github.com/tpope/vim-surround                |
 | tpope/vim-unimpaired              | unimpaired.vim: Pairs of handy bracket mappings                                                                                                                                       | http://github.com/tpope/vim-unimpaired              |
 | valloric/MatchTagAlways           | A Vim plugin that always highlights the enclosing html/xml tags                                                                                                                       | http://github.com/valloric/MatchTagAlways           |
+
 <!---ENDPLUGINS-->
 
 ### Notes
@@ -153,7 +164,6 @@ mango   https://github.com/goatslacker/mango.vim
 the [issues page](https://github.com/tecfu/.vim/issues/new) or to send me
 improvements through the [pull requestspage](https://github.com/tecfu/.vim/pulls).
 
-
-- If some characters dont render correctly
+- If some characters do not render correctly
 
 Make sure you install powerline fonts
