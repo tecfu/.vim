@@ -28,14 +28,6 @@ Plug 'tzachar/cmp-tabnine', {'do': './install.sh'}
 Plug 'zbirenbaum/copilot.lua'
 Plug 'zbirenbaum/copilot-cmp'
 
-" ```
-" - THEME
-" ```
-"Plug 'joshdick/onedark.vim'
-"Plug 'NLKNguyen/papercolor-theme'
-Plug 'tecfu/dracula.vim'
-Plug 'folke/tokyonight.nvim'
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => GENERAL

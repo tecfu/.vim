@@ -55,10 +55,9 @@ endfunction
 Plug 'airblade/vim-gitgutter'
 if has('nvim')
   let g:gitgutter_sign_removed_first_line = "^_"
-  let g:gitgutter_highlight_lines = 1
 endif
 "let g:gitgutter_highlight_linenrs = 1
-
+let g:gitgutter_highlight_lines = 1
 
 Plug 'ap/vim-css-color'
 
@@ -126,7 +125,6 @@ Plug 'bronson/vim-visual-star-search'
 Plug 'danro/rename.vim'
 
 
-"Cool, but conflicts with tabular
 Plug 'dhruvasagar/vim-table-mode'
 function! s:isAtStartOfLine(mapping)
  let text_before_cursor = getline('.')[0 : col('.')-1]
@@ -155,6 +153,15 @@ nmap f <Plug>(easymotion-s)
 " Turn on case insensitive feature
 let g:EasyMotion_smartcase = 1
 "}}}
+
+
+" ```
+" - THEME
+" ```
+"Plug 'ghifarit53/tokyonight-vim'
+Plug 'folke/tokyonight.nvim'
+let g:tokyonight_style = 'night' " available: night, storm
+let g:tokyonight_enable_italic = 1
 
 
 Plug 'FooSoft/vim-argwrap'

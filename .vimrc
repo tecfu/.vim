@@ -68,24 +68,8 @@ endif
 "}}}
 
 set background=dark
-"linux/max vim
-if !has('nvim')
-  set termguicolors
-  "colorscheme mango
-  "colorscheme onedark
-  colorscheme tokyonight
-"linux nvim
-elseif !has("macunix")
-  set termguicolors
-  colorscheme tokyonight-night
-  "colorscheme catppuccin
-  "colorscheme onedark
-"mac nvim
-else
-  "colorscheme onedark
-  "colorscheme PaperColor
-  colorscheme dracula
-endif
+set termguicolors
+colorscheme tokyonight
 
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE = 0
 
