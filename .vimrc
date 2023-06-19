@@ -43,7 +43,7 @@ if !has("nvim")
   call plug#end()
 else
   "call plug#begin('~/.local/share/nvim/site/plugged')
-  call plug#begin('~/.vim/config-nvim')
+  call plug#begin('~/.vim/plugins-nvim')
   source ${HOME}/.vim/config-nvim.vim
   source ${HOME}/.vim/config-common.vim
   call plug#end()
