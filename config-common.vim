@@ -168,10 +168,17 @@ nnoremap <leader>w :ArgWrap<CR>
 
 Plug 'godlygeek/tabular'
 "{{{
-nmap <leader>a= :Tabularize /=<CR>
-vmap <leader>a= :Tabularize /=<CR>
-nmap <leader>a: :Tabularize /:\zs<CR>
-vmap <leader>a: :Tabularize /:\zs<CR>
+function s:VIMRC_CustomTabular() range
+    call inputsave()
+    let l:char = input("Enter desired character to align by:")
+    call inputrestore()
+    exe ":Tabularize /" . l:char
+    echon "\r\r"
+    echon ''
+    echo "Tabularized by: ".l:char
+endfunction
+nnoremap <leader>tz :call <SID>VIMRC_CustomTabular()<CR><ESC>
+vnoremap <leader>tz :call <SID>VIMRC_CustomTabular()<CR><ESC>
 "}}}
 
 
@@ -196,11 +203,13 @@ Plug 'itchyny/calendar.vim'
 
 " Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 " Plug 'junegunn/fzf.vim'
-Plug 'junegunn/vim-easy-align'
+
+" Use tabular.vim instead, its does the same with less complexity
+"Plug 'junegunn/vim-easy-align'
 " Start interactive EasyAlign in visual mode (e.g. vipga)
-xmap ga <Plug>(EasyAlign)
+"xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
-nmap ga <Plug>(EasyAlign)
+"nmap ga <Plug>(EasyAlign)
 
 
 Plug 'jupyter-vim/jupyter-vim'
