@@ -58,9 +58,6 @@ if has('nvim')
 endif
 
 
-Plug 'altercation/vim-colors-solarized'
-
-
 Plug 'ap/vim-css-color'
 
 
