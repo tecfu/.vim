@@ -70,9 +70,10 @@ endif
 set background=dark
 "linux/max vim
 if !has('nvim')
-  "set termguicolors
+  set termguicolors
   "colorscheme mango
-  colorscheme onedark
+  "colorscheme onedark
+  colorscheme tokyonight
 "linux nvim
 elseif !has("macunix")
   set termguicolors

@@ -153,7 +153,9 @@ Plug 'godlygeek/csapprox'
 " ```
 " - THEME
 " ```
-Plug 'joshdick/onedark.vim'
+Plug 'ghifarit53/tokyonight-vim'
+let g:tokyonight_style = 'night' " available: night, storm
+let g:tokyonight_enable_italic = 1
 
 
 " ```
