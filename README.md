@@ -1,5 +1,11 @@
 # vimrc
 
+## Prerequisites
+
+- Mac: You will to want to use a terminal that supports Truecolor, like:
+    - Alacritty
+    - Extraterm
+
 ## Installation for Vim
 
 ### Clone this repository and its submodules into your home directory
@@ -45,14 +51,15 @@ source ~/.vimrc
 
 - Install pynvim
 
-*On Ubuntu and derivatives you will need to install python-distutils*
+_On Ubuntu and derivatives you will need to install python-distutils_
 
 Example for python3.11
+
 ```sh
 sudo apt install python3.11-distutils
 ```
 
-*You may need to install a new version of pip (>23.1.2) before installing pynvim*
+_You may need to install a new version of pip (>23.1.2) before installing pynvim_
 
 ```sh
 pip3 install pynvim

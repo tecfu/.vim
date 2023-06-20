@@ -33,6 +33,13 @@ Plug 'zbirenbaum/copilot-cmp'
 " => GENERAL
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+
+" ```
+" - THEME
+" ```
+Plug 'folke/tokyonight.nvim'
+
+
 Plug 'windwp/nvim-ts-autotag'
 
 

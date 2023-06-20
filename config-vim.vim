@@ -150,6 +150,8 @@ let g:autotagStartMethod='fork'
 Plug 'godlygeek/csapprox'
 
 
+Plug 'joshdick/onedark.vim'
+
 " ```
 " - SYNTAX: Typescript
 " ```
@@ -208,11 +210,6 @@ Plug 'stephpy/vim-yaml'
 " ```
 " - THEME
 " ```
-"https://github.com/goatslacker/mango.vim | see plugins.vim
-Plug 'tecfu/mango.vim'
-
-
-" ```
-" - THEME
-" ```
 Plug 'tecfu/tokyonight-vim'
+let g:tokyonight_style = 'night'
+let g:tokyonight_enable_italic = 1

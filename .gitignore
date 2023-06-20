@@ -8,3 +8,4 @@ undo/*
 Session.vim
 .netrwhist
 .husky
+.DS_Store

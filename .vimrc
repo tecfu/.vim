@@ -65,11 +65,22 @@ if (has("unix") && !has("macunix"))
   let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
   let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 endif
-"}}}
+""}}}
 
 set background=dark
-set termguicolors
-colorscheme tokyonight
+" built-in Terminal.app on Mac does not support 24-bit colors
+" https://github.com/neovim/neovim/issues/11327#issuecomment-710761229
+if $TERM_PROGRAM != "Apple_Terminal" && exists('+termguicolors')
+  set termguicolors
+  if has("nvim")
+    colorscheme tokyonight-night
+  else
+    colorscheme tokyonight
+  endif
+else
+  echom "This terminal emulator does not support termguicolors, fallback theme used"
+  colorscheme onedark
+endif
 
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE = 0
 
@@ -79,9 +90,6 @@ let $NVIM_TUI_ENABLE_CURSOR_SHAPE = 0
 " Set color column
 set colorcolumn=80
 syntax on
-
-" Set vim to 256 color
-" set t_Co=256
 
 " Set relative line numbers except in insert mode
 " set relativenumber
@@ -200,7 +208,7 @@ autocmd InsertEnter * norm zz
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "{{{
 
-"set notimeout ttimeout 
+"set notimeout ttimeout
 " map leader to spacebar
 "nnoremap <Space> <nop>
 "let mapleader = " "

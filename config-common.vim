@@ -55,9 +55,9 @@ endfunction
 Plug 'airblade/vim-gitgutter'
 if has('nvim')
   let g:gitgutter_sign_removed_first_line = "^_"
+  let g:gitgutter_highlight_lines = 1
 endif
 "let g:gitgutter_highlight_linenrs = 1
-let g:gitgutter_highlight_lines = 1
 
 Plug 'ap/vim-css-color'
 
@@ -155,15 +155,6 @@ let g:EasyMotion_smartcase = 1
 "}}}
 
 
-" ```
-" - THEME
-" ```
-"Plug 'ghifarit53/tokyonight-vim'
-Plug 'folke/tokyonight.nvim'
-let g:tokyonight_style = 'night' " available: night, storm
-let g:tokyonight_enable_italic = 1
-
-
 Plug 'FooSoft/vim-argwrap'
 nnoremap <leader>w :ArgWrap<CR>
 
@@ -205,6 +196,10 @@ Plug 'inkarkat/vim-ArgsAndMore'
 
 
 Plug 'itchyny/calendar.vim'
+
+
+"Fallback theme
+Plug 'joshdick/onedark.vim'
 
 
 " Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
