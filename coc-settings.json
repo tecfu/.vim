@@ -15,7 +15,8 @@
   "markdownlint.config": {
     "default": true,
     "line_length": false,
-    "no-bare-urls": false
+    "no-bare-urls": false,
+    "fenced-code-language": false
   },
   "prettier.enable": true,
   "prettier.formatterPriority": 1,
