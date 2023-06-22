@@ -62,6 +62,11 @@ endif
 Plug 'ap/vim-css-color'
 
 
+" Gitlens-like git blame 
+Plug 'APZelos/blamer.nvim'
+let g:blamer_enabled = 1
+
+
 Plug 'bling/vim-airline'
 "{{{
 "let g:airline_theme='colors/mango.vim'
