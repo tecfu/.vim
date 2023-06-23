@@ -113,8 +113,8 @@ lua << EOF
     -- following keymap is based on both lspconfig and lsp-zero.nvim:
     -- - https://github.com/neovim/nvim-lspconfig/blob/fd8f18fe819f1049d00de74817523f4823ba259a/README.md?plain=1#L79-L93
     -- - https://github.com/VonHeikemen/lsp-zero.nvim/blob/18a5887631187f3f7c408ce545fd12b8aeceba06/lua/lsp-zero/server.lua#L285-L298
-    -- vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help                        , bufopts)
-    vim.keymap.set('n', 'K'    , vim.lsp.buf.hover                                 , bufopts)
+    vim.keymap.set('n', 'gh'   , vim.lsp.buf.signature_help                        , bufopts)
+    vim.keymap.set('n', 'gv'   , vim.lsp.buf.hover                                 , bufopts)
     vim.keymap.set('n', 'gD'   , vim.lsp.buf.declaration                           , bufopts)
     vim.keymap.set('n', 'gd'   , vim.lsp.buf.definition                            , bufopts)
     vim.keymap.set('n', 'gi'   , vim.lsp.buf.implementation                        , bufopts)
@@ -185,25 +185,27 @@ lua << EOF
         ['<C-k>'] = cmp.mapping(function(fallback)
             CustomUp(fallback, cmp)   
         end, { 'i', 's' }),
-        ['<Tab>'] = cmp.mapping(function(fallback)
-            CustomDown(fallback,cmp)  
-        end, { 'i', 's' }),
-        ['<Tab>'] = cmp.mapping(function(fallback)
-          if vim.fn.pumvisible() == 1 then
-                vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-n>', true, true, true), 'n', true)
-              elseif has_words_before() and luasnip.expand_or_jumpable() then
-                vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-expand-or-jump', true, true, true), '')
-          else
-            fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
-          end
-        end, { 'i', 's' }),
-        ['<S-Tab>'] = cmp.mapping(function()
-          if vim.fn.pumvisible() == 1 then
-            vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-p>', true, true, true), 'n', true)
-          elseif luasnip.jumpable(-1) then
-            vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-jump-prev', true, true, true), '', true)
-          end
-        end, { 'i', 's' }),
+        ['<Tab>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    
+  --    ['<Tab>'] = cmp.mapping(function(fallback)
+  --        CustomDown(fallback,cmp)  
+  --    end, { 'i', 's' }),
+  --      ['<Tab>'] = cmp.mapping(function(fallback)
+  --        if vim.fn.pumvisible() == 1 then
+  --              vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-n>', true, true, true), 'n', true)
+  --            elseif has_words_before() and luasnip.expand_or_jumpable() then
+  --              vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-expand-or-jump', true, true, true), '')
+  --        else
+  --          fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
+  --        end
+  --      end, { 'i', 's' }),
+  --      ['<S-Tab>'] = cmp.mapping(function()
+  --        if vim.fn.pumvisible() == 1 then
+  --          vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-p>', true, true, true), 'n', true)
+  --        elseif luasnip.jumpable(-1) then
+  --          vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-jump-prev', true, true, true), '', true)
+  --        end
+  --      end, { 'i', 's' }),
       }),
       -- optionally, add more completion-sources:
       -- sources = cmp.config.sources({
@@ -239,13 +241,13 @@ lua << EOF
   })
 
   -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-  cmp.setup.cmdline(':', {
-    mapping = cmp.mapping.preset.cmdline(),
-    sources = cmp.config.sources({
-      { name = 'path' },
-      { name = 'cmdline' }
-    })
-  })
+  -- cmp.setup.cmdline(':', {
+  --   mapping = cmp.mapping.preset.cmdline(),
+  --   sources = cmp.config.sources({
+  --     { name = 'path' },
+  --     { name = 'cmdline' }
+  --   })
+  -- })
 
 EOF
 endfunction
