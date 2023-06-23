@@ -73,7 +73,10 @@ set background=dark
 if $TERM_PROGRAM != "Apple_Terminal" && exists('+termguicolors')
   set termguicolors
   if has("nvim")
-    colorscheme tokyonight-night
+    colorscheme tokyonight-storm
+    " TabLine too dark with this color scheme
+    "hi TabLine    gui=NONE guibg=#3e4452 guifg=#abb2bf    cterm=NONE term=NONE ctermfg=black ctermbg=white
+    hi TabLine    gui=NONE guibg=#3b3d57 guifg=#a9b1d6   cterm=NONE term=NONE ctermfg=black ctermbg=white
   else
     colorscheme tokyonight
   endif
