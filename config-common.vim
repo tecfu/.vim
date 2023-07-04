@@ -192,7 +192,7 @@ vnoremap <leader>tz :call <SID>VIMRC_CustomTabular()<CR><ESC>
 "Plug 'heavenshell/vim-jsdoc'
 
 
-Plug 'idanarye/vim-merginal'
+Plug 'tecfu/vim-merginal'
 autocmd FileType merginal nnoremap <buffer> <Enter> :MerginalCheckout<CR>
 nnoremap <leader>b :Merginal<CR>
 
