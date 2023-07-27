@@ -161,6 +161,9 @@ let g:EasyMotion_smartcase = 1
 "}}}
 
 
+" ```
+" - FORMATTING: Wrap parameter arguments
+" ```
 Plug 'FooSoft/vim-argwrap'
 nnoremap <leader>w :ArgWrap<CR>
 
@@ -169,6 +172,9 @@ nnoremap <leader>w :ArgWrap<CR>
 "Plug 'fs111/pydoc.vim'
 
 
+" ```
+" - FORMATTING: Create a table
+" ```
 Plug 'godlygeek/tabular'
 "{{{
 function s:VIMRC_CustomTabular() range
@@ -192,19 +198,30 @@ vnoremap <leader>tz :call <SID>VIMRC_CustomTabular()<CR><ESC>
 
 "Plug 'heavenshell/vim-jsdoc'
 
-
+" ```
+" - GIT: Switch branches quickly (fugitive plugin) run :Merginal
+" ```
 Plug 'tecfu/vim-merginal'
 autocmd FileType merginal nnoremap <buffer> <Enter> :MerginalCheckout<CR>
 nnoremap <leader>b :Merginal<CR>
 
 
+
+" ```
+" - UTILITY COMMAND: Argdo / Windo /
+" ```
 Plug 'inkarkat/vim-ArgsAndMore'
 
 
+" ```
+" - WIDGET: Calendar
+" ```
 Plug 'itchyny/calendar.vim'
 
 
-"Fallback theme
+" ```
+" - THEME
+" ```
 Plug 'joshdick/onedark.vim'
 
 
@@ -273,6 +290,9 @@ let g:vim_markdown_folding_style_pythonic = 1
 "}}}
 
 
+" ```
+" - Format: js
+" ```
 Plug 'maksimr/vim-jsbeautify'
 
 
@@ -338,13 +358,13 @@ nnoremap <leader>u :UndotreeToggle<cr>
 
 
 " ```
-" Git viewer
+" - GIT: Show branch convergence/divergence, depends on fugitive
 " ```
 Plug 'rbong/vim-flog'
 
 
 " ```
-" - Edit browswer text fields with vim
+" - WIDGET: Open Vim from Browser
 " ```
 " Grouped together as vim-hug-neovim-rpc and nvim-yarp are deps of vim-ghost
 Plug 'roxma/vim-hug-neovim-rpc'
@@ -372,7 +392,7 @@ Plug 'scrooloose/vim-slumlord'
 
 
 " ```
-" VimShell terminal plugin: Allows vim motions, normal mode (copy/paste)
+" - WIDGET: Terminal/ Vimshell
 " ```
 Plug 'Shougo/vimproc', {
     \ 'do' : 'make'
