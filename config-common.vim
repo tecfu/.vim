@@ -168,8 +168,10 @@ Plug 'FooSoft/vim-argwrap'
 nnoremap <leader>w :ArgWrap<CR>
 
 
-"Doesn't support custom keymaps, interferes with <S-k>
-"Plug 'fs111/pydoc.vim'
+" ```
+" - FORMATTING: Create a table
+" ```
+Plug 'github/copilot.vim'
 
 
 " ```
@@ -197,14 +199,6 @@ vnoremap <leader>tz :call <SID>VIMRC_CustomTabular()<CR><ESC>
 
 
 "Plug 'heavenshell/vim-jsdoc'
-
-" ```
-" - GIT: Switch branches quickly (fugitive plugin) run :Merginal
-" ```
-Plug 'tecfu/vim-merginal'
-autocmd FileType merginal nnoremap <buffer> <Enter> :MerginalCheckout<CR>
-nnoremap <leader>b :Merginal<CR>
-
 
 
 " ```
@@ -300,11 +294,6 @@ Plug 'maksimr/vim-jsbeautify'
 
 
 Plug 'mattn/emmet-vim'
-
-
-" Move highlighted text
-Plug 'tecfu/vim-move'
-let g:move_key_modifier_visualmode = 'S'
 
 
 Plug 'mechatroner/rainbow_csv'
@@ -478,6 +467,20 @@ Plug 'tecfu/vimshell-inline-history.vim', { 'depends' : [ 'Shougo/vimshell.vim' 
 
 " YankRing interferes with remapping default register for `p` in visual mode
 Plug 'tecfu/YankRing.vim'
+
+
+
+" ```
+" - GIT: Switch branches quickly (fugitive plugin) run :Merginal
+" ```
+Plug 'tecfu/vim-merginal'
+autocmd FileType merginal nnoremap <buffer> <Enter> :MerginalCheckout<CR>
+nnoremap <leader>b :Merginal<CR>
+
+
+" Move highlighted text
+Plug 'tecfu/vim-move'
+let g:move_key_modifier_visualmode = 'S'
 
 
 "<c-p>,<c-n> here cause conflict with yank plugins (YankRing)

@@ -74,12 +74,13 @@ let g:coc_global_extensions = [
   \ 'coc-prettier',
   \ 'coc-rome',
   \ 'coc-snippets',
-  \ 'coc-tabnine',
   \ 'coc-tsserver',
   \ 'coc-vimlsp',
   \ 'https://github.com/andys8/vscode-jest-snippets',
+  \ 'coc-copilot'
   \ ]
 
+  "\ 'coc-tabnine',
 augroup CustomCocMappings
   autocmd!
   autocmd FileType * nmap <silent> <leader>l :call CocAction('format')<CR>
