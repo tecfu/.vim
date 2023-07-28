@@ -32,6 +32,17 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
 Plug 'tzachar/cmp-tabnine', {'do': './install.sh'}
+
+Plug 'nvim-lua/plenary.nvim'
+
+
+Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.2' }
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+
+
 Plug 'zbirenbaum/copilot.lua'
 Plug 'zbirenbaum/copilot-cmp'
 
@@ -128,7 +139,7 @@ lua << EOF
     vim.keymap.set('n', 'go'   , vim.lsp.buf.type_definition                       , bufopts)
     vim.keymap.set('n', 'gr'   , vim.lsp.buf.references                            , bufopts)
     --m.keymap.set('n', TODO   , vim.lsp.buf.code_action                           , bufopts) -- lspconfig: <space>ca; lsp-zero: <F4>
-    --m.keymap.set('n', TODO   , function() vim.lsp.buf.format { async = true } end, bufopts) -- lspconfig: <space>f
+    vim.keymap.set('n', '<space>l', function() vim.lsp.buf.format { async = true } end, bufopts) -- lspconfig: <space>l
     --m.keymap.set('n', TODO   , vim.lsp.buf.rename                                , bufopts) -- lspconfig: <space>rn; lsp-zero: <F2>
   end
 
