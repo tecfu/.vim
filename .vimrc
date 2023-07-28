@@ -665,3 +665,13 @@ set showcmd
 set tags=./tags,tags;/
 
 "}}}
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Sytem Specific Overrides (i.e. 4 spaces for tabs at work)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"{{{
+if !empty(glob('~/.config-overrides.vim'))
+  source ~/.config-overrides.vim
+endif
+"}}{
