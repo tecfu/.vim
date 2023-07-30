@@ -627,6 +627,10 @@ function! <SID>BufcloseCloseIt()
      execute("bdelete! ".l:currentBufNum)
    endif
 endfunction
+
+" Stringify JSON 
+command! -range=% StringifyJSON <line1>,<line2>!jq -r tostring | sed 's/\"/\\"/g' | echo "\"$(cat)\""
+vnoremap <silent> <leader>s :!jq -r tostring \| sed 's/"/\\"/g' \| echo "\"$(cat)\""<CR>
 "}}}
 
 
