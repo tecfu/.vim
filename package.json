@@ -16,7 +16,7 @@
   },
   "homepage": "https://github.com/tecfu/.vim#readme",
   "devDependencies": {
-    "follow-redirects": "0.0.3",
+    "follow-redirects": "1.15.4",
     "husky": "^8.0.3",
     "markdown-table": "^0.4.0",
     "orgy": "^2.0.3"
