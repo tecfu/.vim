@@ -171,7 +171,7 @@ nnoremap <leader>w :ArgWrap<CR>
 " ```
 " - FORMATTING: Create a table
 " ```
-Plug 'github/copilot.vim'
+"Plug 'github/copilot.vim'
 
 
 " ```

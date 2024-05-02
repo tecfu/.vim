@@ -72,6 +72,7 @@ let g:coc_global_extensions = [
   \ 'coc-marketplace',
   \ 'coc-pairs',
   \ 'coc-prettier',
+  \ 'coc-pyright',
   \ 'coc-rome',
   \ 'coc-snippets',
   \ 'coc-tsserver',
