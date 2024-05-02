@@ -1,6 +1,9 @@
 #!/bin/bash
 
-echo "Starting vim configuration install"
+PRODUCT="VIM"
+
+OPENING_MESSAGE="STARTING $PRODUCT CONFIGURATION INSTALL"
+echo -e "\033[0;32m$OPENING_MESSAGE\033[0m"
 
 ###
 #   RUN THIS WITH /bin/bash NOT /bin/sh
@@ -111,4 +114,9 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 
 vim +PlugInstall +qall
 echo VIM installation finished. If no errors, assume success.
-echo BE SURE TO INSTALL POWERLINE FONTS: sudo apt-get install fonts-powerline
+
+WARN_MESSAGE="WARN: BE SURE TO INSTALL POWERLINE FONTS: sudo apt-get install fonts-powerline"
+echo -e "\033[0;33m$WARN_MESSAGE\033[0m"
+
+CLOSING_MESSAGE="ENDING $PRODUCT CONFIGURATION INSTALL"
+echo -e "\033[0;32m$CLOSING_MESSAGE\033[0m"
