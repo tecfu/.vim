@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Starting vim configuration install"
+
 ###
 #   RUN THIS WITH /bin/bash NOT /bin/sh
 #   /bin/sh MAPS TO INCOMPATIBLE TERM EMULATORS 
@@ -30,10 +32,14 @@ fi
 ### Check for node
 if ! [ -x "$(which node)" ]; then
   echo "ERROR! You must install \"nodejs\" prior to installing due to coc-vim."
+  # echo "Attempting to install nodejs via nvm..."
+  # curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+  # export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+  # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
   exit
 fi
 
-# create config directories if they don't exists
+# create nvim config directory they doesn't exist
 mkdir -p $HOME/.config/nvim
 
 cd $(dirname $0); __DIR__=$(pwd)
@@ -105,4 +111,4 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 
 vim +PlugInstall +qall
 echo VIM installation finished. If no errors, assume success.
-echo MAKE SURE TO INSTAL POWERLINE FONTS VIA: sudo apt-get install fonts-powerline
+echo BE SURE TO INSTALL POWERLINE FONTS: sudo apt-get install fonts-powerline
