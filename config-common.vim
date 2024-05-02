@@ -347,9 +347,13 @@ nnoremap <leader>u :UndotreeToggle<cr>
 
 
 " ```
-" - GIT: Show branch convergence/divergence, depends on fugitive
+" - GIT: Show branch convergence/divergence, 
+"   depends on fugitive
+"   depends on vim > 9.1
+"   disabled due to dependencies
+"
 " ```
-Plug 'rbong/vim-flog'
+" Plug 'rbong/vim-flog'
 
 
 " ```
@@ -559,14 +563,15 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 
 
-Plug 'valloric/MatchTagAlways'
-let g:mta_filetypes = {
-    \ 'html' : 1,
-    \ 'jinja' : 1,
-    \ 'xhtml' : 1,
-    \ 'xml' : 1,
-    \ 'vue' : 1
-    \}
-nnoremap <leader>t :MtaJumpToOtherTag<cr>
-highlight MatchTag ctermfg=black ctermbg=lightgreen
+" Doesn't work in Vim8
+" Plug 'valloric/MatchTagAlways'
+" let g:mta_filetypes = {
+"     \ 'html' : 1,
+"     \ 'jinja' : 1,
+"     \ 'xhtml' : 1,
+"     \ 'xml' : 1,
+"     \ 'vue' : 1
+"     \}
+" nnoremap <leader>t :MtaJumpToOtherTag<cr>
+" highlight MatchTag ctermfg=black ctermbg=lightgreen
 
