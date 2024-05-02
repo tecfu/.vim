@@ -9,27 +9,29 @@
 #    $ /bin/bash INSTALL.sh
 #
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+
 ### Check for make
 if ! [ -x "$(which make)" ]; then
-  echo "ERROR! You must install \"make\" prior to installing."
+  echo "ERROR: You must install \"make\" prior to installing."
   exit 1
 fi
 
 ### Check for gcc
 if ! [ -x "$(which gcc)" ]; then
-  echo "ERROR! You must install \"gcc\" prior to installing."
+  echo "ERROR: You must install \"gcc\" prior to installing."
   exit 1
 fi
 
 ### Check for curl
 if ! [ -x "$(which curl)" ]; then
-  echo "ERROR! You must install \"curl\" prior to installing."
+  echo "ERROR: You must install \"curl\" prior to installing."
   exit 1
 fi
 
 ### Check for node
 if ! [ -x "$(which node)" ]; then
-  echo "ERROR! You must install \"nodejs\" prior to installing due to coc-vim."
+  echo "ERROR: You must install \"nodejs\" prior to installing due to coc-vim."
   # echo "Attempting to install nodejs via nvm..."
   # curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
   # export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
@@ -40,11 +42,10 @@ fi
 # create nvim config directory they doesn't exist
 mkdir -p $HOME/.config/nvim
 
-cd $(dirname $0); __DIR__=$(pwd)
 SYMLINKS=()
-SYMLINKS+=("$__DIR__ $HOME/.vim")
+SYMLINKS+=("$DIR $HOME/.vim")
 
-if [[ "$__DIR__" != "$HOME/.vim" ]]; then
+if [[ "$DIR" != "$HOME/.vim" ]]; then
   for i in "${SYMLINKS[@]}"; do
     # split each command at the space to get config path
     IFS=" " read -ra OUT <<< "$i"
@@ -64,14 +65,12 @@ fi
 
 # Install Powerline Fonts
 #git clone http://www.github.com/tecfu/fonts
-#$__DIR__/fonts/install.sh # not working in ubuntu 20
+#$DIR/fonts/install.sh # not working in ubuntu 20
 
 # declare array
 SYMLINKS=()
-SYMLINKS+=("$__DIR__/.vimrc $HOME/.vimrc")
-SYMLINKS+=("$__DIR__/init.vim $HOME/.config/nvim/init.vim")
-
-#printf '%s\n' "${SYMLINKS[@]}"
+SYMLINKS+=("$DIR/.vimrc $HOME/.vimrc")
+SYMLINKS+=("$DIR/init.vim $HOME/.config/nvim/init.vim")
 
 for i in "${SYMLINKS[@]}"; do
   #echo $i
@@ -81,14 +80,17 @@ for i in "${SYMLINKS[@]}"; do
   
   #no config, create symlink to one
   if [ ! -f "${OUT[1]}" ] && [ ! -d "${OUT[1]}" ] && [ ! -L "${OUT[1]}" ]; then
-    echo "${OUT[1]} not found, creating configs..."
+    echo "SYMLINKING: ln -s $i"
     ln -s $i 
   
   #config exsts; save if doesn't point to correct target
   elif [ "$(readlink -- "${OUT[1]}")" != "${OUT[0]}" ]; then
-    echo "MOVING ${OUT[1]} to ${OUT[1]}.saved"
+    echo "MV EXISTING: ${OUT[1]} to ${OUT[1]}.saved"
     mv "${OUT[1]}" "${OUT[1]}.saved"
+    echo "SYMLINKING: ln -s $i"
     ln -s $i
+  else
+    echo "ALREADY SYMLINKED: $i"
   fi
 done
 
@@ -106,10 +108,12 @@ echo "INFO: Download vim-plug package manager to ~/.vim/autoload/plug.vim"
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
+vim +PlugInstall +qall
+
 WARN_MESSAGES=()
 
 WARN_MESSAGES+=("WARN: FOR VIM BE SURE TO INSTALL POWERLINE FONTS: sudo apt-get install fonts-powerline")
-WARN_MESSAGES+=("WARN: FOR VIM BE SURE TO RUN :PlugInstall")
+#WARN_MESSAGES+=("WARN: FOR VIM BE SURE TO RUN :PlugInstall")
 
 for MESSAGE in "${WARN_MESSAGES[@]}"; do
   echo -e "\033[0;33m$MESSAGE\033[0m"
