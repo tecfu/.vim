@@ -1,10 +1,5 @@
 #!/bin/bash
 
-PRODUCT="VIM"
-
-OPENING_MESSAGE="STARTING $PRODUCT CONFIGURATION INSTALL"
-echo -e "\033[0;32m$OPENING_MESSAGE\033[0m"
-
 ###
 #   RUN THIS WITH /bin/bash NOT /bin/sh
 #   /bin/sh MAPS TO INCOMPATIBLE TERM EMULATORS 
@@ -17,19 +12,19 @@ echo -e "\033[0;32m$OPENING_MESSAGE\033[0m"
 ### Check for make
 if ! [ -x "$(which make)" ]; then
   echo "ERROR! You must install \"make\" prior to installing."
-  exit
+  exit 1
 fi
 
 ### Check for gcc
 if ! [ -x "$(which gcc)" ]; then
   echo "ERROR! You must install \"gcc\" prior to installing."
-  exit
+  exit 1
 fi
 
 ### Check for curl
 if ! [ -x "$(which curl)" ]; then
   echo "ERROR! You must install \"curl\" prior to installing."
-  exit
+  exit 1
 fi
 
 ### Check for node
@@ -39,7 +34,7 @@ if ! [ -x "$(which node)" ]; then
   # curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
   # export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
   # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-  exit
+  exit 1
 fi
 
 # create nvim config directory they doesn't exist
@@ -51,10 +46,9 @@ SYMLINKS+=("$__DIR__ $HOME/.vim")
 
 if [[ "$__DIR__" != "$HOME/.vim" ]]; then
   for i in "${SYMLINKS[@]}"; do
-    echo $i
     # split each command at the space to get config path
     IFS=" " read -ra OUT <<< "$i"
-    echo "Creating symlink: ln -s ${i}"
+    echo "SYMLINKING: ln -s ${i}"
     if [ ! -d "${OUT[1]}" ] && [ ! -L "${OUT[1]}" ]; then
       ln -s $i 
     
@@ -108,15 +102,15 @@ done
 #  echo $SEARCHSTRING1 >> $TARGETFILE1
 #fi
 
-## Download vim-plug package manager to ~/.vim/autoload/plug.vim
+echo "INFO: Download vim-plug package manager to ~/.vim/autoload/plug.vim"
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-vim +PlugInstall +qall
-echo VIM installation finished. If no errors, assume success.
+WARN_MESSAGES=()
 
-WARN_MESSAGE="WARN: BE SURE TO INSTALL POWERLINE FONTS: sudo apt-get install fonts-powerline"
-echo -e "\033[0;33m$WARN_MESSAGE\033[0m"
+WARN_MESSAGES+=("WARN: FOR VIM BE SURE TO INSTALL POWERLINE FONTS: sudo apt-get install fonts-powerline")
+WARN_MESSAGES+=("WARN: FOR VIM BE SURE TO RUN :PlugInstall")
 
-CLOSING_MESSAGE="ENDING $PRODUCT CONFIGURATION INSTALL"
-echo -e "\033[0;32m$CLOSING_MESSAGE\033[0m"
+for MESSAGE in "${WARN_MESSAGES[@]}"; do
+  echo -e "\033[0;33m$MESSAGE\033[0m"
+done
