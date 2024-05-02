@@ -213,12 +213,6 @@ Plug 'inkarkat/vim-ArgsAndMore'
 Plug 'itchyny/calendar.vim'
 
 
-" ```
-" - THEME
-" ```
-Plug 'joshdick/onedark.vim'
-
-
 " Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 " Plug 'junegunn/fzf.vim'
 
