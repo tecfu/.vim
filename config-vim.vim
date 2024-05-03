@@ -211,6 +211,7 @@ Plug 'stephpy/vim-yaml'
 
 " ```
 " - THEME
+"   See .vimrc for switching logic
 " ```
 Plug 'tecfu/tokyonight-vim'
 let g:tokyonight_style = 'night'

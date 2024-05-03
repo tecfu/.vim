@@ -175,6 +175,13 @@ nnoremap <leader>w :ArgWrap<CR>
 
 
 " ```
+" - THEME
+"   See .vimrc for switching logic
+" ```
+Plug 'goatslacker/mango.vim'
+
+
+" ```
 " - FORMATTING: Create a table
 " ```
 Plug 'godlygeek/tabular'
@@ -211,6 +218,14 @@ Plug 'inkarkat/vim-ArgsAndMore'
 " - WIDGET: Calendar
 " ```
 Plug 'itchyny/calendar.vim'
+
+
+" ```
+" - THEME
+"   This is run when we are on an Apple device
+"   See .vimrc for switching logic
+" ```
+Plug 'joshdick/onedark.vim'
 
 
 " Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }

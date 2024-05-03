@@ -54,6 +54,7 @@ Plug 'zbirenbaum/copilot-cmp'
 
 " ```
 " - THEME
+"   See .vimrc for switching logic
 " ```
 Plug 'folke/tokyonight.nvim'
 

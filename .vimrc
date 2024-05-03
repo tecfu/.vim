@@ -68,20 +68,21 @@ endif
 ""}}}
 
 set background=dark
+
 " built-in Terminal.app on Mac does not support 24-bit colors
 " https://github.com/neovim/neovim/issues/11327#issuecomment-710761229
 if $TERM_PROGRAM != "Apple_Terminal" && exists('+termguicolors')
   set termguicolors
   if has("nvim")
     colorscheme tokyonight-storm
-    " TabLine too dark with this color scheme
-    "hi TabLine    gui=NONE guibg=#3e4452 guifg=#abb2bf    cterm=NONE term=NONE ctermfg=black ctermbg=white
-    hi TabLine    gui=NONE guibg=#3b3d57 guifg=#a9b1d6   cterm=NONE term=NONE ctermfg=black ctermbg=white
+    hi TabLine gui=NONE guibg=#3b3d57 guifg=#a9b1d6 cterm=NONE term=NONE ctermfg=black ctermbg=white
   else
     colorscheme tokyonight
   endif
+elseif &t_Co == 16
+  colorscheme mango
 else
-  echom "This terminal emulator does not support termguicolors, fallback theme used"
+  echom "This terminal emulator does not support termguicolors and has less than 16 colors, fallback theme used"
   colorscheme onedark
 endif
 
