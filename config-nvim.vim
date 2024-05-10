@@ -1,41 +1,48 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => CUSTOM CONFIG
+" => PLUGINS
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-let g:blamer_enabled = 0 
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => LANGUAGE SERVER
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" Will fail on first run because plugin  not installed.
+" nvim-treesitter/nvim-treesitter: A Neovim plugin for tree-sitter, a parser generator tool and an incremental parsing library. It helps to improve syntax highlighting and indentation.
 Plug 'nvim-treesitter/nvim-treesitter', {'do': 'TSUpdate'}
 
+" github/copilot.vim: GitHub Copilot for Vim. It suggests whole lines or blocks of code as you type.
+Plug 'github/copilot.vim'
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => AUTOCOMPLETION
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
+" nvim-cmp: A completion engine plugin for Neovim. It provides an extensible and customizable framework for text completion.
 Plug 'hrsh7th/nvim-cmp'
-Plug 'hrsh7th/cmp-buffer'
-Plug 'hrsh7th/cmp-nvim-lsp'
-Plug 'hrsh7th/cmp-path'
-Plug 'hrsh7th/cmp-cmdline'
 
-" :MasonUpdate updates registry contents. Will fail on first run because plugin  not installed.
-" Plug 'williamboman/mason.nvim', {'do': 'MasonUpdate'}
+" cmp-buffer: A buffer source for nvim-cmp. It provides completion items from the current and other open buffers.
+Plug 'hrsh7th/cmp-buffer'
+
+" cmp-nvim-lsp: A Language Server Protocol (LSP) source for nvim-cmp. It provides completion items based on LSP.
+Plug 'hrsh7th/cmp-nvim-lsp'
+
+" cmp-path: A file path source for nvim-cmp. It provides completion for file paths.
+Plug 'hrsh7th/cmp-path'
+
+" cmp-cmdline: A command line source for nvim-cmp. It provides completion for command line mode.
+Plug 'hrsh7th/cmp-cmdline'" 
+
+" mason.nvim: A plugin manager for Neovim. It helps to manage and load plugins.
 Plug 'williamboman/mason.nvim'
+
+" mason-lspconfig.nvim: Provides configurations for setting up Language Server Protocol (LSP) with mason.nvim.
 Plug 'williamboman/mason-lspconfig.nvim'
+
+" nvim-lspconfig: A collection of common configurations for Neovim's built-in LSP client. It makes setting up Neovim's LSP client easier.
 Plug 'neovim/nvim-lspconfig'
 
+" LuaSnip: A snippet engine for Neovim. It allows for faster coding via reusable code snippets.
 Plug 'L3MON4D3/LuaSnip'
-Plug 'saadparwaiz1/cmp_luasnip'
-Plug 'tzachar/cmp-tabnine', {'do': './install.sh'}
 
+" cmp_luasnip: A LuaSnip source for nvim-cmp. It provides completion for LuaSnip snippets.
+" Plug 'saadparwaiz1/cmp_luasnip'" Plug 'tzachar/cmp-tabnine', {'do': './install.sh'}
+
+" plenary.nvim: A Lua library for Neovim. It provides utility functions and classes which can be used by other plugins.
 Plug 'nvim-lua/plenary.nvim'
 
 
+" nvim-telescope/telescope.nvim: A highly extendable fuzzy finder over lists. It helps you to find and manage files, buffers, and much more.
 Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.2' }
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
@@ -45,6 +52,8 @@ nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 
 Plug 'zbirenbaum/copilot.lua'
 Plug 'zbirenbaum/copilot-cmp'
+autocmd VimEnter * call luaeval("require('copilot').setup()")
+autocmd VimEnter * call luaeval("require('copilot_cmp').setup()")
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -52,17 +61,15 @@ Plug 'zbirenbaum/copilot-cmp'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
-" ```
-" - THEME
-"   See .vimrc for switching logic
-" ```
+" theme
 Plug 'folke/tokyonight.nvim'
 
 
+" windwp/nvim-ts-autotag: An automatic tag closer for HTML, XML, and JSX. It uses the tree-sitter feature of Neovim to auto-update pair tags.
 Plug 'windwp/nvim-ts-autotag'
 
 
-function! VimrcSetupPlugins(timer)
+function! VimrcSetupPlugins()
 lua << EOF
   require("mason").setup({
       ui = {
@@ -76,9 +83,6 @@ lua << EOF
   
   -- List of available servers: https://github.com/williamboman/mason-lspconfig.nvim
   local lspservers = {
-    'rust_analyzer',
-    'clangd',
-    'pyright',
     'tsserver',
     'eslint',
   }
@@ -86,24 +90,22 @@ lua << EOF
     ensure_installed = lspservers
   })
 
-  require("copilot_cmp").setup()
-
-  local tabnine = require('cmp_tabnine.config')
-  tabnine:setup({
-    max_lines = 1000,
-    max_num_results = 20,
-    sort = true,
-    run_on_every_keystroke = true,
-    snippet_placeholder = '..',
-    ignored_file_types = {
-      -- default is not to ignore
-      -- uncomment to ignore in lua:
-      -- lua = true
-    },
-    show_prediction_strength = false,
-    lazy = true,
-    event = "InsertEnter"
-  })
+  -- local tabnine = require('cmp_tabnine.config')
+  -- tabnine:setup({
+  --   max_lines = 1000,
+  --   max_num_results = 20,
+  --   sort = true,
+  --   run_on_every_keystroke = true,
+  --   snippet_placeholder = '..',
+  --   ignored_file_types = {
+  --     -- default is not to ignore
+  --     -- uncomment to ignore in lua:
+  --     -- lua = true
+  --   },
+  --   show_prediction_strength = false,
+  --   lazy = true,
+  --   event = "InsertEnter"
+  -- })
 
   --
   -- Set up treesitter
@@ -240,14 +242,15 @@ lua << EOF
         end,
       },
       sources = cmp.config.sources({
-        { name = 'nvim_lsp' },
-        -- { name = 'copilot' },
-        { name = 'cmp_tabnine' },
+        { name = 'copilot', group_index = 1 },
+        -- { name = 'cmp_tabnine' },
         -- { name = 'vsnip' }, -- For vsnip users.
-        { name = 'luasnip' }, -- For luasnip users.
+        { name = 'path', group_index = 2 },
+        { name = 'nvim_lsp', group_index = 2 },
+        { name = 'luasnip', group_index = 2 }, -- For luasnip users.
         -- { name = 'ultisnips' }, -- For ultisnips users.
         -- { name = 'snippy' }, -- For snippy users.
-        { name = 'buffer' },
+        { name = 'buffer', group_index = 2 },
       })
     })
 
@@ -270,4 +273,6 @@ lua << EOF
 
 EOF
 endfunction
-call timer_start(1000, 'VimrcSetupPlugins')
+
+" Call the function after Vim has finished starting up
+autocmd VimEnter * call VimrcSetupPlugins()
