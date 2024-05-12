@@ -1,4 +1,10 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => APPIMAGE CONFIG
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" See https://github.com/vim/vim-appimage/releases
+set pythonthreedll=libpython3.10.so
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => LANGUAGE SERVER
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -9,7 +15,6 @@
 "Plug 'mattn/vim-lsp-settings'
 "Plug 'prabirshrestha/asyncomplete.vim'
 "Plug 'prabirshrestha/asyncomplete-lsp.vim'
-"Plug 'github/copilot.vim'
 "
 "" ## config
 "filetype plugin on
@@ -59,27 +64,28 @@ hi CocErrorFloat ctermfg=white guifg=white
 "hi QuickFixLine ctermbg=yellow guibg=yellow
 "hi QuickFixLine ctermfg=white guifg=white
 
-
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " coc extensions
 let g:coc_global_extensions = [
-  \ 'coc-eslint',
-  \ 'coc-explorer',
-  \ 'coc-html',
-  \ 'coc-json',
-  \ 'coc-lua',
-  \ 'coc-markdownlint',
-  \ 'coc-marketplace',
-  \ 'coc-pairs',
-  \ 'coc-prettier',
-  \ 'coc-pyright',
-  \ 'coc-rome',
-  \ 'coc-snippets',
-  \ 'coc-tsserver',
-  \ 'coc-vimlsp',
-  \ 'https://github.com/andys8/vscode-jest-snippets',
-  \ 'coc-copilot'
-  \ ]
+      \ 'coc-eslint',
+      \ 'coc-json',
+      \ 'coc-html',
+      \ 'coc-markdownlint',
+      \ 'coc-marketplace',
+      \ 'coc-pairs',
+      \ 'coc-prettier',
+      \ 'coc-rome',
+      \ 'coc-snippets',
+      \ 'coc-tabnine',
+      \ 'coc-tsserver',
+      \ 'coc-vimlsp',
+      \ 'jest-snippets',
+      \ 'coc-lua',
+      \ 'coc-explorer',
+      \ 'coc-copilot',
+      \ 'coc-pyright',
+      \ '@hexuhua/coc-copilot',
+      \ ]
 
   "\ 'coc-tabnine',
 augroup CustomCocMappings
@@ -144,6 +150,12 @@ inoremap <nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(
 " ```
 Plug 'craigemery/vim-autotag'
 let g:autotagStartMethod='fork'
+
+
+" ```
+" - AI
+" ```
+Plug 'github/copilot.vim'
 
 
 " ```

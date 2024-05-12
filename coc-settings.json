@@ -23,5 +23,5 @@
   "python.formatting.provider": "autopep8",
   "typescript.format.enable": true,
   "suggest.enablePreselect": false,
-  "snippets.ultisnips.pythonPrompt": true
+  "snippets.ultisnips.pythonPrompt": false
 }
