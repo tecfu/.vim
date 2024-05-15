@@ -55,6 +55,8 @@ Plug 'zbirenbaum/copilot-cmp'
 autocmd VimEnter * call luaeval("require('copilot').setup()")
 autocmd VimEnter * call luaeval("require('copilot_cmp').setup()")
 
+Plug 'CopilotC-Nvim/CopilotChat.nvim', { 'branch': 'canary' }
+autocmd VimEnter * call luaeval("require('CopilotChat').setup()")
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => GENERAL
@@ -69,8 +71,12 @@ Plug 'folke/tokyonight.nvim'
 Plug 'windwp/nvim-ts-autotag'
 
 
+call plug#end()
+
+
 function! VimrcSetupPlugins()
 lua << EOF
+
   require("mason").setup({
       ui = {
           icons = {
