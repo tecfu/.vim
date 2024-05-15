@@ -8,6 +8,7 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "
 " Sections:
+"  -> Load Providers
 "  -> Load Plugins
 "  -> User Interface
 "  -> Text Folding, Tab, and Indent Related
@@ -19,6 +20,24 @@
 "  -> Misc
 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Load Providers
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" PYTHON PROVIDERS {{{
+if has('macunix')
+" OSX
+let g:python3_host_prog = '/usr/local/bin/python3' " -- Set python 3 provider
+let g:python_host_prog = '/usr/local/bin/python2' " --- Set python 2 provider
+elseif has('unix')
+" Ubuntu
+let g:python3_host_prog = '/usr/bin/python3' " -------- Set python 3 provider
+let g:python_host_prog = '/usr/bin/python' " ---------- Set python 2 provider
+elseif has('win32') || has('win64')
+" Windows
+endif
+" }}}
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

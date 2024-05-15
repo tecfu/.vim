@@ -372,22 +372,22 @@ nnoremap <leader>u :UndotreeToggle<cr>
 " - WIDGET: Open Vim from Browser
 " ```
 " Grouped together as vim-hug-neovim-rpc and nvim-yarp are deps of vim-ghost
-Plug 'roxma/vim-hug-neovim-rpc'
-Plug 'SpaceVim/nvim-yarp'
-Plug 'raghur/vim-ghost', {'do': ':GhostInstall'}
-"{{{
-function! s:SetupGhostBuffer()
-    if match(expand("%:a"), '\v/ghost-(github|bitbucket|gitlab)\.com-')
-        set ft=markdown
-    endif
-endfunction
-
-" Automatically open vim
-" let g:ghost_darwin_app = 'vim'
-augroup vim-ghost
-    au!
-    au User vim-ghost#connected call s:SetupGhostBuffer()
-augroup END
+" Plug 'roxma/vim-hug-neovim-rpc'
+" Plug 'SpaceVim/nvim-yarp'
+" Plug 'raghur/vim-ghost', {'do': ':GhostInstall'}
+" "{{{
+" function! s:SetupGhostBuffer()
+"     if match(expand("%:a"), '\v/ghost-(github|bitbucket|gitlab)\.com-')
+"         set ft=markdown
+"     endif
+" endfunction
+" 
+" " Automatically open vim
+" " let g:ghost_darwin_app = 'vim'
+" augroup vim-ghost
+"     au!
+"     au User vim-ghost#connected call s:SetupGhostBuffer()
+" augroup END
 "}}}
 
 
