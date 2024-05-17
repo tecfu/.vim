@@ -21,7 +21,7 @@ Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-path'
 
 " cmp-cmdline: A command line source for nvim-cmp. It provides completion for command line mode.
-Plug 'hrsh7th/cmp-cmdline'" 
+Plug 'hrsh7th/cmp-cmdline'"
 
 " mason.nvim: A plugin manager for Neovim. It helps to manage and load plugins.
 Plug 'williamboman/mason.nvim'
@@ -37,7 +37,7 @@ Plug 'L3MON4D3/LuaSnip'
 
 " cmp_luasnip: A LuaSnip source for nvim-cmp. It provides completion for LuaSnip snippets.
 " Plug 'saadparwaiz1/cmp_luasnip'" Plug 'tzachar/cmp-tabnine', {'do': './install.sh'}
-
+"
 " plenary.nvim: A Lua library for Neovim. It provides utility functions and classes which can be used by other plugins.
 Plug 'nvim-lua/plenary.nvim'
 
@@ -51,12 +51,26 @@ nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 
 
 Plug 'zbirenbaum/copilot.lua'
-Plug 'zbirenbaum/copilot-cmp'
 autocmd VimEnter * call luaeval("require('copilot').setup()")
+Plug 'zbirenbaum/copilot-cmp'
 autocmd VimEnter * call luaeval("require('copilot_cmp').setup()")
 
 Plug 'CopilotC-Nvim/CopilotChat.nvim', { 'branch': 'canary' }
-autocmd VimEnter * call luaeval("require('CopilotChat').setup()")
+function! SetupCopilotChat()
+lua << EOF
+  require('CopilotChat').setup({
+    debug = true,
+    mappings = {
+      complete = {
+        detail = 'Use @<Tab> or /<Tab> for options.',
+				-- Default <Tab> setting conflicts with cmp and coc-nvim
+        insert = '<S-Tab>'
+      }
+    }
+  })
+EOF
+endfunction
+autocmd VimEnter * call SetupCopilotChat()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => GENERAL
@@ -86,7 +100,7 @@ lua << EOF
           }
       }
   })
-  
+
   -- List of available servers: https://github.com/williamboman/mason-lspconfig.nvim
   local lspservers = {
     'tsserver',
@@ -123,7 +137,7 @@ lua << EOF
       "c",
       "lua",
       "vim"
-    },  
+    },
     auto_install = true,
     highlight = {
       enable = true,                -- Enable syntax highlighting
@@ -175,7 +189,7 @@ lua << EOF
   local CustomDown = function(fallback,cmp)
     if cmp.visible() then
       cmp.select_next_item()
-    -- You could replace the expand_or_jumpable() calls with expand_or_locally_jumpable() 
+    -- You could replace the expand_or_jumpable() calls with expand_or_locally_jumpable()
     -- they way you will only jump inside the snippet region
     elseif luasnip.expand_or_jumpable() then
       luasnip.expand_or_jump()
@@ -197,68 +211,45 @@ lua << EOF
   end
 
   local cmp = require('cmp')
-    cmp.setup({
-      completion = { completeopt = 'menu,menuone,noinsert' },
-      -- if desired, choose another keymap-preset:
-      mapping = cmp.mapping.preset.insert({
-        ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-f>'] = cmp.mapping.scroll_docs(4),
-        ['<C-Space>'] = cmp.mapping.complete(),
-        ['<C-e>'] = cmp.mapping.abort(),
-        ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-        ['<C-j>'] = cmp.mapping(function(fallback)
-            CustomDown(fallback,cmp)  
-        end, { 'i', 's' }),
-        ['<C-k>'] = cmp.mapping(function(fallback)
-            CustomUp(fallback, cmp)   
-        end, { 'i', 's' }),
-        ['<Tab>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-    
-  --    ['<Tab>'] = cmp.mapping(function(fallback)
-  --        CustomDown(fallback,cmp)  
-  --    end, { 'i', 's' }),
-  --      ['<Tab>'] = cmp.mapping(function(fallback)
-  --        if vim.fn.pumvisible() == 1 then
-  --              vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-n>', true, true, true), 'n', true)
-  --            elseif has_words_before() and luasnip.expand_or_jumpable() then
-  --              vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-expand-or-jump', true, true, true), '')
-  --        else
-  --          fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
-  --        end
-  --      end, { 'i', 's' }),
-  --      ['<S-Tab>'] = cmp.mapping(function()
-  --        if vim.fn.pumvisible() == 1 then
-  --          vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-p>', true, true, true), 'n', true)
-  --        elseif luasnip.jumpable(-1) then
-  --          vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-jump-prev', true, true, true), '', true)
-  --        end
-  --      end, { 'i', 's' }),
-      }),
-      -- optionally, add more completion-sources:
-      -- sources = cmp.config.sources({
-      --   { name = 'nvim_lsp' }
-      -- }),
-      snippet = {
-        -- REQUIRED - you must specify a snippet engine
-        expand = function(args)
-          -- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-          luasnip.lsp_expand(args.body) -- For `luasnip` users.
-          -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-          -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
-        end,
-      },
-      sources = cmp.config.sources({
-        { name = 'copilot', group_index = 1 },
-        -- { name = 'cmp_tabnine' },
-        -- { name = 'vsnip' }, -- For vsnip users.
-        { name = 'path', group_index = 2 },
-        { name = 'nvim_lsp', group_index = 2 },
-        { name = 'luasnip', group_index = 2 }, -- For luasnip users.
-        -- { name = 'ultisnips' }, -- For ultisnips users.
-        -- { name = 'snippy' }, -- For snippy users.
-        { name = 'buffer', group_index = 2 },
-      })
-    })
+	local baseMappings = {
+    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-e>'] = cmp.mapping.abort(),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    ['<C-j>'] = cmp.mapping(function(fallback)
+        CustomDown(fallback,cmp)
+    end, { 'i', 's' }),
+    ['<C-k>'] = cmp.mapping(function(fallback)
+        CustomUp(fallback, cmp)
+    end, { 'i', 's' }),
+    ['<Tab>'] = cmp.mapping(function(fallback)
+        if vim.fn.pumvisible() == 1 then
+            vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-n>', true, true, true), 'n')
+        elseif cmp.visible() then
+            cmp.select_next_item()
+        else
+            fallback()
+        end
+    end, { 'i', 's' }),
+	}
+
+	cmp.setup({
+	completion = { completeopt = 'menu,menuone,noinsert' },
+	mapping = cmp.mapping.preset.insert(baseMappings),
+	snippet = {
+		expand = function(args)
+			luasnip.lsp_expand(args.body)
+		end,
+	},
+	sources = cmp.config.sources({
+		{ name = 'copilot', group_index = 1 },
+		{ name = 'path', group_index = 2 },
+		{ name = 'nvim_lsp', group_index = 2 },
+		{ name = 'luasnip', group_index = 2 },
+		{ name = 'buffer', group_index = 2 },
+	})
+})
 
   -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
   cmp.setup.cmdline({ '/', '?' }, {
@@ -269,16 +260,16 @@ lua << EOF
   })
 
   -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-  -- cmp.setup.cmdline(':', {
-  --   mapping = cmp.mapping.preset.cmdline(),
-  --   sources = cmp.config.sources({
-  --     { name = 'path' },
-  --     { name = 'cmdline' }
-  --   })
-  -- })
+  cmp.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+      -- { name = 'path' },
+      { name = 'cmdline' }
+    })
+  })
 
 EOF
 endfunction
 
-" Call the function after Vim has finished starting up
+"Call the function after Vim has finished starting up
 autocmd VimEnter * call VimrcSetupPlugins()
