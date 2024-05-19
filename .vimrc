@@ -463,9 +463,8 @@ set list
 set listchars=tab:▸\ ,eol:¬
 
 " Replace tab character with empty spaces
+" if this is broken, make sure there is no .editorconfig file inherited 
 set expandtab
-" Use tabs, not spaces
-" set noexpandtab
 
 " Enable filetype plugins
 " This may override the tabstop, softtabstop, shiftwidth
@@ -671,13 +670,3 @@ set showcmd
 set tags=./tags,tags;/
 
 "}}}
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Sytem Specific Overrides (i.e. 4 spaces for tabs at work)
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"{{{
-if !empty(glob('~/.config-overrides.vim'))
-  source ~/.config-overrides.vim
-endif
-"}}{
