@@ -87,7 +87,6 @@ let g:coc_global_extensions = [
       \ '@hexuhua/coc-copilot',
       \ ]
 
-  "\ 'coc-tabnine',
 augroup CustomCocMappings
   autocmd!
   autocmd FileType * nmap <silent> <leader>l :call CocAction('format')<CR>
@@ -129,9 +128,29 @@ inoremap <silent><expr> <S-Tab>
 inoremap <silent><expr> <CR> pumvisible() ? coc#_select_confirm()
     \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
-"Remap up/down in popup to <C-j>, <C-k>
+"Remap up/down in popupmenu to <C-j>, <C-k>
 inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
 inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
+
+"Remap up/down in coc popup to <C-j>, <C-k>
+inoremap <expr><C-j> coc#pum#visible() ? coc#pum#next(1) : "\<C-j>"
+inoremap <expr><C-k> coc#pum#visible() ? coc#pum#prev(1) : "\<C-k>"
+
+function! CocPumMultipleTimes(action, count)
+    let l:result = ''
+    if a:action == 'next'
+        let l:cmd = repeat("\<C-r>=coc#pum#_navigate(1,1)\<CR>", a:count)
+    elseif a:action == 'prev'
+        let l:cmd = repeat("\<C-r>=coc#pum#_navigate(0,0)\<CR>", a:count)
+    else
+        return ''
+    endif
+    return l:cmd
+endfunction
+
+" <C-s-j/k> supported by gvim
+inoremap <expr><C-S-j> coc#pum#visible() ? CocPumMultipleTimes('next', 5) : "\<C-S-j>"
+inoremap <expr><C-S-k> coc#pum#visible() ? CocPumMultipleTimes('prev', 5) : "\<C-S-k>"
 
 "Scroll info popup
 nnoremap <nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
