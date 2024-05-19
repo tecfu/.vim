@@ -63,7 +63,7 @@ lua << EOF
     mappings = {
       complete = {
         detail = 'Use @<Tab> or /<Tab> for options.',
-				-- Default <Tab> setting conflicts with cmp and coc-nvim
+        -- Default <Tab> setting conflicts with cmp and coc-nvim
         insert = '<S-Tab>'
       }
     }
@@ -307,7 +307,7 @@ lua << EOF
   end
 
   local cmp = require('cmp')
-	local baseMappings = {
+  local baseMappings = {
     ['<C-b>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<C-Space>'] = cmp.mapping.complete(),
@@ -328,28 +328,45 @@ lua << EOF
             fallback()
         end
     end, { 'i', 's' }),
-	}
+  }
 
-	cmp.setup({
-	completion = { completeopt = 'menu,menuone,noinsert' },
-	mapping = cmp.mapping.preset.insert(baseMappings),
-	snippet = {
-		expand = function(args)
-			luasnip.lsp_expand(args.body)
-		end,
-	},
-	sources = cmp.config.sources({
-		{ name = 'copilot', group_index = 1 },
-		{ name = 'path', group_index = 2 },
-		{ name = 'nvim_lsp', group_index = 2 },
-		{ name = 'luasnip', group_index = 2 },
-		{ name = 'buffer', group_index = 2 },
-	})
+
+  cmp.setup({
+  completion = { completeopt = 'menu,menuone,noinsert' },
+  mapping = cmp.mapping.preset.insert(baseMappings),
+  snippet = {
+    expand = function(args)
+      luasnip.lsp_expand(args.body)
+    end,
+  },
+  sources = cmp.config.sources({
+    { name = 'copilot', group_index = 1 },
+    { name = 'path', group_index = 2 },
+    { name = 'nvim_lsp', group_index = 2 },
+    { name = 'luasnip', group_index = 2 },
+    { name = 'buffer', group_index = 2 },
+  })
 })
 
   -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
   cmp.setup.cmdline({ '/', '?' }, {
-    mapping = cmp.mapping.preset.cmdline(),
+    mapping = cmp.mapping.preset.cmdline({
+        ['<CR>'] = {
+        c = function(_)
+            cmp.confirm({ select = true })
+        end,
+        },
+        ['<C-j>'] = {
+        c = function(_)
+             cmp.select_next_item()
+        end,
+        },
+        ['<C-k>'] = {
+        c = function(_)
+             cmp.select_prev_item()
+        end,
+        }
+    }),
     sources = {
       { name = 'buffer' }
     }
@@ -357,9 +374,21 @@ lua << EOF
 
   -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
   cmp.setup.cmdline(':', {
-    mapping = cmp.mapping.preset.cmdline(),
+    mapping = cmp.mapping.preset.cmdline({
+				['<CR>'] = cmp.mapping(cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Insert }), { 'i', 'c' }),
+        ['<C-j>'] = {
+        c = function(_)
+             cmp.select_next_item()
+        end,
+        },
+        ['<C-k>'] = {
+        c = function(_)
+             cmp.select_prev_item()
+        end,
+        }
+    }),
     sources = cmp.config.sources({
-      -- { name = 'path' },
+      { name = 'path' },
       { name = 'cmdline' }
     })
   })
