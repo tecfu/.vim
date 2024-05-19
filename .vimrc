@@ -23,24 +23,6 @@
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Load Providers
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" PYTHON PROVIDERS {{{
-if has('macunix')
-" OSX
-let g:python3_host_prog = '/usr/local/bin/python3' " -- Set python 3 provider
-let g:python_host_prog = '/usr/local/bin/python2' " --- Set python 2 provider
-elseif has('unix')
-" Ubuntu
-let g:python3_host_prog = '/usr/bin/python3' " -------- Set python 3 provider
-let g:python_host_prog = '/usr/bin/python' " ---------- Set python 2 provider
-elseif has('win32') || has('win64')
-" Windows
-endif
-" }}}
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Load Plugins
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "{{{
@@ -648,7 +630,7 @@ function! <SID>BufcloseCloseIt()
    endif
 endfunction
 
-" Stringify JSON 
+" Stringify JSON
 command! -range=% StringifyJSON <line1>,<line2>!jq -r tostring | sed 's/\"/\\"/g' | echo "\"$(cat)\""
 vnoremap <silent> <leader>s :!jq -r tostring \| sed 's/"/\\"/g' \| echo "\"$(cat)\""<CR>
 "}}}
