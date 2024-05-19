@@ -96,7 +96,6 @@ let g:coc_global_extensions = [
       \ 'jest-snippets',
       \ 'coc-lua',
       \ 'coc-explorer',
-      \ 'coc-copilot',
       \ 'coc-pyright',
       \ '@hexuhua/coc-copilot',
       \ ]
@@ -234,12 +233,6 @@ nmap <leader>db <Plug>VimspectorBreakpoints
 " - POLYFILL: Neovim Healthcheck
 " ```
 Plug 'rhysd/vim-healthcheck'
-
-
-" ```
-" - SYNTAX: Various
-" ```
-Plug 'sheerun/vim-polyglot'
 
 
 " ```
