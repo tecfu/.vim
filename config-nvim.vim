@@ -199,9 +199,12 @@ lua << EOF
 
   -- List of available servers: https://github.com/williamboman/mason-lspconfig.nvim
   local lspservers = {
-    'tsserver',
     'eslint',
+    'vacuum', -- OPEN API Validator
+    'tsserver',
+    'vimls',
   }
+
   require('mason-lspconfig').setup({
     ensure_installed = lspservers
   })
@@ -246,6 +249,8 @@ lua << EOF
   --
   local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
   local lsp_on_attach = function(client, bufnr)
+		client.server_capabilities.documentFormattingProvider = true
+
     local bufopts = { noremap=true, silent=true, buffer=bufnr }
     -- following keymap is based on both lspconfig and lsp-zero.nvim:
     -- - https://github.com/neovim/nvim-lspconfig/blob/fd8f18fe819f1049d00de74817523f4823ba259a/README.md?plain=1#L79-L93
@@ -351,11 +356,6 @@ lua << EOF
   -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
   cmp.setup.cmdline({ '/', '?' }, {
     mapping = cmp.mapping.preset.cmdline({
-        ['<CR>'] = {
-        c = function(_)
-            cmp.confirm({ select = true })
-        end,
-        },
         ['<C-j>'] = {
         c = function(_)
              cmp.select_next_item()
@@ -372,27 +372,21 @@ lua << EOF
     }
   })
 
-  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-  cmp.setup.cmdline(':', {
-    mapping = cmp.mapping.preset.cmdline({
-				['<CR>'] = cmp.mapping(cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Insert }), { 'i', 'c' }),
-        ['<C-j>'] = {
-        c = function(_)
-             cmp.select_next_item()
-        end,
-        },
-        ['<C-k>'] = {
-        c = function(_)
-             cmp.select_prev_item()
-        end,
-        }
-    }),
+  cmp.setup.cmdline(":", {
+      mapping = cmp.mapping.preset.cmdline(),
     sources = cmp.config.sources({
-      { name = 'path' },
-      { name = 'cmdline' }
+        { name = "path" },
+      }, {
+        {
+          name = "cmdline",
+          option = {
+            ignore_cmds = { "Man", "!" },
+          },
+        },
+      }, {
+        { name = "buffer" },
+      }),
     })
-  })
-
 EOF
 endfunction
 
