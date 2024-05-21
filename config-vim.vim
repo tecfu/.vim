@@ -176,14 +176,6 @@ inoremap <nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => GENERAL
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" ```
-" - CTAGS
-" ```
-Plug 'craigemery/vim-autotag'
-let g:autotagStartMethod='fork'
-
-
 " ```
 " - AI
 " ```
@@ -194,31 +186,6 @@ Plug 'github/copilot.vim'
 " - Makes Gvim only colorschems work in term / nc with neovim
 " ```
 Plug 'godlygeek/csapprox'
-
-
-Plug 'joshdick/onedark.vim'
-
-" ```
-" - SYNTAX: Typescript
-" ```
-Plug 'leafgarland/typescript-vim'
-let g:typescript_compiler_binary = 'tsc'
-let g:typescript_compiler_options = ''
-autocmd FileType typescript :set makeprg=tsc
-
-
-" ```
-" - SYNTAX: Javascript
-" ```
-Plug 'pangloss/vim-javascript'
-let b:javascript_fold = 1
-
-
-" ```
-" - SYNTAX: VueJS
-" ```
-Plug 'posva/vim-vue'
-
 
 " ```
 " - DEBUGGER
@@ -236,21 +203,12 @@ Plug 'rhysd/vim-healthcheck'
 
 
 " ```
-" - SYNTAX: PHP
-" ```
-Plug 'StanAngeloff/php.vim'
-
-
-" ```
-" - SYNTAX: YAML
-" ```
-Plug 'stephpy/vim-yaml'
-
-
-" ```
 " - THEME
 "   See .vimrc for switching logic
 " ```
 Plug 'tecfu/tokyonight-vim'
 let g:tokyonight_style = 'night'
 let g:tokyonight_enable_italic = 1
+set background=dark
+set termguicolors
+autocmd VimEnter * colorscheme tokyonight

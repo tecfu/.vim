@@ -207,7 +207,6 @@ vnoremap <leader>tz :call <SID>VIMRC_CustomTabular()<CR><ESC>
 
 "Plug 'heavenshell/vim-jsdoc'
 
-
 " ```
 " - UTILITY COMMAND: Argdo / Windo /
 " ```
@@ -250,6 +249,13 @@ Plug 'jupyter-vim/jupyter-vim'
 "```
 Plug 'kshenoy/vim-signature'
 
+
+" ```
+" - CTAGS
+" ```
+"sudo apt install universal-ctags
+Plug 'ludovicchabant/vim-gutentags'
+set statusline+=%{gutentags#statusline()}
 
 "```
 "- Colorizes pairs of opening/closing parens, braces, etc

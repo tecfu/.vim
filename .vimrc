@@ -43,10 +43,9 @@ if !has("nvim")
   source ${HOME}/.vim/config-vim.vim
   call plug#end()
 else
-  "call plug#begin('~/.local/share/nvim/site/plugged')
   call plug#begin('~/.vim/plugins-nvim')
-  source ${HOME}/.vim/config-nvim.vim
   source ${HOME}/.vim/config-common.vim
+  source ${HOME}/.vim/config-nvim.vim
   call plug#end()
 endif
 
@@ -67,25 +66,6 @@ if (has("unix") && !has("macunix"))
   let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 endif
 ""}}}
-
-set background=dark
-
-" built-in Terminal.app on Mac does not support 24-bit colors
-" https://github.com/neovim/neovim/issues/11327#issuecomment-710761229
-if $TERM_PROGRAM != "Apple_Terminal" && exists('+termguicolors')
-  set termguicolors
-  if has("nvim")
-    colorscheme tokyonight-storm
-    hi TabLine gui=NONE guibg=#3b3d57 guifg=#a9b1d6 cterm=NONE term=NONE ctermfg=black ctermbg=white
-  else
-    colorscheme tokyonight
-  endif
-elseif &t_Co == 16
-  colorscheme mango
-else
-  echom "This terminal emulator does not support termguicolors and has less than 16 colors, fallback theme used"
-  colorscheme onedark
-endif
 
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE = 0
 
@@ -253,6 +233,7 @@ function s:SetFoldLevel()
     echo "Set foldlevel to ".l:level
 endfunction
 nnoremap <leader>fl :call <SID>SetFoldLevel()<CR><ESC>
+
 
 " Disable highlight when <leader><cr> is pressed
 " map <silent> <leader><cr> :noh<cr>
@@ -463,7 +444,7 @@ set list
 set listchars=tab:▸\ ,eol:¬
 
 " Replace tab character with empty spaces
-" if this is broken, make sure there is no .editorconfig file inherited 
+" if this is broken, make sure there is no .editorconfig file inherited
 set expandtab
 
 " Enable filetype plugins
