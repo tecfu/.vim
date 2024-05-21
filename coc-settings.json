@@ -1,7 +1,6 @@
 {
-  "coc.preferences.formatOnSaveFiletypes": [],
   "diagnostic.virtualTextCurrentLineOnly": false,
-  "diagnostic.messageTarget": "float",
+  "diagnostic.messageTarget": "echo",
   "diagnostic.virtualText": true,
   "diagnostic.checkCurrentLine": true,
   "diagnostic.enable": true,

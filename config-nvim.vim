@@ -1,9 +1,27 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => PROVIDERS
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Use the following to setup python3 provider
+" sudo pip3.6 install --upgrade neovim
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => PLUGINS
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" theme
+set background=dark
+
+Plug 'folke/tokyonight.nvim'
+autocmd VimEnter * colorscheme tokyonight
+
 
 " nvim-treesitter/nvim-treesitter: A Neovim plugin for tree-sitter, a parser generator tool and an incremental parsing library. It helps to improve syntax highlighting and indentation.
-Plug 'nvim-treesitter/nvim-treesitter', {'do': 'TSUpdate'}
+function! TreesitterHook()
+	:TSUpdate
+	!npm i -g tree-sitter-cli tree-sitter
+endfunction
+Plug 'nvim-treesitter/nvim-treesitter', { 'do': { -> TreesitterHook() } }
+
 
 " github/copilot.vim: GitHub Copilot for Vim. It suggests whole lines or blocks of code as you type.
 Plug 'github/copilot.vim'
@@ -64,6 +82,8 @@ let g:coc_global_extensions = [
       \ 'coc-pyright',
       \ '@hexuhua/coc-copilot',
       \ ]
+
+call plug#end()
 
 augroup CustomCocMappings
   autocmd!
@@ -136,43 +156,3 @@ nnoremap <nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<
 inoremap <nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
 inoremap <nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
 "}}}
-
-
-
-" theme
-Plug 'folke/tokyonight.nvim'
-
-
-" windwp/nvim-ts-autotag: An automatic tag closer for HTML, XML, and JSX. It uses the tree-sitter feature of Neovim to auto-update pair tags.
-Plug 'windwp/nvim-ts-autotag'
-
-
-call plug#end()
-
-
-function! VimrcSetupPlugins()
-lua << EOF
-
-  --
-  -- Set up treesitter
-  --
-  require'nvim-treesitter.configs'.setup {
-    ensure_installed = {
-      "javascript",
-      "typescript",
-      "c",
-      "lua",
-      "vim"
-    },
-    auto_install = true,
-    highlight = {
-      enable = true,                -- Enable syntax highlighting
-    },
-  }
-  -- nvim-treesitter.install.update()
-
-EOF
-endfunction
-
-"Call the function after Vim has finished starting up
-autocmd VimEnter * call VimrcSetupPlugins()

@@ -71,6 +71,7 @@ fi
 SYMLINKS=()
 SYMLINKS+=("$DIR/.vimrc $HOME/.vimrc")
 SYMLINKS+=("$DIR/init.vim $HOME/.config/nvim/init.vim")
+SYMLINKS+=("$DIR/coc-settings.json $HOME/.config/nvim/coc-settings.json")
 
 for i in "${SYMLINKS[@]}"; do
   #echo $i
@@ -112,6 +113,7 @@ vim +PlugInstall +qall
 
 WARN_MESSAGES=()
 
+WARN_MESSAGES+=("WARN: coc-settings.json is symlinked, so config is shared between vim and nvim")
 WARN_MESSAGES+=("WARN: FOR VIM BE SURE TO INSTALL POWERLINE FONTS: sudo apt-get install fonts-powerline")
 #WARN_MESSAGES+=("WARN: FOR VIM BE SURE TO RUN :PlugInstall")
 
