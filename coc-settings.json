@@ -22,5 +22,28 @@
   "python.formatting.provider": "autopep8",
   "typescript.format.enable": true,
   "suggest.enablePreselect": false,
-  "snippets.ultisnips.pythonPrompt": false
+  "snippets.ultisnips.pythonPrompt": false,
+  "yaml.customTags": [
+    "!Ref scalar",
+    "!Sub scalar",
+    "!GetAtt",
+    "!Base64",
+    "!FindInMap",
+    "!GetAZs",
+    "!ImportValue",
+    "!Join",
+    "!Select",
+    "!Split",
+    "!If",
+    "!Equals",
+    "!Equals mapping",
+    "!Not",
+    "!And",
+    "!Or",
+    "!Condition"
+  ],
+  "yaml.validate": true,
+  "yaml.format.enable": true,
+  "yaml.hover": true,
+  "yaml.completion": true
 }
