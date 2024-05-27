@@ -2,9 +2,9 @@
 
 ###
 #   RUN THIS WITH /bin/bash NOT /bin/sh
-#   /bin/sh MAPS TO INCOMPATIBLE TERM EMULATORS 
+#   /bin/sh MAPS TO INCOMPATIBLE TERM EMULATORS
 #   IN SOME OS
-#   
+#
 #   ```
 #    $ /bin/bash INSTALL.sh
 #
@@ -51,8 +51,8 @@ if [[ "$DIR" != "$HOME/.vim" ]]; then
     IFS=" " read -ra OUT <<< "$i"
     echo "SYMLINKING: ln -s ${i}"
     if [ ! -d "${OUT[1]}" ] && [ ! -L "${OUT[1]}" ]; then
-      ln -s $i 
-    
+      ln -s $i
+
     elif [ "$(readlink -- "${OUT[1]}")" != "${OUT[0]}" ]; then
       mv "${OUT[1]}" "${OUT[1]}.saved"
       ln -s $i
@@ -71,19 +71,18 @@ fi
 SYMLINKS=()
 SYMLINKS+=("$DIR/.vimrc $HOME/.vimrc")
 SYMLINKS+=("$DIR/init.vim $HOME/.config/nvim/init.vim")
-SYMLINKS+=("$DIR/coc-settings.json $HOME/.config/nvim/coc-settings.json")
 
 for i in "${SYMLINKS[@]}"; do
   #echo $i
   # split each command at the space to get config path
   IFS=' ' read -ra OUT <<< "$i"
   # ${OUT[1]} is path config file should be at
-  
+
   #no config, create symlink to one
   if [ ! -f "${OUT[1]}" ] && [ ! -d "${OUT[1]}" ] && [ ! -L "${OUT[1]}" ]; then
     echo "SYMLINKING: ln -s $i"
-    ln -s $i 
-  
+    ln -s $i
+
   #config exsts; save if doesn't point to correct target
   elif [ "$(readlink -- "${OUT[1]}")" != "${OUT[0]}" ]; then
     echo "MV EXISTING: ${OUT[1]} to ${OUT[1]}.saved"
@@ -100,7 +99,7 @@ done
 #TARGETFILE1=$HOME"/.bashrc"
 #SEARCHSTRING1="stty -ixon > /dev/null 2>/dev/null"
 #if ! grep -Fxq "$SEARCHSTRING1" $TARGETFILE1;
-#then 
+#then
 #  #append code
 #  echo $SEARCHSTRING1 >> $TARGETFILE1
 #fi
@@ -113,7 +112,6 @@ vim +PlugInstall +qall
 
 WARN_MESSAGES=()
 
-WARN_MESSAGES+=("WARN: coc-settings.json is symlinked, so config is shared between vim and nvim")
 WARN_MESSAGES+=("WARN: FOR VIM BE SURE TO INSTALL POWERLINE FONTS: sudo apt-get install fonts-powerline")
 #WARN_MESSAGES+=("WARN: FOR VIM BE SURE TO RUN :PlugInstall")
 

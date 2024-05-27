@@ -11,6 +11,18 @@
   "diagnostic.infoSign": "⚑",
   "diagnostic.hintSign": "⚑",
   "javascript.format.enable": true,
+  "languageserver": {
+    "terraform": {
+      "command": "terraform-ls",
+      "args": ["serve"],
+      "filetypes": [
+        "terraform",
+        "tf"
+      ],
+      "initializationOptions": {},
+      "settings": {}
+    }
+  },
   "markdownlint.config": {
     "default": true,
     "line_length": false,
