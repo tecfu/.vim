@@ -10,18 +10,66 @@
   "diagnostic.warningSign": "⚑",
   "diagnostic.infoSign": "⚑",
   "diagnostic.hintSign": "⚑",
-  "javascript.format.enable": true,
   "languageserver": {
-    "terraform": {
+    "external-coc-terraform-ls": {
       "command": "terraform-ls",
       "args": ["serve"],
-      "filetypes": [
-        "terraform",
-        "tf"
-      ],
+      "filetypes": ["terraform", "tf"],
       "initializationOptions": {},
       "settings": {}
+    },
+    "external-coc-vscode-json-language-server": {
+      "command": "vscode-json-language-server",
+      "args": ["--stdio"],
+      "filetypes": ["json", "jsonc"],
+      "settings": {
+        "json": {
+          "schemas": [],
+          "format": {
+            "enable": false
+          },
+          "validate": {
+            "enable": true
+          }
+        }
+      },
+      "trace.server": "verbose",
+      "initializationOptions": {
+        "documentFormatting": true,
+        "documentRangeFormatting": true,
+        "documentSymbol": true,
+        "codeAction": true,
+        "completion": true
+      }
+    },
+    "external-coc-efm-langserver": {
+      "command": "efm-langserver",
+      "args": [],
+      "filetypes": ["javascript", "typescript", "json", "jsonc"],
+      "rootPatterns": [".git/"],
+      "trace.server": "verbose",
+      "initializationOptions": {
+        "documentFormatting": true,
+        "documentRangeFormatting": true,
+        "documentSymbol": true,
+        "codeAction": true,
+        "completion": true
+      }
     }
+    // "coc-efm-languageserver-debug": {
+    //   "command": "nc",
+    //   "args": ["localhost", "12345"],
+    //   "filetypes": ["javascript", "typescript", "json", "jsonc"],
+    //   "rootPatterns": [".git/"],
+    //   "trace.server": "verbose",
+    //   "initializationOptions": {
+    //     "documentFormatting": true,
+    //     "documentRangeFormatting": true,
+    //     "documentSymbol": true,
+    //     "codeAction": true,
+    //     "completion": true
+    //   }
+    // }
   },
   "markdownlint.config": {
     "default": true,
@@ -29,12 +77,7 @@
     "no-bare-urls": false,
     "fenced-code-language": false
   },
-  "prettier.enable": true,
-  "prettier.formatterPriority": 1,
-  "python.formatting.provider": "autopep8",
-  "typescript.format.enable": true,
   "suggest.enablePreselect": false,
-  "snippets.ultisnips.pythonPrompt": false,
   "yaml.customTags": [
     "!Ref scalar",
     "!Sub scalar",
@@ -54,7 +97,6 @@
     "!Or",
     "!Condition"
   ],
-  "yaml.validate": true,
   "yaml.format.enable": true,
   "yaml.hover": true,
   "yaml.completion": true
