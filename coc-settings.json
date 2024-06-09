@@ -1,3 +1,4 @@
+// For unknown reasons this file will always be noexpandtab in nvim
 {
   "diagnostic.virtualTextCurrentLineOnly": false,
   "diagnostic.messageTarget": "echo",
@@ -11,6 +12,7 @@
   "diagnostic.infoSign": "⚑",
   "diagnostic.hintSign": "⚑",
   "languageserver": {
+    // "source": "https://github.com/hashicorp/terraform-ls",
     "external-coc-terraform-ls": {
       "command": "terraform-ls",
       "args": ["serve"],
@@ -18,6 +20,7 @@
       "initializationOptions": {},
       "settings": {}
     },
+    // "source": "https://github.com/hrsh7th/vscode-langservers-extracted",
     "external-coc-vscode-json-language-server": {
       "command": "vscode-json-language-server",
       "args": ["--stdio"],
@@ -39,6 +42,7 @@
         "documentRangeFormatting": false
       }
     },
+    // "source": "https://github.com/mattn/efm-langserver",
     "external-coc-efm-langserver": {
       "command": "efm-langserver",
       "args": [],
