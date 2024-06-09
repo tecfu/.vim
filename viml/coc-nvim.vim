@@ -2,40 +2,35 @@ let g:coc_config_home = expand('$HOME/.vim')
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " coc extensions
+"
+"let g:coc_global_extensions = [
+"      \ 'coc-cfn-lint',
+"      \ 'coc-copilot',
+"      \ 'coc-html',
+"      \ 'coc-markdownlint',
+"      \ 'coc-marketplace',
+"      \ 'coc-sh',
+"      \ 'coc-sql',
+"      \ 'coc-toml',
+"      \ 'coc-vimlsp',
+"      \ 'coc-yaml',
+"      \ '@hexuhua/coc-copilot',
+"      \ ]
+
 let g:coc_global_extensions = [
-      \ 'coc-cfn-lint',
       \ 'coc-copilot',
-      \ 'coc-eslint',
-      \ 'coc-explorer',
-      \ 'coc-json',
-      \ 'coc-html',
-      \ 'coc-markdownlint',
-      \ 'coc-marketplace',
-      \ 'coc-pairs',
-      \ 'coc-prettier',
-      \ 'coc-pyright',
-      \ 'coc-rome',
-      \ 'coc-sh',
-      \ 'coc-snippets',
-      \ 'coc-sql',
-      \ 'coc-tabnine',
-      \ 'coc-toml',
-      \ 'coc-tsserver',
-      \ 'coc-vimlsp',
-      \ 'coc-yaml',
-      \ 'jest-snippets',
       \ '@hexuhua/coc-copilot',
       \ ]
 
 call plug#end()
 
 " Function to disable coc-yaml for specific files
-function! DisableCocYamlForCF()
-  if search('AWSTemplateFormatVersion', 'nw')
-    " Delay the execution to ensure coc.nvim is ready
-    call timer_start(2000, { -> CocAction('deactivateExtension', 'coc-yaml') })
-  endif
-endfunction
+"function! DisableCocYamlForCF()
+"  if search('AWSTemplateFormatVersion', 'nw')
+"    " Delay the execution to ensure coc.nvim is ready
+"    call timer_start(2000, { -> CocAction('deactivateExtension', 'coc-yaml') })
+"  endif
+"endfunction
 
 " Autocommand to trigger the function
 "augroup DisableCocYamlForCF
@@ -43,6 +38,20 @@ endfunction
 "  autocmd BufRead,BufNewFile *.yaml call DisableCocYamlForCF()
 "augroup END
 
+
+" Extension keybindings
+
+" coc-explorer
+nmap <space>e <Cmd>CocCommand explorer<CR>
+
+
+" Coc keybindings
+
+" CocDiagnotics
+nnoremap <expr> <space>i
+  \ (CheckLocationListOpen() ? ":CocDiagnostics" : ":lclose")."<CR>"
+
+" Format current buffer
 augroup CustomCocMappings
   autocmd!
   autocmd FileType * nmap <silent> <leader>l :call CocAction('format')<CR>
@@ -59,9 +68,6 @@ function! CheckLocationListOpen()
   endif
 endfunction
 
-" Shortcut to diagnostics display in location list
-nnoremap <expr> <space>i
-  \ (CheckLocationListOpen() ? ":CocDiagnostics" : ":lclose")."<CR>"
 
 "vmap <S-f>  <Plug>(coc-format-selected)
 "run cmd on range of entire file
