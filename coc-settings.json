@@ -12,16 +12,16 @@
   "diagnostic.infoSign": "⚑",
   "diagnostic.hintSign": "⚑",
   "languageserver": {
-    // "source": "https://github.com/hashicorp/terraform-ls",
     "external-coc-terraform-ls": {
+      "source": "https://github.com/hashicorp/terraform-ls",
       "command": "terraform-ls",
       "args": ["serve"],
       "filetypes": ["terraform", "tf"],
       "initializationOptions": {},
       "settings": {}
     },
-    // "source": "https://github.com/hrsh7th/vscode-langservers-extracted",
     "external-coc-vscode-json-language-server": {
+      "source": "https://github.com/hrsh7th/vscode-langservers-extracted",
       "command": "vscode-json-language-server",
       "args": ["--stdio"],
       "filetypes": ["json", "jsonc"],
@@ -42,8 +42,8 @@
         "documentRangeFormatting": false
       }
     },
-    // "source": "https://github.com/mattn/efm-langserver",
     "external-coc-efm-langserver": {
+      "source": "https://github.com/mattn/efm-langserver",
       "command": "efm-langserver",
       "args": [],
       "filetypes": ["javascript", "typescript", "json", "jsonc"],

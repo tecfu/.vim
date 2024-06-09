@@ -72,7 +72,7 @@ SYMLINKS=()
 SYMLINKS+=("$DIR/.vimrc $HOME/.vimrc")
 SYMLINKS+=("$DIR/init.vim $HOME/.config/nvim/init.vim")
 SYMLINKS+=("$DIR/coc-settings.json $HOME/.config/nvim/coc-settings.json")
-SYMLINKS+=("$DIR/efn-langserver-config.yaml $HOME/.config/efm-langserver/config.yaml")
+SYMLINKS+=("$DIR/efm-langserver-config.yaml $HOME/.config/efm-langserver/config.yaml")
 
 for i in "${SYMLINKS[@]}"; do
   #echo $i
