@@ -35,11 +35,8 @@
       },
       "trace.server": "verbose",
       "initializationOptions": {
-        "documentFormatting": true,
-        "documentRangeFormatting": true,
-        "documentSymbol": true,
-        "codeAction": true,
-        "completion": true
+        "documentFormatting": false,
+        "documentRangeFormatting": false
       }
     },
     "external-coc-efm-langserver": {
