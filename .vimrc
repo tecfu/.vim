@@ -469,7 +469,7 @@ setlocal foldlevel=2
 " Easier to apply groupings here
 
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
-autocmd BufNewFile,BufRead tsconfig.json,*.jsonc set filetype=jsonc
+autocmd BufNewFile,BufRead coc-settings.json,*.jsonc set filetype=jsonc
 autocmd BufNewFile,BufRead *.eslintrc,*.cjs set filetype=javaScript
 autocmd BufEnter *.nvim :setlocal filetype=vim
 
