@@ -423,7 +423,7 @@ set lbr
 set tw=500
 
 " Indentation tweaks:
-set ai "Auto indent
+set autoindent "Auto indent
 "set si "Smart indent
 set wrap "Wrap lines
 
