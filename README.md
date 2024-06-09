@@ -95,7 +95,7 @@ npm run update-plugin-list
 
 ## Troubleshooting
 
-- CoC can't install plugins because npm registry is private
+- CoC can't install plugins when a npm registry is private
 
 ```sh
 npm config set registry https://registry.npmjs.org
