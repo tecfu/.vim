@@ -13,18 +13,17 @@
   "diagnostic.hintSign": "⚑",
   "languageserver": {
     "external-coc-terraform-ls": {
-      "source": "https://github.com/hashicorp/terraform-ls",
+      "filetypes": ["terraform", "tf"],
       "command": "terraform-ls",
       "args": ["serve"],
-      "filetypes": ["terraform", "tf"],
       "initializationOptions": {},
-      "settings": {}
+      "settings": {},
+      "sources": ["https://github.com/hashicorp/terraform-ls"]
     },
     "external-coc-vscode-json-language-server": {
-      "source": "https://github.com/hrsh7th/vscode-langservers-extracted",
+      "filetypes": ["json", "jsonc"],
       "command": "vscode-json-language-server",
       "args": ["--stdio"],
-      "filetypes": ["json", "jsonc"],
       "settings": {
         "json": {
           "schemas": [],
@@ -40,13 +39,14 @@
       "initializationOptions": {
         "documentFormatting": false,
         "documentRangeFormatting": false
-      }
+      },
+      "sources": ["https://github.com/hrsh7th/vscode-langservers-extracted"],
+      "rationale": "We use vscode-json-language-server for linting. We could use coc-json for both but wanted to get away from coc extensions."
     },
-    "external-coc-efm-langserver": {
-      "source": "https://github.com/mattn/efm-langserver",
+    "external-coc-efm-langserver-ts-js": {
+      "filetypes": ["javascript", "typescript"],
       "command": "efm-langserver",
       "args": [],
-      "filetypes": ["javascript", "typescript", "json", "jsonc"],
       "rootPatterns": [".git/"],
       "trace.server": "verbose",
       "initializationOptions": {
@@ -55,7 +55,31 @@
         "documentSymbol": true,
         "codeAction": true,
         "completion": true
-      }
+      },
+      "sources": [
+        "https://github.com/mattn/efm-langserver",
+        "https://github.com/mantoni/eslint_d.js"
+      ],
+      "rationale": "We use efm-langserver+eslint_d.js for linting+formatting. We could use coc-eslint for both but wanted to get away from coc extensions."
+    },
+    "external-coc-efm-langserver-json-jsonc": {
+      "filetypes": ["json", "jsonc"],
+      "command": "efm-langserver",
+      "args": [],
+      "rootPatterns": [".git/"],
+      "trace.server": "verbose",
+      "initializationOptions": {
+        "documentFormatting": true,
+        "documentRangeFormatting": true,
+        "documentSymbol": true,
+        "codeAction": true,
+        "completion": true
+      },
+      "rationale": "We use efm-langserver+prettierd for formatting. We could use coc-json for both but wanted to get away from coc extensions.",
+      "sources": [
+        "https://github.com/mattn/efm-langserver",
+        "https://github.com/fsouza/prettierd"
+      ]
     }
     // "coc-efm-languageserver-debug": {
     //   "command": "nc",
