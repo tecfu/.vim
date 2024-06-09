@@ -39,7 +39,6 @@ function! DetectPlugin(name)
   endtry
 
   if (l:scriptnameFound || l:helpFound)
-    echom 'Plugin '.a:name.' detected'
     return 1
   else
     echoerr 'Plugin '.a:name.' not detected'
@@ -59,13 +58,14 @@ if has('nvim')
 endif
 "let g:gitgutter_highlight_linenrs = 1
 
+
 Plug 'ap/vim-css-color'
 
 
-" Gitlens-like git blame 
+" Gitlens-like git blame
 Plug 'APZelos/blamer.nvim'
 " Toggle this in nvim
-let g:blamer_enabled = 0 
+let g:blamer_enabled = 0
 
 
 Plug 'bling/vim-airline'
@@ -77,7 +77,7 @@ let g:airline_powerline_fonts=1
 "let g:airline#extensions#tabline#enabled = 1
 
 function! OnLoadAirline(...)
-  "if DetectPlugin('airline')
+  if DetectPlugin('airline')
 
     let g:airline_section_a = airline#section#create(['mode'])
     let g:airline_section_b = airline#section#create_left(['branch'])
@@ -109,7 +109,7 @@ function! OnLoadAirline(...)
     let g:airline_symbols.readonly = ''
     let g:airline_symbols.linenr = ''
 
-  "endif
+  endif
 endfunction
 
 autocmd VimEnter * call OnLoadAirline()
@@ -117,12 +117,6 @@ autocmd VimEnter * call OnLoadAirline()
 
 
 Plug 'bronson/vim-visual-star-search'
-
-
-"Plug 'Chiel92/vim-autoformat'
-"let g:formatterpath = ['/usr/local/bin']
-"For javascript, install js-beautify externally
-"npm install js-beautify -g
 
 
 "```
@@ -142,6 +136,7 @@ endfunction
 inoreabbrev <expr> <bar><bar>
           \ <SID>isAtStartOfLine('\|\|') ?
           \ '<c-o>:TableModeEnable<cr><bar><space><bar><left><left>' : '<bar><bar>'
+
 
 Plug 'easymotion/vim-easymotion'
 "{{{
@@ -166,12 +161,6 @@ let g:EasyMotion_smartcase = 1
 " ```
 Plug 'FooSoft/vim-argwrap'
 nnoremap <leader>w :ArgWrap<CR>
-
-
-" ```
-" - FORMATTING: Create a table
-" ```
-"Plug 'github/copilot.vim'
 
 
 " ```
@@ -204,8 +193,6 @@ vnoremap <leader>tz :call <SID>VIMRC_CustomTabular()<CR><ESC>
 "Plug 'gorkunov/smartpairs.vim'
 "let g:smartpairs_uber_mode=1
 
-
-"Plug 'heavenshell/vim-jsdoc'
 
 " ```
 " - UTILITY COMMAND: Argdo / Windo /
@@ -302,16 +289,7 @@ let g:vim_markdown_folding_style_pythonic = 1
 "}}}
 
 
-" ```
-" - Format: js
-" ```
-Plug 'maksimr/vim-jsbeautify'
-
-
 "Plug 'MattesGroeger/vim-bookmarks'
-
-
-Plug 'mattn/emmet-vim'
 
 
 Plug 'mechatroner/rainbow_csv'
@@ -319,12 +297,6 @@ let g:rbql_meta_language='Javascript'
 
 
 Plug 'moll/vim-node'
-
-
-Plug 'mxw/vim-jsx'
-
-
-Plug 'mustache/vim-mustache-handlebars'
 
 
 Plug 'nathanaelkane/vim-indent-guides'
@@ -365,7 +337,7 @@ nnoremap <leader>u :UndotreeToggle<cr>
 
 
 " ```
-" - GIT: Show branch convergence/divergence, 
+" - GIT: Show branch convergence/divergence,
 "   depends on fugitive
 "   depends on vim > 9.1
 "   disabled due to dependencies
