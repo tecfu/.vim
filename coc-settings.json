@@ -12,7 +12,7 @@
   "diagnostic.infoSign": "⚑",
   "diagnostic.hintSign": "⚑",
   "languageserver": {
-    "external-coc-terraform-ls": {
+    "coc-terraform-ls": {
       "filetypes": ["terraform", "tf"],
       "command": "terraform-ls",
       "args": ["serve"],
@@ -20,7 +20,7 @@
       "settings": {},
       "sources": ["https://github.com/hashicorp/terraform-ls"]
     },
-    "external-coc-vscode-json-language-server": {
+    "coc-vscode-json-language-server": {
       "filetypes": ["json", "jsonc"],
       "command": "vscode-json-language-server",
       "args": ["--stdio"],
@@ -40,13 +40,41 @@
         "documentFormatting": false,
         "documentRangeFormatting": false
       },
-      "sources": ["https://github.com/hrsh7th/vscode-langservers-extracted"],
-      "rationale": "We use vscode-json-language-server for linting. We could use coc-json for both but wanted to get away from coc extensions."
+      "sources": ["npm i -g vscode-langservers-extracted"],
+      "rationale": "vscode-json-language-server for linting."
     },
-    "external-coc-efm-langserver-ts-js": {
+    // coc chokes on diagnostics from this server, errors on workspace/didChangeWorkspaceFolders
+    // "coc-vscode-eslint-language-server": {
+    //   "filetypes": ["javascript", "typescript"],
+    //   //"command": "nc",
+    //   //"args": ["localhost", "12345"],
+    //   "command": "vscode-eslint-language-server",
+    //   "args": ["--stdio"],
+    //   "trace.server": "verbose",
+    //   "initializationOptions": {},
+    //   "sources": ["npm i -g vscode-langservers-extracted"],
+    //   "rationale": "uses vscode eslint, but not working"
+    // },
+    // "coc-manual-vscode-eslint-language-server": {
+    //   "filetypes": ["javascript", "typescript"],
+    //   "command": "nc",
+    //   "args": ["localhost", "12346"],
+    //   // "command": "node",
+    //   // "args": ["/home/base/vscode-eslint/server/out/eslintServer.js", "--stdio"],
+    //   "trace.server": "verbose",
+    //   "initializationOptions": {
+    //     "workspaceFolder": "/home/base/Documents/bitbucket/aws-lambda-ts-sls-cloudformation",
+    //     "workingDirectory": "/home/base/Documents/bitbucket/aws-lambda-ts-sls-cloudformation"
+    //   },
+    //   "sources": ["https://github.com/microsoft/vscode-eslint"],
+    //   "rationale": "uses vscode eslint, manually extracted/installed"
+    // },
+    "coc-efm-langserver-elsint_d": {
       "filetypes": ["javascript", "typescript"],
       "command": "efm-langserver",
       "args": [],
+      //  "command": "nc",
+      //  "args": ["localhost", "12345"],
       "rootPatterns": [".git/"],
       "trace.server": "verbose",
       "initializationOptions": {
@@ -57,15 +85,32 @@
         "completion": true
       },
       "sources": [
-        "https://github.com/mattn/efm-langserver",
-        "https://github.com/mantoni/eslint_d.js"
+        "go install github.com/mattn/efm-langserver@latest",
+        "npm install -g eslint_d"
       ],
-      "rationale": "We use efm-langserver+eslint_d.js for linting+formatting. We could use coc-eslint for both but wanted to get away from coc extensions."
+      "rationale": "efm-langserver:eslint_d.js for linting+formatting.",
+      "alternatives": ["coc-eslint"]
     },
-    "external-coc-efm-langserver-json-jsonc": {
+    //"coc-typescript-language-server": {
+    //  "filetypes": ["typescript"],
+    //  "command": "typescript-language-server",
+    //  "args": ["--stdio"],
+    //  "sources": ["npm install -g typescript-language-server"]
+    //},
+    //"coc-vtsls": {
+    //  "filetypes": ["typescript"],
+    //  "command": "vtsls",
+    //  "args": ["--stdio"],
+    //  "sources": ["npm install -g @vtsls/language-server"],
+    //  "rationale": "LSP wrapper for typescript extension of vscode"
+    //},
+    "coc-efm-langserver-json-jsonc": {
       "filetypes": ["json", "jsonc"],
       "command": "efm-langserver",
       "args": [],
+      //   "command": "nc",
+      //   "args": ["localhost", "12345"],
+
       "rootPatterns": [".git/"],
       "trace.server": "verbose",
       "initializationOptions": {
@@ -75,26 +120,13 @@
         "codeAction": true,
         "completion": true
       },
-      "rationale": "We use efm-langserver+prettierd for formatting. We could use coc-json for both but wanted to get away from coc extensions.",
+      "rationale": "efm-langserver:prettierd for formatting.",
       "sources": [
-        "https://github.com/mattn/efm-langserver",
-        "https://github.com/fsouza/prettierd"
-      ]
+        "go install github.com/mattn/efm-langserver@latest",
+        "npm install -g @fsouza/prettierd"
+      ],
+      "alternatives": ["coc-json"]
     }
-    // "coc-efm-languageserver-debug": {
-    //   "command": "nc",
-    //   "args": ["localhost", "12345"],
-    //   "filetypes": ["javascript", "typescript", "json", "jsonc"],
-    //   "rootPatterns": [".git/"],
-    //   "trace.server": "verbose",
-    //   "initializationOptions": {
-    //     "documentFormatting": true,
-    //     "documentRangeFormatting": true,
-    //     "documentSymbol": true,
-    //     "codeAction": true,
-    //     "completion": true
-    //   }
-    // }
   },
   "markdownlint.config": {
     "default": true,

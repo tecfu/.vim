@@ -22,9 +22,6 @@ Plug 'williamboman/mason-lspconfig.nvim'
 " nvim-lspconfig: A collection of common configurations for Neovim's built-in LSP client. It makes setting up Neovim's LSP client easier.
 Plug 'neovim/nvim-lspconfig'
 
-" LuaSnip: A snippet engine for Neovim. It allows for faster coding via reusable code snippets.
-Plug 'L3MON4D3/LuaSnip'
-
 
 function! VimrcSetupPlugins()
 lua << EOF
@@ -41,10 +38,12 @@ lua << EOF
 
   -- List of available servers: https://github.com/williamboman/mason-lspconfig.nvim
   local lspservers = {
+		'biome',
     'eslint',
-    'vacuum', -- OPEN API Validator
     'tsserver',
+    'vacuum', -- OPEN API Validator
     'vimls',
+		'vtsls',
   }
 
   require('mason-lspconfig').setup({
@@ -128,14 +127,11 @@ lua << EOF
   --
   -- Set up nvim-cmp.
   --
-  local luasnip = require('luasnip')
   local CustomDown = function(fallback,cmp)
     if cmp.visible() then
       cmp.select_next_item()
     -- You could replace the expand_or_jumpable() calls with expand_or_locally_jumpable()
     -- they way you will only jump inside the snippet region
-    elseif luasnip.expand_or_jumpable() then
-      luasnip.expand_or_jump()
     elseif has_words_before() then
       cmp.complete()
     else
@@ -146,8 +142,6 @@ lua << EOF
   local CustomUp = function(fallback,cmp)
     if cmp.visible() then
       cmp.select_prev_item()
-    elseif luasnip.jumpable(-1) then
-      luasnip.jump(-1)
     else
       fallback()
     end
@@ -181,16 +175,10 @@ lua << EOF
   cmp.setup({
   completion = { completeopt = 'menu,menuone,noinsert' },
   mapping = cmp.mapping.preset.insert(baseMappings),
-  snippet = {
-    expand = function(args)
-      luasnip.lsp_expand(args.body)
-    end,
-  },
   sources = cmp.config.sources({
     { name = 'copilot', group_index = 1 },
     { name = 'path', group_index = 2 },
     { name = 'nvim_lsp', group_index = 2 },
-    { name = 'luasnip', group_index = 2 },
     { name = 'buffer', group_index = 2 },
   })
 })
@@ -218,3 +206,92 @@ endfunction
 
 "Call the function after Vim has finished starting up
 autocmd VimEnter * call VimrcSetupPlugins()
+
+
+" Define a Lua function to customize diagnostics formatting
+lua << EOF
+function _G.custom_diagnostics_format(diagnostic)
+  local source = diagnostic.source or "N/A"
+  return string.format("%s: %s", source, diagnostic.message)
+end
+
+vim.diagnostic.config({
+  virtual_text = {
+    format = function(diagnostic)
+      return _G.custom_diagnostics_format(diagnostic)
+    end,
+  },
+  float = {
+    format = function(diagnostic)
+      return _G.custom_diagnostics_format(diagnostic)
+    end,
+  },
+})
+EOF
+
+function! SetLocationList()
+  " Clear the location list
+  call setloclist(0, [], 'r')
+
+  " Get diagnostics for the current buffer using Lua
+  let diagnostics = luaeval('vim.diagnostic.get(0)')
+  let items = []
+
+  " Format diagnostics and add them to the location list
+  for diagnostic in diagnostics
+    " Get the LSP source name, defaulting to 'LSP' if not available
+    let source = get(diagnostic, 'source', 'LSP')
+    let lsp_name = get(diagnostic, 'client_name', '')
+
+    " Construct the message with LSP name and diagnostic text
+    let message = '[' . source . ']: ' . diagnostic.message
+
+    " Determine the type based on diagnostic severity
+    let type = 'E'
+    if diagnostic.severity == 'Warning'
+      let type = 'W'
+    elseif diagnostic.severity == 'Information'
+      let type = 'I'
+    elseif diagnostic.severity == 'Hint'
+      let type = 'H'
+    endif
+
+    " Prepare item for the location list
+    let item = {
+          \ 'bufnr': diagnostic.bufnr,
+          \ 'lnum': diagnostic.lnum + 1,
+          \ 'col': diagnostic.col + 1,
+          \ 'text': message,
+          \ 'type': type
+          \ }
+    call add(items, item)
+  endfor
+
+  " Set the location list with the items
+  call setloclist(0, items, 'r')
+endfunction
+
+
+" Define the function to toggle the location list
+function! ToggleLocationList()
+  " Check if the location list is currently open
+  let loclist_open = 0
+  for win in getwininfo()
+    if win['loclist']
+      let loclist_open = 1
+      break
+    endif
+  endfor
+
+  if loclist_open
+    " If location list is open, close it
+    lclose
+  else
+    " If location list is closed, set and open it
+    call SetLocationList()
+    lopen
+  endif
+endfunction
+
+" Map the function to <leader>i
+nnoremap <silent> <leader>i :call ToggleLocationList()<CR>

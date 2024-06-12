@@ -3,24 +3,26 @@ let g:coc_config_home = expand('$HOME/.vim')
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " coc extensions
 "
-"let g:coc_global_extensions = [
-"      \ 'coc-cfn-lint',
-"      \ 'coc-copilot',
-"      \ 'coc-html',
-"      \ 'coc-markdownlint',
-"      \ 'coc-marketplace',
-"      \ 'coc-sh',
-"      \ 'coc-sql',
-"      \ 'coc-toml',
-"      \ 'coc-vimlsp',
-"      \ 'coc-yaml',
-"      \ '@hexuhua/coc-copilot',
-"      \ ]
-
 let g:coc_global_extensions = [
+      \ 'coc-cfn-lint',
       \ 'coc-copilot',
+      \ 'coc-eslint',
+      \ 'coc-html',
+      \ 'coc-markdownlint',
+      \ 'coc-marketplace',
+      \ 'coc-sh',
+      \ 'coc-sql',
+      \ 'coc-toml',
+      \ 'coc-tsserver',
+      \ 'coc-vimlsp',
+      \ 'coc-yaml',
       \ '@hexuhua/coc-copilot',
       \ ]
+
+"let g:coc_global_extensions = [
+"    \ 'coc-copilot',
+"    \ '@hexuhua/coc-copilot',
+"\ ]
 
 call plug#end()
 
@@ -40,6 +42,9 @@ call plug#end()
 
 
 " Extension keybindings
+" view available code actions
+nmap <leader>d  <Plug>(coc-codeaction)
+nmap <leader>fc <Plug>(coc-fix-current)
 
 " coc-explorer
 nmap <space>e <Cmd>CocCommand explorer<CR>
