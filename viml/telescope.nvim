@@ -1,0 +1,7 @@
+" nvim-telescope/telescope.nvim: A highly extendable fuzzy finder over lists. It helps you to find and manage files, buffers, and much more.
+Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.2' }
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+

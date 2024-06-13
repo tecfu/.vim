@@ -1,0 +1,28 @@
+" nvim-treesitter/nvim-treesitter: A Neovim plugin for tree-sitter, a parser generator tool and an incremental parsing library. It helps to improve syntax highlighting and indentation.
+function! TreesitterHook()
+	!npm i -g tree-sitter-cli tree-sitter
+endfunction
+
+Plug 'nvim-treesitter/nvim-treesitter', { 'do': { -> TreesitterHook() } }
+
+function! TreesitterSetup()
+lua << EOF
+  require'nvim-treesitter.configs'.setup {
+    ensure_installed = {
+      "javascript",
+      "typescript",
+      "c",
+      "lua",
+      "vim"
+    },
+    auto_install = true,
+    highlight = {
+      enable = true,                -- Enable syntax highlighting
+    },
+  }
+  -- nvim-treesitter.install.update()
+EOF
+endfunction
+
+"Call the function after Vim has finished starting up
+autocmd VimEnter * call TreesitterSetup()

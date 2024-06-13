@@ -1,0 +1,79 @@
+" cmp-nvim-lsp: A Language Server Protocol (LSP) source for nvim-cmp. It provides completion items based on LSP.
+Plug 'hrsh7th/cmp-nvim-lsp'
+
+" mason.nvim: A plugin manager for Neovim. It helps to manage and load plugins.
+Plug 'williamboman/mason.nvim'
+
+" mason-lspconfig.nvim: Provides configurations for setting up Language Server Protocol (LSP) with mason.nvim.
+Plug 'williamboman/mason-lspconfig.nvim'
+
+" nvim-lspconfig: A collection of common configurations for Neovim's built-in LSP client. It makes setting up Neovim's LSP client easier.
+Plug 'neovim/nvim-lspconfig'
+
+
+function! SetupLsp()
+lua << EOF
+
+  require("mason").setup({
+    ui = {
+      icons = {
+        package_installed = "✓",
+        package_pending = "➜",
+        package_uninstalled = "✗"
+      }
+    }
+  })
+
+  -- Aailable servers: https://github.com/williamboman/mason-lspconfig.nvim
+  local lspservers = {
+    -- 'biome',
+    'tsserver', -- tsserver before eslint so eslint overrides when conflicted
+    -- 'vtsls', -- vtsls before eslint so eslint overrides when conflicted
+    'eslint',
+    'vacuum', -- OPEN API Validator
+    'vimls',
+  }
+
+  require('mason-lspconfig').setup({
+    ensure_installed = lspservers
+  })
+
+  -- Set up cmp_nvim_lsp
+  local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
+  local lsp_on_attach = function(client, bufnr)
+    client.server_capabilities.documentFormattingProvider = true
+
+    local bufopts = { noremap=true, silent=true, buffer=bufnr }
+
+    vim.keymap.set('n', 'gh'   , vim.lsp.buf.signature_help                        , bufopts)
+    vim.keymap.set('n', 'gv'   , vim.lsp.buf.hover                                 , bufopts)
+    vim.keymap.set('n', 'gD'   , vim.lsp.buf.declaration                           , bufopts)
+    vim.keymap.set('n', 'gd'   , vim.lsp.buf.definition                            , bufopts)
+    vim.keymap.set('n', 'gi'   , vim.lsp.buf.implementation                        , bufopts)
+    vim.keymap.set('n', 'go'   , vim.lsp.buf.type_definition                       , bufopts)
+    vim.keymap.set('n', 'gr'   , vim.lsp.buf.references                            , bufopts)
+    --m.keymap.set('n', TODO   , vim.lsp.buf.code_action                           , bufopts) -- lspconfig: <space>ca; lsp-zero: <F4>
+    vim.keymap.set('n', '<space>l', function() vim.lsp.buf.format { async = true } end, bufopts) -- lspconfig: <space>l
+    --m.keymap.set('n', TODO   , vim.lsp.buf.rename                                , bufopts) -- lspconfig: <space>rn; lsp-zero: <F2>
+  end
+
+  -- enable both language-servers for both eslint and typescript:
+  -- for _, server in pairs(lspservers) do
+  -- BUG: must load tsserver twice
+  local lspconfig = require('lspconfig')
+  for _, server in pairs(lspservers) do
+    lspconfig[server].setup({
+      capabilities = lsp_capabilities,
+      on_attach = lsp_on_attach,
+    })
+    lspconfig[server].setup({
+      capabilities = lsp_capabilities,
+      on_attach = lsp_on_attach,
+    })
+  end
+
+EOF
+endfunction
+
+"Call the function after Vim has finished starting up
+autocmd VimEnter * call SetupLsp()

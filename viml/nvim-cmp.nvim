@@ -1,0 +1,99 @@
+" nvim-cmp: A completion engine plugin for Neovim. It provides an extensible and customizable framework for text completion.
+Plug 'hrsh7th/nvim-cmp'
+
+" cmp-buffer: A buffer source for nvim-cmp. It provides completion items from the current and other open buffers.
+Plug 'hrsh7th/cmp-buffer'
+
+" cmp-path: A file path source for nvim-cmp. It provides completion for file paths.
+Plug 'hrsh7th/cmp-path'
+
+" cmp-cmdline: A command line source for nvim-cmp. It provides completion for command line mode.
+Plug 'hrsh7th/cmp-cmdline'"
+
+function! SetupCmp()
+lua << EOF
+
+  local has_words_before = function()
+    local cursor = vim.api.nvim_win_get_cursor(0)
+    return not vim.api.nvim_get_current_line():sub(1, cursor[2]):match('^%s$')
+  end
+
+  -- Set up nvim-cmp.
+  local CustomDown = function(fallback,cmp)
+    if cmp.visible() then
+      cmp.select_next_item()
+    -- You could replace the expand_or_jumpable() calls with expand_or_locally_jumpable()
+    -- they way you will only jump inside the snippet region
+    elseif has_words_before() then
+      cmp.complete()
+    else
+      fallback()
+    end
+  end
+
+  local CustomUp = function(fallback,cmp)
+    if cmp.visible() then
+      cmp.select_prev_item()
+    else
+      fallback()
+    end
+  end
+
+  local cmp = require('cmp')
+  local baseMappings = {
+    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-e>'] = cmp.mapping.abort(),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    ['<C-j>'] = cmp.mapping(function(fallback)
+        CustomDown(fallback,cmp)
+    end, { 'i', 's' }),
+    ['<C-k>'] = cmp.mapping(function(fallback)
+        CustomUp(fallback, cmp)
+    end, { 'i', 's' }),
+    ['<Tab>'] = cmp.mapping(function(fallback)
+        if vim.fn.pumvisible() == 1 then
+            vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-n>', true, true, true), 'n')
+        elseif cmp.visible() then
+            cmp.select_next_item()
+        else
+            fallback()
+        end
+    end, { 'i', 's' }),
+  }
+
+  cmp.setup({
+    completion = { completeopt = 'menu,menuone,noinsert' },
+    mapping = cmp.mapping.preset.insert(baseMappings),
+    sources = cmp.config.sources({
+      { name = 'copilot', group_index = 1 },
+      { name = 'path', group_index = 2 },
+      { name = 'nvim_lsp', group_index = 2 },
+      { name = 'buffer', group_index = 2 },
+    })
+  })
+
+  -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline({ '/', '?' }, {
+    mapping = cmp.mapping.preset.cmdline({
+        ['<C-j>'] = {
+        c = function(_)
+             cmp.select_next_item()
+        end,
+        },
+        ['<C-k>'] = {
+        c = function(_)
+             cmp.select_prev_item()
+        end,
+        }
+    }),
+    sources = {
+      { name = 'buffer' }
+    }
+  })
+EOF
+endfunction
+
+"Call the function after Vim has finished starting up
+autocmd VimEnter * call SetupCmp()

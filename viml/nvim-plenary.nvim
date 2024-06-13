@@ -1,0 +1,2 @@
+" plenary.nvim: A Lua library for Neovim. It provides utility functions and classes which can be used by other plugins.
+Plug 'nvim-lua/plenary.nvim'
