@@ -29,7 +29,8 @@ lua << EOF
     -- 'biome',
     'tsserver', -- tsserver before eslint so eslint overrides when conflicted
     -- 'vtsls', -- vtsls before eslint so eslint overrides when conflicted
-    'eslint',
+    -- 'eslint', -- using eslint_d instead via efm, much faster
+    'efm',
     'vacuum', -- OPEN API Validator
     'vimls',
   }
@@ -57,9 +58,14 @@ lua << EOF
     --m.keymap.set('n', TODO   , vim.lsp.buf.rename                                , bufopts) -- lspconfig: <space>rn; lsp-zero: <F2>
   end
 
-  -- enable both language-servers for both eslint and typescript:
-  -- for _, server in pairs(lspservers) do
-  -- BUG: must load tsserver twice
+  -- lspconfig.customEslint.setup {
+  --   cmd = { 'vscode-eslint-language-server', '--stdio' },
+  --   on_attach = on_attach,
+  --   autostart = false,
+  --   root_dir = function() return vim.fn.getcwd() end,
+  -- }
+
+  -- BUG: must load each lsp twice
   local lspconfig = require('lspconfig')
   for _, server in pairs(lspservers) do
     lspconfig[server].setup({
