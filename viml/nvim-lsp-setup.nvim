@@ -13,6 +13,7 @@ Plug 'neovim/nvim-lspconfig'
 
 function! SetupLsp()
 lua << EOF
+  vim.lsp.set_log_level("debug")
 
   require("mason").setup({
     ui = {
@@ -24,7 +25,7 @@ lua << EOF
     }
   })
 
-  -- Aailable servers: https://github.com/williamboman/mason-lspconfig.nvim
+  -- Available servers: https://github.com/williamboman/mason-lspconfig.nvim
   local lspservers = {
     -- 'biome',
     'tsserver', -- tsserver before eslint so eslint overrides when conflicted
@@ -58,12 +59,45 @@ lua << EOF
     --m.keymap.set('n', TODO   , vim.lsp.buf.rename                                , bufopts) -- lspconfig: <space>rn; lsp-zero: <F2>
   end
 
-  -- lspconfig.customEslint.setup {
-  --   cmd = { 'vscode-eslint-language-server', '--stdio' },
-  --   on_attach = on_attach,
-  --   autostart = false,
-  --   root_dir = function() return vim.fn.getcwd() end,
-  -- }
+  -- Custom example. Client fails on sending path. nc used to debug.
+  -- root_dir = function(fname)
+  --     -- local root = vim.fn.getcwd()
+  --     -- print("Checking root dir: " .. tostring(root))
+  --     -- return root
+  --     local root = vim.fn.fnamemodify(fname, ':p:h')
+  --     print("Checking root dir: " .. tostring(root))
+  --     return root
+  -- end
+
+  -- -- customEslint LSP server setup
+  -- -- this example uses a proxy to give you visibility into stdin/stdout
+  -- local lsp_configurations = require('lspconfig.configs')
+  -- if not lsp_configurations.customEslint then
+  --     lsp_configurations.customEslint = {
+  --         default_config = {
+  --             name = 'customEslint',
+  --             cmd = { "nc", "localhost", "12345" },
+  --             -- cmd = {
+  --             --     "python3",
+  --             --     "/home/base/.terminal/scripts/python-stdio-proxy.py",
+  --             --     "--cmd",
+  --             --     "vscode-eslint-language-server --stdio",
+  --             --     "port",
+  --             --     "12345"
+  --             -- },
+  --             -- cmd = {
+  --             --     "vscode-eslint-language-server",
+  --             --     "--stdio"
+  --             -- },
+  --             filetypes = { 'javascript', 'typescript' },
+  --             -- root_dir = require('lspconfig.util').root_pattern('*.git'),
+  --             -- root_dir = require('lspconfig.util').root_pattern("eslint*", "*.git")
+  --             root_dir = root_dir
+  --         }
+  --     }
+  -- end
+
+  -- lspservers = {unpack(lspservers), 'customEslint', 'customEslint'}
 
   -- BUG: must load each lsp twice
   local lspconfig = require('lspconfig')
@@ -81,5 +115,5 @@ lua << EOF
 EOF
 endfunction
 
-"Call the function after Vim has finished starting up
+" Call the function after Vim has finished starting up
 autocmd VimEnter * call SetupLsp()
