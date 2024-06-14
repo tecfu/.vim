@@ -45,6 +45,20 @@ call plug#end()
 " view available code actions
 nmap <leader>d  <Plug>(coc-codeaction)
 nmap <leader>fc <Plug>(coc-fix-current)
+nmap <silent> gD <Plug>(coc-definition)
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use to show documentation in preview window
+" nmap <silent> gk <Plug>(coc-hover)
+
 
 " coc-explorer
 nmap <space>e <Cmd>CocCommand explorer<CR>
