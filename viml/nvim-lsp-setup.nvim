@@ -60,6 +60,7 @@ lua << EOF
   end
 
   -- Custom example. Client fails on sending path. nc used to debug.
+  -- See also: https://github.com/neovim/nvim-lspconfig/issues/2657#issuecomment-1674107409
   -- root_dir = function(fname)
   --     -- local root = vim.fn.getcwd()
   --     -- print("Checking root dir: " .. tostring(root))

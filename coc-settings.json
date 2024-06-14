@@ -71,7 +71,7 @@
     // },
     "coc-efm-langserver-elsint_d": {
       "filetypes": ["javascript", "typescript"],
-      "command": "efm-langserver",
+      "command": "$HOME/go/bin/efm-langserver",
       "args": [],
       //  "command": "nc",
       //  "args": ["localhost", "12345"],
@@ -106,7 +106,7 @@
     //},
     "coc-efm-langserver-json-jsonc": {
       "filetypes": ["json", "jsonc"],
-      "command": "efm-langserver",
+      "command": "$HOME/go/bin/efm-langserver",
       "args": [],
       //   "command": "nc",
       //   "args": ["localhost", "12345"],

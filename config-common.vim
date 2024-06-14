@@ -240,9 +240,10 @@ Plug 'kshenoy/vim-signature'
 " ```
 " - CTAGS
 " ```
+" Think these are redundant with lsp go to definition
 "sudo apt install universal-ctags
-Plug 'ludovicchabant/vim-gutentags'
-set statusline+=%{gutentags#statusline()}
+"Plug 'ludovicchabant/vim-gutentags'
+"set statusline+=%{gutentags#statusline()}
 
 "```
 "- Colorizes pairs of opening/closing parens, braces, etc
