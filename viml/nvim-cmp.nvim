@@ -45,22 +45,22 @@ lua << EOF
     ['<C-Space>'] = cmp.mapping.complete(),
     ['<C-e>'] = cmp.mapping.abort(),
     ['<CR>'] = cmp.mapping.confirm({ select = true }),
-    ['<Tab>'] = cmp.mapping.confirm({ select = true }),
+    -- ['<Tab>'] = cmp.mapping.confirm({ select = true }),
     ['<C-j>'] = cmp.mapping(function(fallback)
         CustomDown(fallback,cmp)
     end, { 'i', 's' }),
     ['<C-k>'] = cmp.mapping(function(fallback)
         CustomUp(fallback, cmp)
     end, { 'i', 's' }),
-    -- ['<Tab>'] = cmp.mapping(function(fallback)
-        -- if vim.fn.pumvisible() == 1 then
-        --     vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-n>', true, true, true), 'n')
-        -- elseif cmp.visible() then
-        --     cmp.select_next_item()
-        -- else
-        --     fallback()
-        -- end
-     --end, { 'i', 's' }),
+     ['<Tab>'] = cmp.mapping(function(fallback)
+         if vim.fn.pumvisible() == 1 then
+             vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-n>', true, true, true), 'n')
+         elseif cmp.visible() then
+             cmp.select_next_item()
+         else
+             fallback()
+         end
+     end, { 'i', 's' }),
   }
 
   cmp.setup({
@@ -81,16 +81,20 @@ lua << EOF
     },
   })
 
-  -- cmp.setup.filetype('vimshell', {
-  --   completion = { completeopt = 'menu,menuone' },
-  --   sources = cmp.config.sources({
-  --     {
-  --       name = 'path',
-  --       trigger_characters = { '/', '.', 'cd ', 'mkdir ', 'cp ', 'mv ' },
-  --       group_index = 1
-  --     }
-  --   })
-  -- })
+  cmp.setup.filetype('vimshell', {
+    completion = { completeopt = 'menu,menuone' },
+    sources = cmp.config.sources({
+      -- {
+      --   name = 'path',
+      --   trigger_characters = { '/', '.', 'cd ', 'mkdir ', 'cp ', 'mv ' },
+      --   group_index = 1
+      -- },
+      {
+          name = 'cmdline',
+          group_index = 2
+       }
+    })
+  })
 
   -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
   cmp.setup.cmdline({ '/', '?' }, {
