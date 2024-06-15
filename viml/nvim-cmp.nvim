@@ -12,7 +12,6 @@ Plug 'hrsh7th/cmp-cmdline'"
 
 function! SetupCmp()
 lua << EOF
-
   local has_words_before = function()
     local cursor = vim.api.nvim_win_get_cursor(0)
     return not vim.api.nvim_get_current_line():sub(1, cursor[2]):match('^%s$')
@@ -46,33 +45,52 @@ lua << EOF
     ['<C-Space>'] = cmp.mapping.complete(),
     ['<C-e>'] = cmp.mapping.abort(),
     ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    ['<Tab>'] = cmp.mapping.confirm({ select = true }),
     ['<C-j>'] = cmp.mapping(function(fallback)
         CustomDown(fallback,cmp)
     end, { 'i', 's' }),
     ['<C-k>'] = cmp.mapping(function(fallback)
         CustomUp(fallback, cmp)
     end, { 'i', 's' }),
-    ['<Tab>'] = cmp.mapping(function(fallback)
-        if vim.fn.pumvisible() == 1 then
-            vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-n>', true, true, true), 'n')
-        elseif cmp.visible() then
-            cmp.select_next_item()
-        else
-            fallback()
-        end
-    end, { 'i', 's' }),
+    -- ['<Tab>'] = cmp.mapping(function(fallback)
+        -- if vim.fn.pumvisible() == 1 then
+        --     vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-n>', true, true, true), 'n')
+        -- elseif cmp.visible() then
+        --     cmp.select_next_item()
+        -- else
+        --     fallback()
+        -- end
+     --end, { 'i', 's' }),
   }
 
   cmp.setup({
-    completion = { completeopt = 'menu,menuone,noinsert' },
+    completion = { completeopt = 'menu,menuone' },
     mapping = cmp.mapping.preset.insert(baseMappings),
     sources = cmp.config.sources({
       { name = 'copilot', group_index = 1 },
-      { name = 'path', group_index = 2 },
+      {
+        name = 'path',
+        group_index = 2,
+        trigger_characters = { '/', '.' }
+      },
       { name = 'nvim_lsp', group_index = 2 },
       { name = 'buffer', group_index = 2 },
-    })
+    }),
+    experimental = {
+        ghost_text = true, -- enables virtual text hints, must disable in copilot
+    },
   })
+
+  -- cmp.setup.filetype('vimshell', {
+  --   completion = { completeopt = 'menu,menuone' },
+  --   sources = cmp.config.sources({
+  --     {
+  --       name = 'path',
+  --       trigger_characters = { '/', '.', 'cd ', 'mkdir ', 'cp ', 'mv ' },
+  --       group_index = 1
+  --     }
+  --   })
+  -- })
 
   -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
   cmp.setup.cmdline({ '/', '?' }, {

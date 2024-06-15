@@ -1,31 +1,64 @@
-Plug 'github/copilot.vim'
+function! SetupCopilot()
+lua << EOF
+require("copilot").setup({
+  suggestion = { enabled = false }, -- disables virtaul text so no nvim-cmp conflict
+  panel = { enabled = false },
+})
+EOF
+endfunction
+
+autocmd VimEnter * call SetupCopilot()
+let g:copilot_no_tab_map = v:true
+"imap <silent><script><expr> <TAB> copilot#Accept("\<CR>")
+
 
 if has('nvim')
   Plug 'zbirenbaum/copilot.lua'
-  autocmd VimEnter * call luaeval("require('copilot').setup()")
+  autocmd VimEnter * lua require('copilot').setup()
 
   if $NVIM_CONFIG == 'cmp'
     Plug 'zbirenbaum/copilot-cmp'
-    autocmd VimEnter * call luaeval("require('copilot_cmp').setup()")
+
+    function! SetupCopilotCmp()
+      lua << EOF
+      require('copilot_cmp').setup({
+        suggestion = {
+          enabled = true,
+          auto_trigger = true,
+          debounce = 05,
+          keymap = {
+            accept = "<TAB>",
+            accept_word = false,
+            accept_line = false,
+            next = "<M-]>",
+            prev = "<M-[>",
+            dismiss = "<C-]>",
+          },
+        }
+      })
+EOF
+    endfunction
+    autocmd VimEnter * call SetupCopilotCmp()
   endif
 endif
 
 Plug 'CopilotC-Nvim/CopilotChat.nvim', { 'branch': 'canary' }
-function! SetupCopilotChat()
-lua << EOF
-require('CopilotChat').setup({
-  debug = true,
-  mappings = {
-    complete = {
-      detail = 'Use @<Tab> or /<Tab> for options.',
-      -- Default <Tab> setting conflicts with cmp and coc-nvim
-      insert = '<S-Tab>'
+
+function! SetupChat()
+  lua << EOF
+  require('CopilotChat').setup({
+    debug = true,
+    mappings = {
+      complete = {
+        detail = 'Use @<Tab> or /<Tab> for options.',
+        -- Default <Tab> setting conflicts with cmp and coc-nvim
+        insert = '<S-Tab>'
+      }
     }
-  }
-})
+  })
 EOF
 endfunction
-autocmd VimEnter * call SetupCopilotChat()
+autocmd VimEnter * call SetupChat()
 
 " Optional: Add a keybinding to open the chat window
 nnoremap <C-M-i> :CopilotChatToggle<CR>
