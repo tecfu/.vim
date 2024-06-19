@@ -32,6 +32,9 @@ lua << EOF
     -- 'vtsls', -- vtsls before eslint so eslint overrides when conflicted
     -- 'eslint', -- using eslint_d instead via efm, much faster
     'efm',
+    'pyright',
+    'marksman',
+    'typos_lsp',
     'vacuum', -- OPEN API Validator
     'vimls',
   }
