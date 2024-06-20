@@ -457,6 +457,9 @@ set shiftwidth=2
 " Global Code Folding Default
 setlocal foldmethod=indent
 setlocal foldlevel=2
+
+" Map <C-d> to duplicate tab
+nnoremap <C-d> :tab split<CR>
 "}}}
 
 
