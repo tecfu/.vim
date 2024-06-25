@@ -85,8 +85,8 @@ syntax on
 " http://stackoverflow.com/questions/1551231/highlight-variable-under-cursor-in-vim-like-in-netbeans
 " :autocmd CursorMoved * exe printf('match IncSearch /\V\<%s\>/', escape(expand('<cword>'), '/\'))
 
-" Turn on the WiLd menu
-set wildmenu
+" Disable wildmenu to prevent conflicts with coc, nvim-cmp 
+" set wildmenu
 
 " Ignore compiled files
 set wildignore=*.o,*~,*.pyc,.build.*,.so,*.a
@@ -427,7 +427,7 @@ set autoindent "Auto indent
 "set si "Smart indent
 set wrap "Wrap lines
 
-" Global code fold settings. Overriden by filetype in ./after/ftplugin/
+" Global code fold settings. Overridden by filetype in ./after/ftplugin/
 set foldmethod=indent
 set foldlevel=2
 
@@ -476,7 +476,7 @@ autocmd BufNewFile,BufRead coc-settings.json,*.jsonc set filetype=jsonc
 autocmd BufNewFile,BufRead *.eslintrc,*.cjs set filetype=javaScript
 autocmd BufEnter *.nvim :setlocal filetype=vim
 
-" Language specific sytax highlighting
+" Language specific syntax highlighting
 autocmd FileType make setlocal ts=8 sts=8 sw=8 noexpandtab
 autocmd FileType python,yaml setlocal ts=2 sts=2 sw=2 expandtab
 
@@ -485,7 +485,7 @@ autocmd Filetype nvim,vim,vimrc,uml
   \ setlocal foldmethod=marker foldmarker=\"{{{,\"}}} foldlevel=1
   \ ts=2 sts=2 sw=2 expandtab
 
-" Set foldlevel to the deepest level of hte file
+" Set foldlevel to the deepest level of the file
 " See: https://superuser.com/questions/567352/how-can-i-set-foldlevelstart-in-vim-to-just-fold-nothing-initially-still-allowi
 autocmd Filetype javascript,typescript
   \ let &foldlevel=max(map(range(1, line('$')), 'foldlevel(v:val)'))

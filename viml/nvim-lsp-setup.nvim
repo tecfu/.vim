@@ -25,23 +25,38 @@ lua << EOF
     }
   })
 
+  -- local linters = {
+  --   'quick-lint-js',
+  --   'semgrep',
+  --   'snyk',
+  -- }
+
+  -- local debuggers = {
+  --   'js-debug-adapter',
+  -- }
+
   -- Available servers: https://github.com/williamboman/mason-lspconfig.nvim
   local lspservers = {
     -- 'biome',
     'tsserver', -- tsserver before eslint so eslint overrides when conflicted
     -- 'vtsls', -- vtsls before eslint so eslint overrides when conflicted
     -- 'eslint', -- using eslint_d instead via efm, much faster
-    'efm',
+    'efm', -- efm langserver, used for eslint_d, prettier_d
+    -- 'eslint_d',
+    -- 'prettier_d',
     'pyright',
     'marksman',
     'typos_lsp',
     'vacuum', -- OPEN API Validator
     'vimls',
+    -- 'sonarlint-language-server',
   }
 
   require('mason-lspconfig').setup({
     ensure_installed = lspservers
   })
+
+  -- remove dependencies that are not lsp servers
 
   -- Set up cmp_nvim_lsp
   local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()

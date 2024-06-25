@@ -81,6 +81,13 @@ lua << EOF
     },
   })
 
+  cmp.setup.filetype('copilot-chat', {
+    completion = { completeopt = 'menu,menuone' },
+    sources = cmp.config.sources({
+      { name = 'copilot', group_index = 1 },
+    })
+  })
+
   cmp.setup.filetype('vimshell', {
     completion = { completeopt = 'menu,menuone' },
     sources = cmp.config.sources({
@@ -111,7 +118,12 @@ lua << EOF
         }
     }),
     sources = {
-      { name = 'buffer' }
+      { name = 'buffer' },
+      {
+        name = 'path',
+        group_index = 2,
+        trigger_characters = { '/', '.' }
+      }
     }
   })
 EOF

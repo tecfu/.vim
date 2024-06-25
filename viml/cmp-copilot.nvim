@@ -9,7 +9,7 @@ endfunction
 
 autocmd VimEnter * call SetupCopilot()
 let g:copilot_no_tab_map = v:true
-"imap <silent><script><expr> <TAB> copilot#Accept("\<CR>")
+imap <silent><script><expr> <TAB> copilot#Accept("\<CR>")
 
 
 if has('nvim')
@@ -30,8 +30,8 @@ if has('nvim')
             accept = "<TAB>",
             accept_word = false,
             accept_line = false,
-            next = "<M-]>",
-            prev = "<M-[>",
+            next = "<C-j>",
+            prev = "<C-k>",
             dismiss = "<C-]>",
           },
         }
@@ -48,13 +48,13 @@ function! SetupChat()
   lua << EOF
   require('CopilotChat').setup({
     debug = true,
-    mappings = {
-      complete = {
-        detail = 'Use @<Tab> or /<Tab> for options.',
-        -- Default <Tab> setting conflicts with cmp and coc-nvim
-        insert = '<S-Tab>'
-      }
-    }
+    -- mappings = {
+    --   complete = {
+    --     detail = 'Use @<Tab> or /<Tab> for options.',
+    --     -- Default <Tab> setting conflicts with cmp and coc-nvim
+    --     insert = '<S-Tab>'
+    --   }
+    -- }
   })
 EOF
 endfunction

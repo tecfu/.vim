@@ -180,14 +180,6 @@ Plug 'github/copilot.vim'
 " ```
 Plug 'godlygeek/csapprox'
 
-" ```
-" - DEBUGGER
-" ```
-Plug 'puremourning/vimspector'
-let g:vimspector_enable_mappings = 'HUMAN'
-let g:vimspector_install_gadgets = ['vscode-node-debug2', 'debugger-for-chrome', 'vscode-firefox-debug', 'debugpy', 'delve']
-nmap <leader>db <Plug>VimspectorBreakpoints
-
 
 " ```
 " - POLYFILL: Neovim Healthcheck

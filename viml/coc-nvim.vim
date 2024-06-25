@@ -5,7 +5,6 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 "
 let g:coc_global_extensions = [
       \ 'coc-cfn-lint',
-      \ 'coc-copilot',
       \ 'coc-eslint',
       \ 'coc-html',
       \ 'coc-markdownlint',
@@ -21,7 +20,7 @@ let g:coc_global_extensions = [
 
 "let g:coc_global_extensions = [
 "    \ 'coc-copilot',
-"    \ '@hexuhua/coc-copilot',
+"    \ '@hexuhua/coc-copilot', " https://github.com/hexh250786313/coc-copilot
 "\ ]
 
 call plug#end()
@@ -66,7 +65,7 @@ nmap <space>e <Cmd>CocCommand explorer<CR>
 
 " Coc keybindings
 
-" CocDiagnotics
+" CocDiagnostics
 nnoremap <expr> <space>i
   \ (CheckLocationListOpen() ? ":CocDiagnostics" : ":lclose")."<CR>"
 

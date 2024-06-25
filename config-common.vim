@@ -290,6 +290,28 @@ let g:vim_markdown_folding_style_pythonic = 1
 "}}}
 
 
+" ```
+" - DEBUGGER
+" ```
+" We use this instead of nvim-dap because it supports easy setup of 
+" vscode-jd-debug, which is required for typescript
+Plug 'puremourning/vimspector'
+let g:vimspector_enable_mappings = 'HUMAN'
+let g:vimspector_install_gadgets = ['vscode-js-debug', 'debugger-for-chrome', 'vscode-firefox-debug', 'debugpy', 'delve']
+nmap <leader>db <Plug>VimspectorBreakpoints
+" autocmd VimEnter * VimspectorUpdate
+" Resume / Pause (Control+\)
+nmap <C-\> :call vimspector#Continue()<CR>
+" Step Over (Control+')
+nmap <C-'> :call vimspector#StepOver()<CR>
+" Step Into (Control+;)
+nmap <C-;> :call vimspector#StepInto()<CR>
+" Step Out (Control+Shift+;)
+nmap <C-S-;> :call vimspector#StepOut()<CR>
+" Toggle Breakpoint (Control+Shift+Leader)
+nmap <leader>bp :call vimspector#ToggleBreakpoint()<CR>
+
+
 "Plug 'MattesGroeger/vim-bookmarks'
 
 
