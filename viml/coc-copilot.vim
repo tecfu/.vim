@@ -25,4 +25,8 @@ autocmd VimEnter * call SetupChat()
 " Optional: Add a keybinding to open the chat window
 nnoremap <C-M-i> :CopilotChatToggle<CR>
 vnoremap <C-M-f> :CopilotChatFix<CR>
+
+" <Ctrl-Command-letter> for Mac
+nnoremap <D-C-i> :CopilotChatToggle<CR>
+vnoremap <D-C-f> :CopilotChatFix<CR>
 endif
