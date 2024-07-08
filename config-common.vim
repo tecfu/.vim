@@ -195,6 +195,12 @@ vnoremap <leader>tz :call <SID>VIMRC_CustomTabular()<CR><ESC>
 
 
 " ```
+" - Markdown Previewer (vim || nvim)
+" ```
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npx --yes yarn install' }
+
+
+" ```
 " - UTILITY COMMAND: Argdo / Windo /
 " ```
 Plug 'inkarkat/vim-ArgsAndMore'
@@ -265,9 +271,10 @@ let g:rainbow_conf = {
 
 
 " doesn't play nice with permissions restricted users
-Plug 'preservim/tagbar'
+" probably not needed with lsp
+"Plug 'preservim/tagbar'
 "{{{
-nmap <leader>tt :TagbarToggle<CR>
+""nmap <leader>tt :TagbarToggle<CR>
 
 "Open tagbar automatically if you're opening Vim with a supported file type
 "autocmd VimEnter * nested :call tagbar#autoopen(1)
@@ -484,7 +491,6 @@ Plug 'tecfu/vimshell-inline-history.vim', { 'depends' : [ 'Shougo/vimshell.vim' 
 
 " YankRing interferes with remapping default register for `p` in visual mode
 Plug 'tecfu/YankRing.vim'
-
 
 
 " ```

@@ -79,7 +79,17 @@ lua << EOF
     experimental = {
         ghost_text = true, -- enables virtual text hints, must disable in copilot
     },
+    enabled = function()
+      local context = require'cmp.config.context'
+      -- Disable nvim-cmp in command-line mode, due to inconsistence behavior
+      if vim.api.nvim_get_mode().mode == 'c' then
+        return false
+      else
+        return true
+      end
+    end,
   })
+
 
   cmp.setup.filetype('copilot-chat', {
     completion = { completeopt = 'menu,menuone' },
@@ -89,43 +99,24 @@ lua << EOF
   })
 
   cmp.setup.filetype('vimshell', {
-    completion = { completeopt = 'menu,menuone' },
-    sources = cmp.config.sources({
-      -- {
-      --   name = 'path',
-      --   trigger_characters = { '/', '.', 'cd ', 'mkdir ', 'cp ', 'mv ' },
-      --   group_index = 1
-      -- },
-      {
-          name = 'cmdline',
-          group_index = 2
-       }
-    })
-  })
+    completion = { completeopt = 'menu,menuone,noselect' },
+    -- sources = cmp.config.sources({
+    --   {
+    --     name = 'path',
+    --     trigger_characters = { '/', '.', 'cd ', 'mkdir ', 'cp ', 'mv ' },
+    --     group_index = 1
+    --   },
+    --   {
+    --     name = 'cmdline',
+    --     group_index = 2
+    --   }
+    -- }),
+    -- Disable auto-completion for vimshell by overriding the completion function
+    completion = {
+      autocomplete = false
+    },
+  }) 
 
-  -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
-  cmp.setup.cmdline({ '/', '?' }, {
-    mapping = cmp.mapping.preset.cmdline({
-        ['<C-j>'] = {
-        c = function(_)
-             cmp.select_next_item()
-        end,
-        },
-        ['<C-k>'] = {
-        c = function(_)
-             cmp.select_prev_item()
-        end,
-        }
-    }),
-    sources = {
-      { name = 'buffer' },
-      {
-        name = 'path',
-        group_index = 2,
-        trigger_characters = { '/', '.' }
-      }
-    }
-  })
 EOF
 endfunction
 

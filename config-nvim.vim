@@ -9,6 +9,7 @@ autocmd VimEnter * colorscheme tokyonight
 
 source $HOME/.vim/viml/nvim-plenary.nvim
 source $HOME/.vim/viml/telescope.nvim
+source $HOME/.vim/viml/swagger-preview.nvim
 
 if $NVIM_CONFIG == 'cmp'
   echom 'using config: nvim-cmp'

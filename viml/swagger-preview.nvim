@@ -1,0 +1,13 @@
+" Markdown Previewer
+Plug 'vinnymeller/swagger-preview.nvim', { 'do': 'npm install swagger-ui-watcher -g' }
+
+function! SetupSwaggerPreview()
+lua << EOF
+require("swagger-preview").setup({
+    port = 9654,
+    host = "localhost",
+})
+EOF
+endfunction
+
+autocmd VimEnter * call SetupSwaggerPreview()
