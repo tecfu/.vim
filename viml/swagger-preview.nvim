@@ -4,7 +4,7 @@ Plug 'vinnymeller/swagger-preview.nvim', { 'do': 'npm install swagger-ui-watcher
 function! SetupSwaggerPreview()
 lua << EOF
 require("swagger-preview").setup({
-    port = 9654,
+    port = 20001,
     host = "localhost",
 })
 EOF

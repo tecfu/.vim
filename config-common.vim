@@ -197,7 +197,18 @@ vnoremap <leader>tz :call <SID>VIMRC_CustomTabular()<CR><ESC>
 " ```
 " - Markdown Previewer (vim || nvim)
 " ```
+" @todo - this is not working on Mac nivm brew install
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npx --yes yarn install' }
+" set to 1, nvim will open the preview window after entering the Markdown buffer
+" default: 0
+let g:mkdp_auto_start = 1
+" use a custom port to start server or empty for random
+let g:mkdp_port = '20000'
+" use custom IP to open preview page.
+" Useful when you work in remote Vim and preview on local browser.
+" For more details see: https://github.com/iamcco/markdown-preview.nvim/pull/9
+" default empty
+let g:mkdp_open_ip = ''
 
 
 " ```
