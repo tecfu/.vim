@@ -259,7 +259,7 @@ map <S-k> :tabnext<CR>
 "Overwrites join lines
 map <S-j> :tabprev<CR>
 "Because C-t is tag navigation
-map <C-t> :tabnew<CR>
+"map <C-t> :tabnew<CR>
 
 " Undo close tab using Shougo/Unite to get MRU file
 "function! UndoCloseTab()
@@ -410,6 +410,18 @@ function! SelectAll()
   ":%
 endfunction
 nnoremap <C-a> :call SelectAll()<CR>
+
+"{{{
+" Define a function to open netrw in a new tab at the current working directory of the current buffer
+function! OpenNetrwInNewTab()
+  let l:current_dir = expand('%:p:h')
+  tabnew
+  execute 'lcd' fnameescape(l:current_dir)
+  let g:netrw_browse_split = 0
+  Ex
+endfunction
+nnoremap <C-t> :call OpenNetrwInNewTab()<CR>
+"}}}
 
 "}}}
 
