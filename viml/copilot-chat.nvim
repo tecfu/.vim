@@ -1,0 +1,26 @@
+" CopilotChat
+Plug 'CopilotC-Nvim/CopilotChat.nvim', { 'branch': 'canary' }
+function! SetupChat()
+  lua << EOF
+  require('CopilotChat').setup({
+    debug = true,
+    mappings = {
+      complete = {
+        detail = 'Use @<Tab> or /<Tab> for options.',
+        -- IMPORTANT: Default <Tab> mapping to accept completion conflicts with copilot.vim <Tab> mapping.
+        -- Must change insert mode or accept completion won't work.
+        insert = '<S-Tab>'
+      }
+    }
+  })
+EOF
+endfunction
+autocmd VimEnter * call SetupChat()
+
+"Add a keybinding to open the chat window
+nnoremap <C-M-i> :CopilotChatToggle<CR>
+vnoremap <C-M-f> :CopilotChatFix<CR>
+
+" <Ctrl-Command-letter> for Mac
+nnoremap <D-C-i> :CopilotChatToggle<CR>
+vnoremap <D-C-f> :CopilotChatFix<CR>

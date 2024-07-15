@@ -10,8 +10,15 @@ Plug 'hrsh7th/cmp-path'
 " cmp-cmdline: A command line source for nvim-cmp. It provides completion for command line mode.
 Plug 'hrsh7th/cmp-cmdline'"
 
+" copilot-cmp: A completion source for nvim-cmp that integrates with copilot.lua.
+Plug 'zbirenbaum/copilot-cmp'
+
+
 function! SetupCmp()
+
 lua << EOF
+  require("copilot_cmp").setup()
+
   local has_words_before = function()
     local cursor = vim.api.nvim_win_get_cursor(0)
     return not vim.api.nvim_get_current_line():sub(1, cursor[2]):match('^%s$')
@@ -44,23 +51,24 @@ lua << EOF
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<C-Space>'] = cmp.mapping.complete(),
     ['<C-e>'] = cmp.mapping.abort(),
-    ['<CR>'] = cmp.mapping.confirm({ select = true }),
-    -- ['<Tab>'] = cmp.mapping.confirm({ select = true }),
+    -- ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    ['<Tab>'] = cmp.mapping.confirm({ select = true }),
     ['<C-j>'] = cmp.mapping(function(fallback)
         CustomDown(fallback,cmp)
     end, { 'i', 's' }),
     ['<C-k>'] = cmp.mapping(function(fallback)
         CustomUp(fallback, cmp)
     end, { 'i', 's' }),
-     ['<Tab>'] = cmp.mapping(function(fallback)
-         if vim.fn.pumvisible() == 1 then
-             vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-n>', true, true, true), 'n')
-         elseif cmp.visible() then
-             cmp.select_next_item()
-         else
-             fallback()
-         end
-     end, { 'i', 's' }),
+    -- ['<Tab>'] = cmp.mapping(function(fallback)
+    --     if vim.fn.pumvisible() == 1 then
+    --         vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-n>', true, true, true), 'n')
+    --     elseif cmp.visible() then
+    --         cmp.select_next_item()
+    --     else
+    --         fallback()
+    --     end
+    -- end, { 'i', 's' }),
+
   }
 
   cmp.setup({
@@ -89,7 +97,6 @@ lua << EOF
       end
     end,
   })
-
 
   cmp.setup.filetype('copilot-chat', {
     completion = { completeopt = 'menu,menuone' },

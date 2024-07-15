@@ -1,0 +1,28 @@
+" replaces copilot.vim, prevents autocomplete in non-buflisted buffers (i.e. copilot-chat)
+" required for nvim-cmp
+Plug 'zbirenbaum/copilot.lua'
+
+function! SetupCopilot()
+lua << EOF
+  require('copilot').setup({
+    panel = { enabled = false },
+    -- suggestion = {
+    --   enabled = false,
+    -- },
+    suggestion = {
+      enabled = true,
+      auto_trigger = true,
+      debounce = 75,
+      keymap = {
+        accept = "<Tab>",
+        accept_word = "<CR>",
+        accept_line = "<space>",
+        next = "<C-j>",
+        prev = "<C-k>",
+        dismiss = "<C-]>",
+      },
+    },
+  })
+EOF
+endfunction
+autocmd VimEnter * call SetupCopilot()
