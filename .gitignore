@@ -6,6 +6,7 @@ bundle/*
 undo/*
 
 Session.vim
+Session.nvim
 .netrwhist
 .husky
 .DS_Store
