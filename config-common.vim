@@ -201,7 +201,7 @@ vnoremap <leader>tz :call <SID>VIMRC_CustomTabular()<CR><ESC>
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npx --yes yarn install' }
 " set to 1, nvim will open the preview window after entering the Markdown buffer
 " default: 0
-let g:mkdp_auto_start = 1
+let g:mkdp_auto_start = 0
 " use a custom port to start server or empty for random
 let g:mkdp_port = '20000'
 " use custom IP to open preview page.
