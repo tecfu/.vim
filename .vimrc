@@ -485,7 +485,7 @@ nnoremap <C-d> :tab split<CR>
 
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 autocmd BufNewFile,BufRead coc-settings.json,*.jsonc set filetype=jsonc
-autocmd BufNewFile,BufRead *.eslintrc,*.cjs set filetype=javaScript
+autocmd BufNewFile,BufRead *.cjs set filetype=javascript
 autocmd BufEnter *.nvim :setlocal filetype=vim
 
 " Language specific syntax highlighting
