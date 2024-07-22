@@ -94,19 +94,20 @@ endfunction
 "Coc Popup Completion settings
 "Use <tab> for trigger completion and navigate to the next complete item
 "Modified from docs due to error: https://github.com/neoclide/coc.nvim/issues/3167
-inoremap <silent><expr> <Tab>
- \ pumvisible() ? "\<C-n>" :
- \ coc#expandableOrJumpable() ?
- \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" : "\<Tab>"
-
-inoremap <silent><expr> <S-Tab>
- \ pumvisible() ? "\<C-p>" :
- \ coc#expandableOrJumpable() ?
- \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-pre',''])\<CR>" : "\<Tab>"
+"inoremap <silent><expr> <Tab>
+" \ pumvisible() ? "\<C-n>" :
+" \ coc#expandableOrJumpable() ?
+" \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" : "\<Tab>"
+"
+"inoremap <silent><expr> <S-Tab>
+" \ pumvisible() ? "\<C-p>" :
+" \ coc#expandableOrJumpable() ?
+" \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-pre',''])\<CR>" : "\<Tab>"
 
 "Select the first completion item and confirm the completion when no item has been selected:
-inoremap <silent><expr> <CR> pumvisible() ? coc#_select_confirm()
-    \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+"inoremap <silent><expr> <CR> pumvisible() ? coc#_select_confirm()
+"    \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+imap <silent><expr> <CR> pumvisible() ? "\<C-y>" : copilot#AcceptWord("\<CR>")
 
 "Remap up/down in popupmenu to <C-j>, <C-k>
 inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
@@ -116,21 +117,21 @@ inoremap <expr> <C-k> pumvisible() ? "\<C-p>" : "\<C-k>"
 inoremap <expr><C-j> coc#pum#visible() ? coc#pum#next(1) : "\<C-j>"
 inoremap <expr><C-k> coc#pum#visible() ? coc#pum#prev(1) : "\<C-k>"
 
-function! CocPumMultipleTimes(action, count)
-    let l:result = ''
-    if a:action == 'next'
-        let l:cmd = repeat("\<C-r>=coc#pum#_navigate(1,1)\<CR>", a:count)
-    elseif a:action == 'prev'
-        let l:cmd = repeat("\<C-r>=coc#pum#_navigate(0,0)\<CR>", a:count)
-    else
-        return ''
-    endif
-    return l:cmd
-endfunction
-
-" <C-s-j/k> supported by gvim
-inoremap <expr><C-S-j> coc#pum#visible() ? CocPumMultipleTimes('next', 5) : "\<C-S-j>"
-inoremap <expr><C-S-k> coc#pum#visible() ? CocPumMultipleTimes('prev', 5) : "\<C-S-k>"
+"function! CocPumMultipleTimes(action, count)
+"    let l:result = ''
+"    if a:action == 'next'
+"        let l:cmd = repeat("\<C-r>=coc#pum#_navigate(1,1)\<CR>", a:count)
+"    elseif a:action == 'prev'
+"        let l:cmd = repeat("\<C-r>=coc#pum#_navigate(0,0)\<CR>", a:count)
+"    else
+"        return ''
+"    endif
+"    return l:cmd
+"endfunction
+""
+""Removed because works only in gvim. in vim will bind to <C-k/j>
+"inoremap <expr><C-S-j> coc#pum#visible() ? CocPumMultipleTimes('next', 5) : "\<C-S-j>"
+"inoremap <expr><C-S-k> coc#pum#visible() ? CocPumMultipleTimes('prev', 5) : "\<C-S-k>"
 
 "Scroll info popup
 nnoremap <nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
