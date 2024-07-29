@@ -58,57 +58,54 @@ endif
 " Use "coc.preferences.formatOnType": true to enable format on type feature.
 " https://vi.stackexchange.com/a/31087/5223
 " https://github.com/neoclide/coc-prettier
-
-" coc ui styling
-" Not a fan of the gray gutter (SignColumn) that comes with the theme
-highlight SignColumn guibg=black ctermbg=black
-
-" Not a fan of pink background in popup menu
-highlight Pmenu ctermbg=DarkGreen guibg=DarkGreen
-" hi CocErrorSign ctermfg=white guifg=white
-"hi CocErrorFloat ctermfg=white guifg=white
-hi CocInfoSign ctermfg=black guifg=black
-hi CocFloating ctermfg=black guifg=black
-hi CocFloating ctermbg=DarkRed guibg=DarkRed
-hi CocHintFloat ctermfg=white guifg=white
-hi CocWarningFloat ctermfg=white guifg=white
-hi CocErrorFloat ctermfg=white guifg=white
-"hi CocFloating ctermbg=DarkYellow guibg=DarkYellow
-"hi QuickFixLine ctermbg=DarkRed guibg=DarkRed
-"hi QuickFixLine ctermbg=yellow guibg=yellow
-"hi QuickFixLine ctermfg=white guifg=white
-
-"Plug 'neoclide/coc.nvim', {'branch': 'release'}
-source $HOME/.vim/viml/coc-nvim.vim
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => GENERAL
+" => PLUGINS
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" ```
-" - AI
-" ```
-Plug 'github/copilot.vim'
+call plug#begin('~/.vim/plugins-vim')
+
+  " - common plugins"
+  source ${HOME}/.vim/config-common.vim
+
+  " - Coc.nvim"
+  source $HOME/.vim/viml/coc-nvim.vim
+
+  " - AI
+  Plug 'github/copilot.vim'
 
 
-" ```
-" - Makes Gvim only colorschems work in term / nc with neovim
-" ```
-Plug 'godlygeek/csapprox'
+  " - Makes Gvim only colorschems work in term / nc with neovim
+  Plug 'godlygeek/csapprox'
 
 
-" ```
-" - POLYFILL: Neovim Healthcheck
-" ```
-Plug 'rhysd/vim-healthcheck'
+  " - POLYFILL: Neovim Healthcheck
+  Plug 'rhysd/vim-healthcheck'
 
 
-" ```
-" - THEME
-"   See .vimrc for switching logic
-" ```
-Plug 'tecfu/tokyonight-vim'
-let g:tokyonight_style = 'night'
-let g:tokyonight_enable_italic = 1
-set background=dark
-set termguicolors
-autocmd VimEnter * colorscheme tokyonight
+  " - THEME
+  " coc ui styling
+  " Not a fan of the gray gutter (SignColumn) that comes with the theme
+  highlight SignColumn guibg=black ctermbg=black
+
+  " Not a fan of pink background in popup menu
+  highlight Pmenu ctermbg=DarkGreen guibg=DarkGreen
+  " hi CocErrorSign ctermfg=white guifg=white
+  "hi CocErrorFloat ctermfg=white guifg=white
+  hi CocInfoSign ctermfg=black guifg=black
+  hi CocFloating ctermfg=black guifg=black
+  hi CocFloating ctermbg=DarkRed guibg=DarkRed
+  hi CocHintFloat ctermfg=white guifg=white
+  hi CocWarningFloat ctermfg=white guifg=white
+  hi CocErrorFloat ctermfg=white guifg=white
+  "hi CocFloating ctermbg=DarkYellow guibg=DarkYellow
+  "hi QuickFixLine ctermbg=DarkRed guibg=DarkRed
+  "hi QuickFixLine ctermbg=yellow guibg=yellow
+  "hi QuickFixLine ctermfg=white guifg=white
+
+  Plug 'tecfu/tokyonight-vim'
+  let g:tokyonight_style = 'night'
+  let g:tokyonight_enable_italic = 1
+  set background=dark
+  set termguicolors
+  autocmd VimEnter * colorscheme tokyonight
+
+call plug#end()

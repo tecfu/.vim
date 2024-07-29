@@ -37,16 +37,10 @@ if empty(glob('~/.vim/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
-if !has("nvim")
-  call plug#begin('~/.vim/plugins-vim')
-  source ${HOME}/.vim/config-common.vim
-  source ${HOME}/.vim/config-vim.vim
-  call plug#end()
-else
-  call plug#begin('~/.vim/plugins-nvim')
-  source ${HOME}/.vim/config-common.vim
+if has("nvim")
   source ${HOME}/.vim/config-nvim.vim
-  call plug#end()
+else
+  source ${HOME}/.vim/config-vim.vim
 endif
 
 " vim-plug unexpectedly configures indentation. undo this
