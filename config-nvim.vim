@@ -12,8 +12,13 @@ call plug#begin('~/.vim/plugins-nvim')
 
   if $NVIM_CONFIG == 'cmp'
     echom 'NVIM_CONFIG=cmp'
-    "source $HOME/.vim/viml/copilot.vim
+
+    " Using both copilot.vim and copilot.lua.nvim is a hack.
+    " copilot.vim suggestions wont show up in nvim-cmp, but supports accepting next word with <CR>
+    " copilot.lua.nvim suggestions will show up in nvim-cmp, but does not support accepting next word with <CR>
+    " Together they provide desired functionality
     source $HOME/.vim/viml/copilot.lua.nvim
+    source $HOME/.vim/viml/copilot.vim 
     source $HOME/.vim/viml/copilot-chat.nvim
     source $HOME/.vim/viml/nvim-lsp-setup.nvim
     source $HOME/.vim/viml/nvim-lsp-formatting.nvim

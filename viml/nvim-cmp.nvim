@@ -50,7 +50,7 @@ lua << EOF
     ['<C-b>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<C-e>'] = cmp.mapping.abort(),
-    -- ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    -- no next-word completion in nvim-cmp:  https://github.com/zbirenbaum/copilot-cmp/issues/63  
     ['<Tab>'] = cmp.mapping.confirm({ select = true }),
     ['<C-j>'] = cmp.mapping(function(fallback)
         CustomDown(fallback,cmp)
