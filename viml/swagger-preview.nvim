@@ -1,5 +1,11 @@
 " Markdown Previewer
-Plug 'vinnymeller/swagger-preview.nvim', { 'do': 'npm install swagger-ui-watcher -g' }
+function! SwaggerPreviewHook()
+    if empty(system('npm list -g swagger-ui-watcher'))
+        !npm i -g swagger-ui-watcher
+    endif
+endfunction
+
+Plug 'vinnymeller/swagger-preview.nvim', { 'do': { -> SwaggerPreviewHook() } }
 
 function! SetupSwaggerPreview()
 lua << EOF
