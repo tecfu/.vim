@@ -18,7 +18,7 @@ if $NVIM_CONFIG == 'cmp'
   source $HOME/.vim/viml/copilot-chat.nvim
   source $HOME/.vim/viml/nvim-lsp-setup.nvim
   source $HOME/.vim/viml/nvim-lsp-formatting.nvim
-  source $HOME/.vim/viml/nvim-cmp.nvim
+  " source $HOME/.vim/viml/nvim-cmp.nvim
   " source $HOME/.vim/viml/nvim-treesitter.nvim
   " source $HOME/.vim/viml/debugging.nvim
 else

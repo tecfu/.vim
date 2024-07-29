@@ -8,7 +8,7 @@ let g:copilot_no_tab_map = v:false
 " <Tab> is the default keymap for accepting a suggestion, here's an example of rempping it to <C-j>
 " imap <silent><script><expr> <C-j> copilot#Accept("\<CR>")
 " imap <silent><script><expr> <C-j> copilot#AcceptWord("\<CR>")
-imap <silent><script><expr> <CR> copilot#AcceptWord("\<CR>")
+ imap <silent><script><expr> <CR> copilot#AcceptWord("\<CR>")
 
 
 " <M-Right>               Accept the next word of the current suggestion.
