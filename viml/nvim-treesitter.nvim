@@ -21,6 +21,10 @@ lua << EOF
     },
   }
   -- nvim-treesitter.install.update()
+
+  -- local parsers = require "nvim-treesitter.parsers"
+  -- local parser_config = parsers.get_parser_configs()
+  -- parser_config.javaScript.filetype_to_parsername = "javascript"
 EOF
 endfunction
 
