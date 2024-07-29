@@ -1,6 +1,8 @@
 " nvim-treesitter/nvim-treesitter: A Neovim plugin for tree-sitter, a parser generator tool and an incremental parsing library. It helps to improve syntax highlighting and indentation.
 function! TreesitterHook()
-	!npm i -g tree-sitter-cli tree-sitter
+    if empty(system('npm list -g tree-sitter-cli tree-sitter'))
+        !npm i -g tree-sitter-cli tree-sitter
+    endif
 endfunction
 
 Plug 'nvim-treesitter/nvim-treesitter', { 'do': { -> TreesitterHook() } }
