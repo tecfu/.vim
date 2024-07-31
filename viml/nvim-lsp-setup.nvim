@@ -10,129 +10,159 @@ Plug 'williamboman/mason-lspconfig.nvim'
 " nvim-lspconfig: A collection of common configurations for Neovim's built-in LSP client. It makes setting up Neovim's LSP client easier.
 Plug 'neovim/nvim-lspconfig'
 
+" telescope.nvim: A highly extendable fuzzy finder over lists.
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-lua/plenary.nvim'
 
 function! SetupLsp()
-lua << EOF
-  vim.lsp.set_log_level("debug")
+  lua << EOF
+    vim.lsp.set_log_level("debug")
 
-  require("mason").setup({
-    ui = {
-      icons = {
-        package_installed = "✓",
-        package_pending = "➜",
-        package_uninstalled = "✗"
+    require("mason").setup({
+      ui = {
+        icons = {
+          package_installed = "✓",
+          package_pending = "➜",
+          package_uninstalled = "✗"
+        }
+      }
+    })
+
+    -- local linters = {
+    --   'quick-lint-js',
+    --   'semgrep',
+    --   'snyk',
+    -- }
+
+    -- local debuggers = {
+    --   'js-debug-adapter',
+    -- }
+
+    -- Available servers: https://github.com/williamboman/mason-lspconfig.nvim
+    local lspservers = {
+      -- 'biome',
+      'tsserver', -- tsserver before eslint so eslint overrides when conflicted
+      -- 'vtsls', -- vtsls before eslint so eslint overrides when conflicted
+      -- 'eslint', -- using eslint_d instead via efm, much faster
+      'efm', -- efm langserver, used for eslint_d, prettier_d
+      -- 'eslint_d',
+      -- 'prettier_d',
+      'pyright',
+      'marksman',
+      'typos_lsp',
+      'vacuum', -- OPEN API Validator
+      'vimls',
+      -- 'sonarlint-language-server',
+    }
+
+    require('mason-lspconfig').setup({
+      ensure_installed = lspservers
+    })
+
+    -- remove dependencies that are not lsp servers
+
+    -- Set up cmp_nvim_lsp
+    local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
+    local lsp_on_attach = function(client, bufnr)
+      client.server_capabilities.documentFormattingProvider = true
+
+      local bufopts = { noremap=true, silent=true, buffer=bufnr }
+
+      vim.keymap.set('n', 'gh'   , vim.lsp.buf.signature_help                        , bufopts)
+      vim.keymap.set('n', 'gv'   , vim.lsp.buf.hover                                 , bufopts)
+      vim.keymap.set('n', 'gD'   , vim.lsp.buf.declaration                           , bufopts)
+      vim.keymap.set('n', 'gd'   , vim.lsp.buf.definition                            , bufopts)
+      vim.keymap.set('n', 'gi'   , vim.lsp.buf.implementation                        , bufopts)
+      vim.keymap.set('n', 'go'   , vim.lsp.buf.type_definition                       , bufopts)
+      vim.keymap.set('n', 'gr'   , vim.lsp.buf.references                            , bufopts)
+      --m.keymap.set('n', TODO   , vim.lsp.buf.code_action                           , bufopts) -- lspconfig: <space>ca; lsp-zero: <F4>
+      vim.keymap.set('n', '<space>l', function() vim.lsp.buf.format { async = true } end, bufopts) -- lspconfig: <space>l
+      --m.keymap.set('n', TODO   , vim.lsp.buf.rename                                , bufopts) -- lspconfig: <space>rn; lsp-zero: <F2>
+    end
+
+    -- Custom example. Client fails on sending path. nc used to debug.
+    -- See also: https://github.com/neovim/nvim-lspconfig/issues/2657#issuecomment-1674107409
+    -- root_dir = function(fname)
+    --     -- local root = vim.fn.getcwd()
+    --     -- print("Checking root dir: " .. tostring(root))
+    --     -- return root
+    --     local root = vim.fn.fnamemodify(fname, ':p:h')
+    --     print("Checking root dir: " .. tostring(root))
+    --     return root
+    -- end
+
+    -- -- customEslint LSP server setup
+    -- -- this example uses a proxy to give you visibility into stdin/stdout
+    -- local lsp_configurations = require('lspconfig.configs')
+    -- if not lsp_configurations.customEslint then
+    --     lsp_configurations.customEslint = {
+    --         default_config = {
+    --             name = 'customEslint',
+    --             cmd = { "nc", "localhost", "12345" },
+    --             -- cmd = {
+    --             --     "python3",
+    --             --     "/home/base/.terminal/scripts/python-stdio-proxy.py",
+    --             --     "--cmd",
+    --             --     "vscode-eslint-language-server --stdio",
+    --             --     "port",
+    --             --     "12345"
+    --             -- },
+    --             -- cmd = {
+    --             --     "vscode-eslint-language-server",
+    --             --     "--stdio"
+    --             -- },
+    --             filetypes = { 'javascript', 'typescript' },
+    --             -- root_dir = require('lspconfig.util').root_pattern('*.git'),
+    --             -- root_dir = require('lspconfig.util').root_pattern("eslint*", "*.git")
+    --             root_dir = root_dir
+    --         }
+    --     }
+    -- end
+
+    -- lspservers = {unpack(lspservers), 'customEslint', 'customEslint'}
+
+    -- BUG: must load each lsp twice
+    local lspconfig = require('lspconfig')
+    for _, server in pairs(lspservers) do
+      lspconfig[server].setup({
+        capabilities = lsp_capabilities,
+        on_attach = lsp_on_attach,
+      })
+      lspconfig[server].setup({
+        capabilities = lsp_capabilities,
+        on_attach = lsp_on_attach,
+      })
+    end
+
+    -- Telescope setup
+    require('telescope').setup{
+      defaults = {
+        -- Default configuration for Telescope goes here:
+        -- config_key = value,
+      },
+      pickers = {
+        -- Default configuration for builtin pickers goes here:
+        -- picker_name = {
+        --   picker_config_key = value,
+        --   ...
+        -- }
+      },
+      extensions = {
+        -- Your extension configuration goes here:
+        -- extension_name = {
+        --   extension_config_key = value,
+        -- }
       }
     }
-  })
-
-  -- local linters = {
-  --   'quick-lint-js',
-  --   'semgrep',
-  --   'snyk',
-  -- }
-
-  -- local debuggers = {
-  --   'js-debug-adapter',
-  -- }
-
-  -- Available servers: https://github.com/williamboman/mason-lspconfig.nvim
-  local lspservers = {
-    -- 'biome',
-    'tsserver', -- tsserver before eslint so eslint overrides when conflicted
-    -- 'vtsls', -- vtsls before eslint so eslint overrides when conflicted
-    -- 'eslint', -- using eslint_d instead via efm, much faster
-    'efm', -- efm langserver, used for eslint_d, prettier_d
-    -- 'eslint_d',
-    -- 'prettier_d',
-    'pyright',
-    'marksman',
-    'typos_lsp',
-    'vacuum', -- OPEN API Validator
-    'vimls',
-    -- 'sonarlint-language-server',
-  }
-
-  require('mason-lspconfig').setup({
-    ensure_installed = lspservers
-  })
-
-  -- remove dependencies that are not lsp servers
-
-  -- Set up cmp_nvim_lsp
-  local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
-  local lsp_on_attach = function(client, bufnr)
-    client.server_capabilities.documentFormattingProvider = true
-
-    local bufopts = { noremap=true, silent=true, buffer=bufnr }
-
-    vim.keymap.set('n', 'gh'   , vim.lsp.buf.signature_help                        , bufopts)
-    vim.keymap.set('n', 'gv'   , vim.lsp.buf.hover                                 , bufopts)
-    vim.keymap.set('n', 'gD'   , vim.lsp.buf.declaration                           , bufopts)
-    vim.keymap.set('n', 'gd'   , vim.lsp.buf.definition                            , bufopts)
-    vim.keymap.set('n', 'gi'   , vim.lsp.buf.implementation                        , bufopts)
-    vim.keymap.set('n', 'go'   , vim.lsp.buf.type_definition                       , bufopts)
-    vim.keymap.set('n', 'gr'   , vim.lsp.buf.references                            , bufopts)
-    --m.keymap.set('n', TODO   , vim.lsp.buf.code_action                           , bufopts) -- lspconfig: <space>ca; lsp-zero: <F4>
-    vim.keymap.set('n', '<space>l', function() vim.lsp.buf.format { async = true } end, bufopts) -- lspconfig: <space>l
-    --m.keymap.set('n', TODO   , vim.lsp.buf.rename                                , bufopts) -- lspconfig: <space>rn; lsp-zero: <F2>
-  end
-
-  -- Custom example. Client fails on sending path. nc used to debug.
-  -- See also: https://github.com/neovim/nvim-lspconfig/issues/2657#issuecomment-1674107409
-  -- root_dir = function(fname)
-  --     -- local root = vim.fn.getcwd()
-  --     -- print("Checking root dir: " .. tostring(root))
-  --     -- return root
-  --     local root = vim.fn.fnamemodify(fname, ':p:h')
-  --     print("Checking root dir: " .. tostring(root))
-  --     return root
-  -- end
-
-  -- -- customEslint LSP server setup
-  -- -- this example uses a proxy to give you visibility into stdin/stdout
-  -- local lsp_configurations = require('lspconfig.configs')
-  -- if not lsp_configurations.customEslint then
-  --     lsp_configurations.customEslint = {
-  --         default_config = {
-  --             name = 'customEslint',
-  --             cmd = { "nc", "localhost", "12345" },
-  --             -- cmd = {
-  --             --     "python3",
-  --             --     "/home/base/.terminal/scripts/python-stdio-proxy.py",
-  --             --     "--cmd",
-  --             --     "vscode-eslint-language-server --stdio",
-  --             --     "port",
-  --             --     "12345"
-  --             -- },
-  --             -- cmd = {
-  --             --     "vscode-eslint-language-server",
-  --             --     "--stdio"
-  --             -- },
-  --             filetypes = { 'javascript', 'typescript' },
-  --             -- root_dir = require('lspconfig.util').root_pattern('*.git'),
-  --             -- root_dir = require('lspconfig.util').root_pattern("eslint*", "*.git")
-  --             root_dir = root_dir
-  --         }
-  --     }
-  -- end
-
-  -- lspservers = {unpack(lspservers), 'customEslint', 'customEslint'}
-
-  -- BUG: must load each lsp twice
-  local lspconfig = require('lspconfig')
-  for _, server in pairs(lspservers) do
-    lspconfig[server].setup({
-      capabilities = lsp_capabilities,
-      on_attach = lsp_on_attach,
-    })
-    lspconfig[server].setup({
-      capabilities = lsp_capabilities,
-      on_attach = lsp_on_attach,
-    })
-  end
-
 EOF
 endfunction
 
 " Call the function after Vim has finished starting up
 autocmd VimEnter * call SetupLsp()
+
+" Telescrope key mappings
+nnoremap <leader>fs <cmd>Telescope lsp_document_symbols<cr>
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>

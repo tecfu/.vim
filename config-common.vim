@@ -605,3 +605,4 @@ Plug 'tpope/vim-unimpaired'
 " nnoremap <leader>t :MtaJumpToOtherTag<cr>
 " highlight MatchTag ctermfg=black ctermbg=lightgreen
 
+source $HOME/.vim/viml/vista.vim
