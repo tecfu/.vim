@@ -10,10 +10,6 @@ Plug 'williamboman/mason-lspconfig.nvim'
 " nvim-lspconfig: A collection of common configurations for Neovim's built-in LSP client. It makes setting up Neovim's LSP client easier.
 Plug 'neovim/nvim-lspconfig'
 
-" telescope.nvim: A highly extendable fuzzy finder over lists.
-Plug 'nvim-telescope/telescope.nvim'
-Plug 'nvim-lua/plenary.nvim'
-
 function! SetupLsp()
   lua << EOF
     vim.lsp.set_log_level("debug")
@@ -133,36 +129,10 @@ function! SetupLsp()
         on_attach = lsp_on_attach,
       })
     end
-
-    -- Telescope setup
-    require('telescope').setup{
-      defaults = {
-        -- Default configuration for Telescope goes here:
-        -- config_key = value,
-      },
-      pickers = {
-        -- Default configuration for builtin pickers goes here:
-        -- picker_name = {
-        --   picker_config_key = value,
-        --   ...
-        -- }
-      },
-      extensions = {
-        -- Your extension configuration goes here:
-        -- extension_name = {
-        --   extension_config_key = value,
-        -- }
-      }
-    }
 EOF
 endfunction
 
 " Call the function after Vim has finished starting up
 autocmd VimEnter * call SetupLsp()
 
-" Telescrope key mappings
-nnoremap <leader>fs <cmd>Telescope lsp_document_symbols<cr>
-nnoremap <leader>ff <cmd>Telescope find_files<cr>
-nnoremap <leader>fg <cmd>Telescope live_grep<cr>
-nnoremap <leader>fb <cmd>Telescope buffers<cr>
-nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+

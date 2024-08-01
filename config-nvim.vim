@@ -12,6 +12,7 @@ call plug#begin('~/.vim/plugins-nvim')
 
   source $HOME/.vim/viml/nvim-plenary.nvim
   source $HOME/.vim/viml/swagger-preview.nvim
+  source $HOME/.vim/viml/telescope-coc.nvim
 
   if $NVIM_CONFIG == 'cmp'
     echom 'NVIM_CONFIG=cmp'
@@ -32,7 +33,6 @@ call plug#begin('~/.vim/plugins-nvim')
     source $HOME/.vim/viml/coc-nvim.vim
     source $HOME/.vim/viml/copilot.vim
     source $HOME/.vim/viml/copilot-chat.nvim
-    source $HOME/.vim/viml/telescope-coc.nvim
   endif
 call plug#end()
 "}}}
