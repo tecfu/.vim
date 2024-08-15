@@ -397,13 +397,10 @@ cnoremap <C-S-h> <C-f>5h<C-c>
 "5 right
 cnoremap <C-S-l> <C-f>5l<C-c>
 
-" Select all
-function! SelectAll()
-  :mark l
-  :exe 'normal ggVG$'
-  ":%
-endfunction
-nnoremap <C-a> :call SelectAll()<CR>
+" Exit netrw on <ESC> || q
+autocmd FileType netrw nnoremap <buffer> <Esc> :q<CR>
+autocmd FileType netrw nnoremap <buffer> q :q<CR>
+
 
 "{{{
 " Define a function to open netrw in a new tab at the current working directory of the current buffer
