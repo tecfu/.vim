@@ -194,13 +194,13 @@ map j gj
 map k gk
 
 " Map ctrl+j, ctrl+k to down/up 10 lines
-" Scroll up/down 10 lines at a time shift+j,shift+k
-noremap <C-j> 10j
-noremap <C-k> 10k
+" Scroll up/down 5 lines at a time shift+j,shift+k
+noremap <C-j> 5j
+noremap <C-k> 5k
 "
-" " Scroll ght/left 10 characters
-noremap <C-l> 10l
-noremap <C-h> 10h
+" " Scroll ght/left 5 characters
+noremap <C-l> 5l
+noremap <C-h> 5h
 
 " Remap home and end to "ctrl+;" and ";" in addition to default "1" and "$"
 noremap <leader>a ^
