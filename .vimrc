@@ -397,23 +397,39 @@ cnoremap <C-S-h> <C-f>5h<C-c>
 "5 right
 cnoremap <C-S-l> <C-f>5l<C-c>
 
-" Exit netrw on <ESC> || q
-autocmd FileType netrw nnoremap <buffer> <Esc> :q<CR>
-autocmd FileType netrw nnoremap <buffer> q :q<CR>
+" netrw navigation
+let g:prev_buf = -1
+let g:prev_tab = -1
 
-
-"{{{
 " Define a function to open netrw in a new tab at the current working directory of the current buffer
 function! OpenNetrwInNewTab()
+  " Store the current buffer and tab numbers in the global variables
+  let g:prev_buf = bufnr('%')
+  let g:prev_tab = tabpagenr()
   let l:current_dir = expand('%:p:h')
   tabnew
   execute 'lcd' fnameescape(l:current_dir)
   let g:netrw_browse_split = 0
   Ex
 endfunction
-nnoremap <C-t> :call OpenNetrwInNewTab()<CR>
-"}}}
 
+" Map <C-t> to call the OpenNetrwInNewTab function
+nnoremap <C-t> :call OpenNetrwInNewTab()<CR>
+
+" Exit netrw on <ESC> or q and return to the previous buffer and tab if they exist
+autocmd FileType netrw nnoremap <buffer> <Esc> :call CloseNetrwAndReturn()<CR>
+autocmd FileType netrw nnoremap <buffer> q :call CloseNetrwAndReturn()<CR>
+
+" Define a function to close netrw and return to the previous buffer and tab if they exist
+function! CloseNetrwAndReturn()
+  if g:prev_tab > 0 && g:prev_buf > 0 && bufexists(g:prev_buf)
+    execute 'bd'
+    execute 'tabnext' g:prev_tab
+    execute 'buffer' g:prev_buf
+  else
+    execute 'bd'
+  endif
+endfunction
 "}}}
 
 
