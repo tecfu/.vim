@@ -3,11 +3,13 @@ Plug 'nvim-telescope/telescope.nvim'
 if $NVIM_CONFIG == 'coc'
   Plug 'fannheyward/telescope-coc.nvim'
 endif
+Plug 'nvim-telescope/telescope-live-grep-args.nvim'
 
 function! SetupTelescopeCoc()
   lua << EOF
   local actions = require('telescope.actions')
   local action_state = require('telescope.actions.state')
+  local lga_actions = require("telescope-live-grep-args.actions")
 
   local function move_selection_previous_5(prompt_bufnr)
     for _ = 1, 5 do
@@ -34,7 +36,7 @@ function! SetupTelescopeCoc()
     else
       local entry = action_state.get_selected_entry()
       if entry.path ~= nil then
-        actions.close(prompt_bufnr)  -- Moved this line before opening the file
+        actions.close(prompt_bufnr)
         vim.cmd(string.format('%s %s', 'tabedit', entry.path))
       end
     end
@@ -45,11 +47,40 @@ function! SetupTelescopeCoc()
     require('telescope.builtin').live_grep({ default_text = word })
   end
 
+  function search_and_replace()
+    require("telescope").extensions.live_grep_args.live_grep_args({
+      attach_mappings = function(_, map)
+        map("i", "<C-r>", function(prompt_bufnr)
+          local action_state = require('telescope.actions.state')
+          local current_picker = action_state.get_current_picker(prompt_bufnr)
+          local prompt = current_picker:_get_prompt()
+          local search_term = prompt:match("^%s*(.-)%s*$")
+          local replace_term = vim.fn.input("Replace with: ")
+
+          -- Create a backup of the affected files
+          local backup_cmd = string.format("grep -rl '%s' . | xargs -I{} cp {} {}.bak", search_term, "{}")
+          os.execute(backup_cmd)
+
+          -- Perform the search and replace
+          local replace_cmd = string.format("grep -rl '%s' . | xargs sed -i '' 's/%s/%s/g'", search_term, search_term, replace_term)
+          os.execute(replace_cmd)
+
+          require('telescope.actions').close(prompt_bufnr)
+        end)
+        return true
+      end,
+    })
+  end
+
+  function restore_backup()
+    local restore_cmd = "find . -name '*.bak' | while read file; do mv \"$file\" \"${file%.bak}\"; done"
+    os.execute(restore_cmd)
+  end
+
   local telescope_setup = {
     defaults = {
       mappings = {
         i = {
-          -- https://github.com/nvim-telescope/telescope.nvim/issues/1048#issuecomment-1679797700
           ['<CR>'] = select_one_or_multi,
           ['<C-k>'] = move_selection_previous_5,
           ['<C-j>'] = move_selection_next_5,
@@ -97,7 +128,11 @@ function! SetupTelescopeCoc()
       -- Developer configurations: Not meant for general override
       buffer_previewer_maker = require'telescope.previewers'.buffer_previewer_maker
     },
-    extensions = {}
+    extensions = {
+      live_grep_args = {
+        auto_quoting = true, -- enable/disable auto-quoting
+      }
+    }
   }
 
   if vim.env.NVIM_CONFIG == 'coc' then
@@ -111,6 +146,7 @@ function! SetupTelescopeCoc()
   end
 
   require('telescope').setup(telescope_setup)
+  require('telescope').load_extension('live_grep_args')
 EOF
 endfunction
 
@@ -123,4 +159,5 @@ nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>gw :lua grep_word_under_cursor()<CR>
 nnoremap <leader>fb :lua require('telescope.builtin').buffers{ default_text = vim.fn.expand('<cword>') }<CR>
-
+nnoremap <leader>sr :lua search_and_replace()<CR>
+nnoremap <leader>rb :lua restore_backup()<CR>
