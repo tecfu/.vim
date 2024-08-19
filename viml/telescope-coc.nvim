@@ -7,6 +7,7 @@ endif
 function! SetupTelescopeCoc()
   lua << EOF
   local actions = require('telescope.actions')
+  local action_state = require('telescope.actions.state')
 
   local function move_selection_previous_5(prompt_bufnr)
     for _ = 1, 5 do
@@ -21,17 +22,21 @@ function! SetupTelescopeCoc()
   end
 
   local select_one_or_multi = function(prompt_bufnr)
-    local picker = require('telescope.actions.state').get_current_picker(prompt_bufnr)
+    local picker = action_state.get_current_picker(prompt_bufnr)
     local multi = picker:get_multi_selection()
     if not vim.tbl_isempty(multi) then
-      require('telescope.actions').close(prompt_bufnr)
+      actions.close(prompt_bufnr)
       for _, j in pairs(multi) do
         if j.path ~= nil then
-          vim.cmd(string.format('%s %s', 'edit', j.path))
+          vim.cmd(string.format('%s %s', 'tabedit', j.path))
         end
       end
     else
-      require('telescope.actions').select_default(prompt_bufnr)
+      local entry = action_state.get_selected_entry()
+      if entry.path ~= nil then
+        actions.close(prompt_bufnr)  -- Moved this line before opening the file
+        vim.cmd(string.format('%s %s', 'tabedit', entry.path))
+      end
     end
   end
 
@@ -118,3 +123,4 @@ nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>gw :lua grep_word_under_cursor()<CR>
 nnoremap <leader>fb :lua require('telescope.builtin').buffers{ default_text = vim.fn.expand('<cword>') }<CR>
+
