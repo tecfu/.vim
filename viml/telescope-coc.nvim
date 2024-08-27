@@ -30,14 +30,14 @@ function! SetupTelescopeCoc()
       actions.close(prompt_bufnr)
       for _, j in pairs(multi) do
         if j.path ~= nil then
-          vim.cmd(string.format('%s %s', 'tabedit', j.path))
+          vim.cmd(string.format('%s +%d %s', 'tabedit', j.lnum, j.path))
         end
       end
     else
       local entry = action_state.get_selected_entry()
       if entry.path ~= nil then
         actions.close(prompt_bufnr)
-        vim.cmd(string.format('%s %s', 'tabedit', entry.path))
+        vim.cmd(string.format('%s +%d %s', 'tabedit', entry.lnum, entry.path))
       end
     end
   end
@@ -154,7 +154,7 @@ autocmd VimEnter * call SetupTelescopeCoc()
 
 nnoremap <leader>fs <cmd>Telescope lsp_document_symbols<cr>
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
-nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep initial_mode=insert default_selection_index=1<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>gw :lua grep_word_under_cursor()<CR>
