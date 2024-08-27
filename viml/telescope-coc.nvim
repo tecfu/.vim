@@ -79,11 +79,15 @@ function! SetupTelescopeCoc()
 
   local telescope_setup = {
     defaults = {
+      history = {
+          path = '~/.local/share/nvim/databases/telescope_history.sqlite3',
+          limit = 100,
+      },
       mappings = {
         i = {
           ['<CR>'] = select_one_or_multi,
-          ['<C-k>'] = move_selection_previous_5,
-          ['<C-j>'] = move_selection_next_5,
+          ['<C-k>'] = actions.cycle_history_next,
+          ['<C-j>'] = actions.cycle_history_prev
         },
         n = {
           ['<CR>'] = select_one_or_multi,
