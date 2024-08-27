@@ -566,6 +566,9 @@ command! -nargs=1 Gdiffprev call DiffPrev(<f-args>)
 " and therefore be confused when Vim spits `ambiguous user defined command`
 " So we're going to make Gdiff explicitly equal to Gdiffsplit
 command! Gdiff Gdiffsplit!
+
+" Alias Gcheckout to Gread
+command! Gcheckout Gread
 "}}}
 
 
