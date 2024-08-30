@@ -32,14 +32,14 @@ function! SetupTelescopeCoc()
       actions.close(prompt_bufnr)
       for _, j in pairs(multi) do
         if j.path ~= nil then
-          vim.cmd(string.format('%s +%d %s', 'tabedit', j.lnum, j.path))
+          vim.cmd(string.format('%s %s', 'tabedit', j.path))
         end
       end
     else
       local entry = action_state.get_selected_entry()
       if entry.path ~= nil then
-        actions.close(prompt_bufnr)
-        vim.cmd(string.format('%s +%d %s', 'tabedit', entry.lnum, entry.path))
+        actions.close(prompt_bufnr)  -- Moved this line before opening the file
+        vim.cmd(string.format('%s %s', 'tabedit', entry.path))
       end
     end
   end
