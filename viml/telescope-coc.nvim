@@ -178,6 +178,11 @@ local telescope_setup = {
         ['<C-k>'] = move_selection_previous_5,
         ['<C-j>'] = move_selection_next_5,
       },
+      i = {
+        ["<Tab>"] = function(prompt_bufnr)
+          vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-N>', true, true, true), 'n')
+        end
+      }
     },
     vimgrep_arguments = {
       'ag',
