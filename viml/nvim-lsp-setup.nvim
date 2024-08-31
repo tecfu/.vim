@@ -40,7 +40,7 @@ function! SetupLsp()
       'tsserver', -- tsserver before eslint so eslint overrides when conflicted
       -- 'vtsls', -- vtsls before eslint so eslint overrides when conflicted
       -- 'eslint', -- using eslint_d instead via efm, much faster
-      'efm', -- efm langserver, used for eslint_d, prettier_d
+      -- 'efm', -- efm langserver, used for eslint_d, prettier_d
       -- 'eslint_d',
       -- 'prettier_d',
       'pyright',
@@ -64,13 +64,13 @@ function! SetupLsp()
 
       local bufopts = { noremap=true, silent=true, buffer=bufnr }
 
-      vim.keymap.set('n', 'gh'   , vim.lsp.buf.signature_help                        , bufopts)
-      vim.keymap.set('n', 'gv'   , vim.lsp.buf.hover                                 , bufopts)
-      vim.keymap.set('n', 'gD'   , vim.lsp.buf.declaration                           , bufopts)
-      vim.keymap.set('n', 'gd'   , vim.lsp.buf.definition                            , bufopts)
-      vim.keymap.set('n', 'gi'   , vim.lsp.buf.implementation                        , bufopts)
-      vim.keymap.set('n', 'go'   , vim.lsp.buf.type_definition                       , bufopts)
-      vim.keymap.set('n', 'gr'   , vim.lsp.buf.references                            , bufopts)
+      vim.keymap.set('n', 'gh'   , vim.lsp.buf.signature_help           , bufopts)
+      vim.keymap.set('n', 'gv'   , vim.lsp.buf.hover                    , bufopts)
+      vim.keymap.set('n', 'gD'   , vim.lsp.buf.declaration              , bufopts)
+      vim.keymap.set('n', 'gd'   , vim.lsp.buf.definition               , bufopts)
+      vim.keymap.set('n', 'gi'   , vim.lsp.buf.implementation           , bufopts)
+      vim.keymap.set('n', 'go'   , vim.lsp.buf.type_definition          , bufopts)
+      vim.keymap.set('n', 'gr'   , vim.lsp.buf.references               , bufopts)
       --m.keymap.set('n', TODO   , vim.lsp.buf.code_action                           , bufopts) -- lspconfig: <space>ca; lsp-zero: <F4>
       vim.keymap.set('n', '<space>l', function() vim.lsp.buf.format { async = true } end, bufopts) -- lspconfig: <space>l
       --m.keymap.set('n', TODO   , vim.lsp.buf.rename                                , bufopts) -- lspconfig: <space>rn; lsp-zero: <F2>
@@ -87,33 +87,33 @@ function! SetupLsp()
     --     return root
     -- end
 
-    -- -- customEslint LSP server setup
-    -- -- this example uses a proxy to give you visibility into stdin/stdout
-    -- local lsp_configurations = require('lspconfig.configs')
-    -- if not lsp_configurations.customEslint then
-    --     lsp_configurations.customEslint = {
-    --         default_config = {
-    --             name = 'customEslint',
-    --             cmd = { "nc", "localhost", "12345" },
-    --             -- cmd = {
-    --             --     "python3",
-    --             --     "/home/base/.terminal/scripts/python-stdio-proxy.py",
-    --             --     "--cmd",
-    --             --     "vscode-eslint-language-server --stdio",
-    --             --     "port",
-    --             --     "12345"
-    --             -- },
-    --             -- cmd = {
-    --             --     "vscode-eslint-language-server",
-    --             --     "--stdio"
-    --             -- },
-    --             filetypes = { 'javascript', 'typescript' },
-    --             -- root_dir = require('lspconfig.util').root_pattern('*.git'),
-    --             -- root_dir = require('lspconfig.util').root_pattern("eslint*", "*.git")
-    --             root_dir = root_dir
-    --         }
-    --     }
-    -- end
+    -- customEslint LSP server setup
+    -- this example uses a proxy to give you visibility into stdin/stdout
+    local lsp_configurations = require('lspconfig.configs')
+    if not lsp_configurations.customEslint then
+        lsp_configurations.customEslint = {
+            default_config = {
+                name = 'customEslint',
+                -- cmd = { "nc", "localhost", "12345" },
+                -- cmd = {
+                --     "python3",
+                --     "/home/base/.terminal/scripts/python-stdio-proxy.py",
+                --     "--cmd",
+                --     "vscode-eslint-language-server --stdio",
+                --     "port",
+                --     "12345"
+                -- },
+                cmd = {
+                    "vscode-eslint-language-server",
+                    "--stdio"
+                },
+                filetypes = { 'javascript', 'typescript' },
+                -- root_dir = require('lspconfig.util').root_pattern('*.git'),
+                -- root_dir = require('lspconfig.util').root_pattern("eslint*", "*.git")
+                root_dir = root_dir
+            }
+        }
+    end
 
     -- lspservers = {unpack(lspservers), 'customEslint', 'customEslint'}
 
