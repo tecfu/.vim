@@ -1,17 +1,14 @@
-" Telescope for nvim-cmp implemented in nvim-lsp-setup.nvim
 Plug 'nvim-telescope/telescope.nvim'
 if $NVIM_CONFIG == 'coc'
   Plug 'fannheyward/telescope-coc.nvim'
 endif
 Plug 'nvim-telescope/telescope-live-grep-args.nvim'
-"brew install cmake make gcc
-Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release' }
 
 function! SetupTelescopeCoc()
   lua << EOF
   local actions = require('telescope.actions')
   local action_state = require('telescope.actions.state')
-  local lga_actions = require("telescope-live-grep-args.actions")
+  local lga_actions = require('telescope-live-grep-args.actions')
 
   local function move_selection_previous_5(prompt_bufnr)
     for _ = 1, 5 do
@@ -25,6 +22,7 @@ function! SetupTelescopeCoc()
     end
   end
 
+  -- Custom fn select_one_or_multi allows us to open one or more files in new tabs
   local select_one_or_multi = function(prompt_bufnr)
     local picker = action_state.get_current_picker(prompt_bufnr)
     local multi = picker:get_multi_selection()
@@ -79,18 +77,67 @@ function! SetupTelescopeCoc()
     os.execute(restore_cmd)
   end
 
+  -- Maintain history for find_files and live_grep
+  local find_files_history = {}
+  local live_grep_history = {}
+
+  local find_files_index = 1
+  local live_grep_index = 1
+
+  -- Custom actions for find_files history
+  local function cycle_find_files_history_next(prompt_bufnr)
+    print("cycle_find_files_history_next called")
+    local current_picker = action_state.get_current_picker(prompt_bufnr)
+    if #find_files_history > 0 then
+      find_files_index = (find_files_index % #find_files_history) + 1
+      print("find_files_index: " .. find_files_index)
+      current_picker:set_prompt(find_files_history[find_files_index])
+    end
+  end
+
+  local function cycle_find_files_history_prev(prompt_bufnr)
+    print("cycle_find_files_history_prev called")
+    local current_picker = action_state.get_current_picker(prompt_bufnr)
+    if #find_files_history > 0 then
+      find_files_index = (find_files_index - 2 + #find_files_history) % #find_files_history + 1
+      print("find_files_index: " .. find_files_index)
+      current_picker:set_prompt(find_files_history[find_files_index])
+    end
+  end
+
+  -- Custom actions for live_grep history
+  local function cycle_live_grep_history_next(prompt_bufnr)
+    print("cycle_live_grep_history_next called")
+    local current_picker = action_state.get_current_picker(prompt_bufnr)
+    if #live_grep_history > 0 then
+      live_grep_index = (live_grep_index % #live_grep_history) + 1
+      print("live_grep_index: " .. live_grep_index)
+      current_picker:set_prompt(live_grep_history[live_grep_index])
+    end
+  end
+
+  local function cycle_live_grep_history_prev(prompt_bufnr)
+    print("cycle_live_grep_history_prev called")
+    local current_picker = action_state.get_current_picker(prompt_bufnr)
+    if #live_grep_history > 0 then
+      live_grep_index = (live_grep_index - 2 + #live_grep_history) % #live_grep_history + 1
+      print("live_grep_index: " .. live_grep_index)
+      current_picker:set_prompt(live_grep_history[live_grep_index])
+    end
+  end
+
+  local function add_to_history(prompt_bufnr, history_table)
+    local current_picker = action_state.get_current_picker(prompt_bufnr)
+    local prompt = current_picker:_get_prompt()
+    if prompt and prompt ~= "" then
+      table.insert(history_table, prompt)
+      print("Updated history: " .. vim.inspect(history_table))
+    end
+  end
+
   local telescope_setup = {
     defaults = {
-      history = {
-          path = '~/.local/share/nvim/databases/telescope_history.sqlite3',
-          limit = 100,
-      },
       mappings = {
-        i = {
-          ['<CR>'] = select_one_or_multi,
-          ['<C-k>'] = actions.cycle_history_next,
-          ['<C-j>'] = actions.cycle_history_prev
-        },
         n = {
           ['<CR>'] = select_one_or_multi,
           ['<C-k>'] = move_selection_previous_5,
@@ -140,24 +187,53 @@ function! SetupTelescopeCoc()
       -- Developer configurations: Not meant for general override
       buffer_previewer_maker = require'telescope.previewers'.buffer_previewer_maker
     },
-    pickers = {
-      live_grep = {
-        mappings = {
-          i = { ["<c-f>"] = actions.to_fuzzy_refine },
-        },
-      },
-    },
     extensions = {
       live_grep_args = {
         auto_quoting = true, -- enable/disable auto-quoting
       },
-      fzf = {
-        fuzzy = true,                    -- false will only do exact matching
-        override_generic_sorter = true,  -- override the generic sorter
-        override_file_sorter = true,     -- override the file sorter
-        case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
-      }
-    }
+    },
+    pickers = {
+      find_files = {
+        mappings = {
+          i = {
+            ['<C-k>'] = cycle_find_files_history_next,
+            ['<C-j>'] = cycle_find_files_history_prev,
+            ['<CR>'] = function(prompt_bufnr)
+              add_to_history(prompt_bufnr, find_files_history)
+              actions.select_default(prompt_bufnr)
+            end,
+          },
+          n = {
+            ['<C-k>'] = move_selection_previous_5,
+            ['<C-j>'] = move_selection_next_5,
+            ['<CR>'] = function(prompt_bufnr)
+              add_to_history(prompt_bufnr, find_files_history)
+              actions.select_default(prompt_bufnr)
+            end,
+          },
+        },
+      },
+      live_grep = {
+        mappings = {
+          i = {
+            ['<C-k>'] = cycle_live_grep_history_next,
+            ['<C-j>'] = cycle_live_grep_history_prev,
+            ['<CR>'] = function(prompt_bufnr)
+              add_to_history(prompt_bufnr, live_grep_history)
+              actions.select_default(prompt_bufnr)
+            end,
+          },
+          n = {
+            ['<C-k>'] = move_selection_previous_5,
+            ['<C-j>'] = move_selection_next_5,
+            ['<CR>'] = function(prompt_bufnr)
+              add_to_history(prompt_bufnr, find_files_history)
+              actions.select_default(prompt_bufnr)
+            end,
+          },
+        },
+      },
+    },
   }
 
   if vim.env.NVIM_CONFIG == 'coc' then
@@ -172,7 +248,6 @@ function! SetupTelescopeCoc()
 
   require('telescope').setup(telescope_setup)
   require('telescope').load_extension('live_grep_args')
-  require('telescope').load_extension('fzf')
 EOF
 endfunction
 
