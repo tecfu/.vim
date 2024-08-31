@@ -5,249 +5,284 @@ endif
 Plug 'nvim-telescope/telescope-live-grep-args.nvim'
 
 function! SetupTelescopeCoc()
-  lua << EOF
-  local actions = require('telescope.actions')
-  local action_state = require('telescope.actions.state')
-  local lga_actions = require('telescope-live-grep-args.actions')
+lua << EOF
+local actions = require('telescope.actions')
+local action_state = require('telescope.actions.state')
+local lga_actions = require('telescope-live-grep-args.actions')
 
-  local function move_selection_previous_5(prompt_bufnr)
-    for _ = 1, 5 do
-      actions.move_selection_previous(prompt_bufnr)
-    end
+local function move_selection_previous_5(prompt_bufnr)
+  for _ = 1, 5 do
+    actions.move_selection_previous(prompt_bufnr)
   end
+end
 
-  local function move_selection_next_5(prompt_bufnr)
-    for _ = 1, 5 do
-      actions.move_selection_next(prompt_bufnr)
-    end
+local function move_selection_next_5(prompt_bufnr)
+  for _ = 1, 5 do
+    actions.move_selection_next(prompt_bufnr)
   end
+end
 
-  -- Custom fn select_one_or_multi allows us to open one or more files in new tabs
-  local select_one_or_multi = function(prompt_bufnr)
-    local picker = action_state.get_current_picker(prompt_bufnr)
-    local multi = picker:get_multi_selection()
-    if not vim.tbl_isempty(multi) then
-      actions.close(prompt_bufnr)
-      for _, j in pairs(multi) do
-        if j.path ~= nil then
-          vim.cmd(string.format('%s %s', 'tabedit', j.path))
-        end
+-- Custom fn select_one_or_multi allows us to open one or more files in new tabs
+local select_one_or_multi = function(prompt_bufnr)
+  local picker = action_state.get_current_picker(prompt_bufnr)
+  local multi = picker:get_multi_selection()
+  if not vim.tbl_isempty(multi) then
+    actions.close(prompt_bufnr)
+    for _, j in pairs(multi) do
+      if j.path ~= nil then
+        vim.cmd(string.format('%s %s', 'tabedit', j.path))
       end
+    end
+  else
+    local entry = action_state.get_selected_entry()
+    if entry.path ~= nil then
+      actions.close(prompt_bufnr)  -- Moved this line before opening the file
+      vim.cmd(string.format('%s %s', 'tabedit', entry.path))
+    end
+  end
+end
+
+function grep_word_under_cursor()
+  local word = vim.fn.expand('<cword>')
+  require('telescope.builtin').live_grep({ default_text = word })
+end
+
+function search_and_replace()
+  require("telescope").extensions.live_grep_args.live_grep_args({
+    attach_mappings = function(_, map)
+      map("i", "<C-r>", function(prompt_bufnr)
+        local action_state = require('telescope.actions.state')
+        local current_picker = action_state.get_current_picker(prompt_bufnr)
+        local prompt = current_picker:_get_prompt()
+        local search_term = prompt:match("^%s*(.-)%s*$")
+        local replace_term = vim.fn.input("Replace with: ")
+
+        -- Create a backup of the affected files
+        local backup_cmd = string.format("grep -rl '%s' . | xargs -I{} cp {} {}.bak", search_term, "{}")
+        os.execute(backup_cmd)
+
+        -- Perform the search and replace
+        local replace_cmd = string.format("grep -rl '%s' . | xargs sed -i '' 's/%s/%s/g'", search_term, search_term, replace_term)
+        os.execute(replace_cmd)
+
+        require('telescope.actions').close(prompt_bufnr)
+      end)
+      return true
+    end,
+  })
+end
+
+function restore_backup()
+  local restore_cmd = "find . -name '*.bak' | while read file; do mv \"$file\" \"${file%.bak}\"; done"
+  os.execute(restore_cmd)
+end
+
+-- Determine the home directory path
+local home_dir = os.getenv("HOME") or os.getenv("USERPROFILE")
+local find_files_history_file = home_dir .. "/.telescope_find_files_history.txt"
+local live_grep_history_file = home_dir .. "/.telescope_live_grep_history.txt"
+
+-- Function to read history from a file
+local function read_history_from_file(history_file)
+  local history = {}
+  local file = io.open(history_file, "r")
+  if file then
+    for line in file:lines() do
+      table.insert(history, line)
+    end
+    file:close()
+  else
+    print("Error: Could not open file " .. history_file)
+  end
+  return history
+end
+
+-- Add a prompt to the history table and persist to a file
+local function add_to_history(prompt_bufnr, history_table, history_file)
+  local current_picker = action_state.get_current_picker(prompt_bufnr)
+  local prompt = current_picker:_get_prompt()
+  if prompt and prompt ~= "" then
+    table.insert(history_table, prompt)
+    print("Updated history: " .. vim.inspect(history_table))
+
+    -- Write the updated history to the file
+    local file = io.open(history_file, "w")
+    if file then
+      for _, entry in ipairs(history_table) do
+        file:write(entry .. "\n")
+      end
+      file:close()
     else
-      local entry = action_state.get_selected_entry()
-      if entry.path ~= nil then
-        actions.close(prompt_bufnr)  -- Moved this line before opening the file
-        vim.cmd(string.format('%s %s', 'tabedit', entry.path))
-      end
+      print("Error: Could not open file " .. history_file)
     end
   end
+end
 
-  function grep_word_under_cursor()
-    local word = vim.fn.expand('<cword>')
-    require('telescope.builtin').live_grep({ default_text = word })
+-- Initialize the history tables and indices
+local find_files_history = read_history_from_file(find_files_history_file)
+local live_grep_history = read_history_from_file(live_grep_history_file)
+local find_files_index = #find_files_history
+local live_grep_index = #live_grep_history
+
+-- Custom actions for find_files history
+local function cycle_find_files_history_next(prompt_bufnr)
+  print("cycle_find_files_history_next called")
+  local current_picker = action_state.get_current_picker(prompt_bufnr)
+  local find_files_history = read_history_from_file(find_files_history_file)
+  if #find_files_history > 0 then
+    find_files_index = (find_files_index % #find_files_history) + 1
+    print("find_files_index: " .. find_files_index)
+    current_picker:set_prompt(find_files_history[find_files_index])
   end
+end
 
-  function search_and_replace()
-    require("telescope").extensions.live_grep_args.live_grep_args({
-      attach_mappings = function(_, map)
-        map("i", "<C-r>", function(prompt_bufnr)
-          local action_state = require('telescope.actions.state')
-          local current_picker = action_state.get_current_picker(prompt_bufnr)
-          local prompt = current_picker:_get_prompt()
-          local search_term = prompt:match("^%s*(.-)%s*$")
-          local replace_term = vim.fn.input("Replace with: ")
-
-          -- Create a backup of the affected files
-          local backup_cmd = string.format("grep -rl '%s' . | xargs -I{} cp {} {}.bak", search_term, "{}")
-          os.execute(backup_cmd)
-
-          -- Perform the search and replace
-          local replace_cmd = string.format("grep -rl '%s' . | xargs sed -i '' 's/%s/%s/g'", search_term, search_term, replace_term)
-          os.execute(replace_cmd)
-
-          require('telescope.actions').close(prompt_bufnr)
-        end)
-        return true
-      end,
-    })
+local function cycle_find_files_history_prev(prompt_bufnr)
+  print("cycle_find_files_history_prev called")
+  local current_picker = action_state.get_current_picker(prompt_bufnr)
+  local find_files_history = read_history_from_file(find_files_history_file)
+  if #find_files_history > 0 then
+    find_files_index = (find_files_index - 2 + #find_files_history) % #find_files_history + 1
+    print("find_files_index: " .. find_files_index)
+    current_picker:set_prompt(find_files_history[find_files_index])
   end
+end
 
-  function restore_backup()
-    local restore_cmd = "find . -name '*.bak' | while read file; do mv \"$file\" \"${file%.bak}\"; done"
-    os.execute(restore_cmd)
+-- Custom actions for live_grep history
+local function cycle_live_grep_history_next(prompt_bufnr)
+  print("cycle_live_grep_history_next called")
+  local current_picker = action_state.get_current_picker(prompt_bufnr)
+  local live_grep_history = read_history_from_file(live_grep_history_file)
+  if #live_grep_history > 0 then
+    live_grep_index = (live_grep_index % #live_grep_history) + 1
+    print("live_grep_index: " .. live_grep_index)
+    current_picker:set_prompt(live_grep_history[live_grep_index])
   end
+end
 
-  -- Maintain history for find_files and live_grep
-  local find_files_history = {}
-  local live_grep_history = {}
-
-  local find_files_index = 1
-  local live_grep_index = 1
-
-  -- Custom actions for find_files history
-  local function cycle_find_files_history_next(prompt_bufnr)
-    print("cycle_find_files_history_next called")
-    local current_picker = action_state.get_current_picker(prompt_bufnr)
-    if #find_files_history > 0 then
-      find_files_index = (find_files_index % #find_files_history) + 1
-      print("find_files_index: " .. find_files_index)
-      current_picker:set_prompt(find_files_history[find_files_index])
-    end
+local function cycle_live_grep_history_prev(prompt_bufnr)
+  print("cycle_live_grep_history_prev called")
+  local current_picker = action_state.get_current_picker(prompt_bufnr)
+  local live_grep_history = read_history_from_file(live_grep_history_file)
+  if #live_grep_history > 0 then
+    live_grep_index = (live_grep_index - 2 + #live_grep_history) % #live_grep_history + 1
+    print("live_grep_index: " .. live_grep_index)
+    current_picker:set_prompt(live_grep_history[live_grep_index])
   end
+end
 
-  local function cycle_find_files_history_prev(prompt_bufnr)
-    print("cycle_find_files_history_prev called")
-    local current_picker = action_state.get_current_picker(prompt_bufnr)
-    if #find_files_history > 0 then
-      find_files_index = (find_files_index - 2 + #find_files_history) % #find_files_history + 1
-      print("find_files_index: " .. find_files_index)
-      current_picker:set_prompt(find_files_history[find_files_index])
-    end
-  end
-
-  -- Custom actions for live_grep history
-  local function cycle_live_grep_history_next(prompt_bufnr)
-    print("cycle_live_grep_history_next called")
-    local current_picker = action_state.get_current_picker(prompt_bufnr)
-    if #live_grep_history > 0 then
-      live_grep_index = (live_grep_index % #live_grep_history) + 1
-      print("live_grep_index: " .. live_grep_index)
-      current_picker:set_prompt(live_grep_history[live_grep_index])
-    end
-  end
-
-  local function cycle_live_grep_history_prev(prompt_bufnr)
-    print("cycle_live_grep_history_prev called")
-    local current_picker = action_state.get_current_picker(prompt_bufnr)
-    if #live_grep_history > 0 then
-      live_grep_index = (live_grep_index - 2 + #live_grep_history) % #live_grep_history + 1
-      print("live_grep_index: " .. live_grep_index)
-      current_picker:set_prompt(live_grep_history[live_grep_index])
-    end
-  end
-
-  local function add_to_history(prompt_bufnr, history_table)
-    local current_picker = action_state.get_current_picker(prompt_bufnr)
-    local prompt = current_picker:_get_prompt()
-    if prompt and prompt ~= "" then
-      table.insert(history_table, prompt)
-      print("Updated history: " .. vim.inspect(history_table))
-    end
-  end
-
-  local telescope_setup = {
-    defaults = {
+local telescope_setup = {
+  defaults = {
+    mappings = {
+      n = {
+        ['<CR>'] = select_one_or_multi,
+        ['<C-k>'] = move_selection_previous_5,
+        ['<C-j>'] = move_selection_next_5,
+      },
+    },
+    vimgrep_arguments = {
+      'ag',
+      '--nocolor',
+      '--noheading',
+      '--filename',
+      '--numbers',
+      '--column',
+      '--smart-case',
+      '--hidden',
+      '--ignore', '.git', 
+      '--ignore', 'node_modules',
+    },
+    prompt_prefix = '> ',
+    selection_caret = '> ',
+    entry_prefix = '  ',
+    initial_mode = 'insert',
+    selection_strategy = 'reset',
+    sorting_strategy = 'descending',
+    layout_strategy = 'horizontal',
+    layout_config = {
+      horizontal = {
+        mirror = false,
+      },
+      vertical = {
+        mirror = false,
+      },
+    },
+    file_sorter = require'telescope.sorters'.get_fuzzy_file,
+    file_ignore_patterns = {},
+    generic_sorter = require'telescope.sorters'.get_generic_fuzzy_sorter,
+    path_display = {},
+    winblend = 0,
+    border = {},
+    borderchars = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
+    color_devicons = true,
+    use_less = true,
+    set_env = { ['COLORTERM'] = 'truecolor' }, -- default = nil,
+    file_previewer = require'telescope.previewers'.vim_buffer_cat.new,
+    grep_previewer = require'telescope.previewers'.vim_buffer_vimgrep.new,
+    qflist_previewer = require'telescope.previewers'.vim_buffer_qflist.new,
+    -- Developer configurations: Not meant for general override
+    buffer_previewer_maker = require'telescope.previewers'.buffer_previewer_maker
+  },
+  extensions = {
+    live_grep_args = {
+      auto_quoting = true, -- enable/disable auto-quoting
+    },
+  },
+  pickers = {
+    find_files = {
       mappings = {
+        i = {
+          ['<C-k>'] = cycle_find_files_history_next,
+          ['<C-j>'] = cycle_find_files_history_prev,
+          ['<CR>'] = function(prompt_bufnr)
+            add_to_history(prompt_bufnr, find_files_history, find_files_history_file)
+            actions.select_default(prompt_bufnr)
+          end,
+        },
         n = {
-          ['<CR>'] = select_one_or_multi,
           ['<C-k>'] = move_selection_previous_5,
           ['<C-j>'] = move_selection_next_5,
-        },
-      },
-      vimgrep_arguments = {
-        'ag',
-        '--nocolor',
-        '--noheading',
-        '--filename',
-        '--numbers',
-        '--column',
-        '--smart-case',
-        '--hidden',
-        '--ignore', '.git', 
-        '--ignore', 'node_modules',
-      },
-      prompt_prefix = '> ',
-      selection_caret = '> ',
-      entry_prefix = '  ',
-      initial_mode = 'insert',
-      selection_strategy = 'reset',
-      sorting_strategy = 'descending',
-      layout_strategy = 'horizontal',
-      layout_config = {
-        horizontal = {
-          mirror = false,
-        },
-        vertical = {
-          mirror = false,
-        },
-      },
-      file_sorter = require'telescope.sorters'.get_fuzzy_file,
-      file_ignore_patterns = {},
-      generic_sorter = require'telescope.sorters'.get_generic_fuzzy_sorter,
-      path_display = {},
-      winblend = 0,
-      border = {},
-      borderchars = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
-      color_devicons = true,
-      use_less = true,
-      set_env = { ['COLORTERM'] = 'truecolor' }, -- default = nil,
-      file_previewer = require'telescope.previewers'.vim_buffer_cat.new,
-      grep_previewer = require'telescope.previewers'.vim_buffer_vimgrep.new,
-      qflist_previewer = require'telescope.previewers'.vim_buffer_qflist.new,
-      -- Developer configurations: Not meant for general override
-      buffer_previewer_maker = require'telescope.previewers'.buffer_previewer_maker
-    },
-    extensions = {
-      live_grep_args = {
-        auto_quoting = true, -- enable/disable auto-quoting
-      },
-    },
-    pickers = {
-      find_files = {
-        mappings = {
-          i = {
-            ['<C-k>'] = cycle_find_files_history_next,
-            ['<C-j>'] = cycle_find_files_history_prev,
-            ['<CR>'] = function(prompt_bufnr)
-              add_to_history(prompt_bufnr, find_files_history)
-              actions.select_default(prompt_bufnr)
-            end,
-          },
-          n = {
-            ['<C-k>'] = move_selection_previous_5,
-            ['<C-j>'] = move_selection_next_5,
-            ['<CR>'] = function(prompt_bufnr)
-              add_to_history(prompt_bufnr, find_files_history)
-              actions.select_default(prompt_bufnr)
-            end,
-          },
-        },
-      },
-      live_grep = {
-        mappings = {
-          i = {
-            ['<C-k>'] = cycle_live_grep_history_next,
-            ['<C-j>'] = cycle_live_grep_history_prev,
-            ['<CR>'] = function(prompt_bufnr)
-              add_to_history(prompt_bufnr, live_grep_history)
-              actions.select_default(prompt_bufnr)
-            end,
-          },
-          n = {
-            ['<C-k>'] = move_selection_previous_5,
-            ['<C-j>'] = move_selection_next_5,
-            ['<CR>'] = function(prompt_bufnr)
-              add_to_history(prompt_bufnr, find_files_history)
-              actions.select_default(prompt_bufnr)
-            end,
-          },
+          ['<CR>'] = function(prompt_bufnr)
+            add_to_history(prompt_bufnr, find_files_history, find_files_history_file)
+            actions.select_default(prompt_bufnr)
+          end,
         },
       },
     },
+    live_grep = {
+      mappings = {
+        i = {
+          ['<C-k>'] = cycle_live_grep_history_next,
+          ['<C-j>'] = cycle_live_grep_history_prev,
+          ['<CR>'] = function(prompt_bufnr)
+            add_to_history(prompt_bufnr, live_grep_history, live_grep_history_file)
+            actions.select_default(prompt_bufnr)
+          end,
+        },
+        n = {
+          ['<C-k>'] = move_selection_previous_5,
+          ['<C-j>'] = move_selection_next_5,
+          ['<CR>'] = function(prompt_bufnr)
+            add_to_history(prompt_bufnr, live_grep_history, live_grep_history_file)
+            actions.select_default(prompt_bufnr)
+          end,
+        },
+      },
+    },
+  },
+}
+
+if vim.env.NVIM_CONFIG == 'coc' then
+  telescope_setup.extensions.coc = {
+    theme = 'ivy',
+    prefer_locations = true, -- always use Telescope locations to preview definitions/declarations/implementations etc
+    push_cursor_on_edit = true, -- save the cursor position to jump back in the future
+    timeout = 3000, -- timeout for coc commands
   }
+  require('telescope').load_extension('coc')
+end
 
-  if vim.env.NVIM_CONFIG == 'coc' then
-    telescope_setup.extensions.coc = {
-      theme = 'ivy',
-      prefer_locations = true, -- always use Telescope locations to preview definitions/declarations/implementations etc
-      push_cursor_on_edit = true, -- save the cursor position to jump back in the future
-      timeout = 3000, -- timeout for coc commands
-    }
-    require('telescope').load_extension('coc')
-  end
-
-  require('telescope').setup(telescope_setup)
-  require('telescope').load_extension('live_grep_args')
+require('telescope').setup(telescope_setup)
+require('telescope').load_extension('live_grep_args')
 EOF
 endfunction
 
