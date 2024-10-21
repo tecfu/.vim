@@ -62,12 +62,6 @@ endif
 Plug 'ap/vim-css-color'
 
 
-" Gitlens-like git blame
-Plug 'APZelos/blamer.nvim'
-" Toggle this in nvim
-let g:blamer_enabled = 0
-
-
 Plug 'bling/vim-airline'
 "{{{
 "let g:airline_theme='colors/mango.vim'
@@ -572,22 +566,10 @@ command! Gcheckout Gread
 "}}}
 
 
+Plug 'tpope/vim-rhubarb'
+
+
 Plug 'tpope/vim-obsession'
-"{{{
-
-" Sessions
-" Using Tim Pope's Obsession Plugin
-" automatically restore when session found.
-function! RestoreSess()
-  if filereadable(".vim/session.vim")
-    source .vim/session.vim
-  else
-    exec 'echo "Warning: No vim session available to restore"'
-  endif
-endfunction
-
-" autocmd VimEnter * call RestoreSess()
-"}}}
 
 
 Plug 'tpope/vim-surround'

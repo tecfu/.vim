@@ -1,5 +1,5 @@
-" ┌───────────────────────────────────┐
 " │      vimrc by Tecfu               │
+" ┌───────────────────────────────────┐
 " ├───────────────────────────────────┤
 " │ http://github.com/tecfu           │
 " └───────────────────────────────────┘
@@ -265,7 +265,7 @@ map <S-j> :tabprev<CR>
 "nmap <C-u> :call UndoCloseTab()<CR><ESC>
 
 " Switch CWD to the directory of the open buffer
-map <leader>cd :cd %:p:h<cr>:pwd<cr>
+" map <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 
 " Reselect visual block after indent/outdent
