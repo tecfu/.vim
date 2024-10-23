@@ -495,8 +495,9 @@ autocmd BufNewFile,BufRead coc-settings.json,*.jsonc set filetype=jsonc
 autocmd BufNewFile,BufRead *.cjs set filetype=javascript
 autocmd BufEnter *.nvim :setlocal filetype=vim
 
-" Language specific syntax highlighting
+" Filetype specific syntax highlighting and indentation
 autocmd FileType make setlocal ts=8 sts=8 sw=8 noexpandtab
+autocmd FileType markdown setlocal shiftwidth=2 tabstop=2
 autocmd FileType python,yaml setlocal ts=2 sts=2 sw=2 expandtab
 
 " Setting foldmethod=marker disables folding
