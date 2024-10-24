@@ -1,7 +1,5 @@
 Plug 'nvim-telescope/telescope.nvim'
-if $NVIM_CONFIG == 'coc'
-  Plug 'fannheyward/telescope-coc.nvim'
-endif
+Plug 'fannheyward/telescope-coc.nvim'
 Plug 'nvim-telescope/telescope-live-grep-args.nvim'
 
 function! SetupTelescopeCoc()

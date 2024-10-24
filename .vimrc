@@ -522,7 +522,7 @@ autocmd Filetype text
 
 augroup no_filetype
   autocmd!
-  autocmd BufEnter * if &filetype ==# '' | setlocal spell | endif
+  autocmd BufEnter * if &filetype ==# '' | setlocal nospell | endif
 augroup END
 "}}}
 
