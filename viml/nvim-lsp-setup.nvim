@@ -14,6 +14,16 @@ function! SetupLsp()
   lua << EOF
     vim.lsp.set_log_level("debug")
 
+    -- See also: https://github.com/neovim/nvim-lspconfig/issues/2657#issuecomment-1674107409
+    -- custom_root_dir = function(fname)
+    --   -- local root = vim.fn.getcwd()
+    --   -- print("Checking root dir: " .. tostring(root))
+    --   -- return root
+    --   local root = vim.fn.fnamemodify(fname, ':p:h')
+    --   print("Checking root dir: " .. tostring(root))
+    --   return root
+    -- end
+
     require("mason").setup({
       ui = {
         icons = {
@@ -24,38 +34,60 @@ function! SetupLsp()
       }
     })
 
-    -- local linters = {
-    --   'quick-lint-js',
-    --   'semgrep',
-    --   'snyk',
-    -- }
-
-    -- local debuggers = {
-    --   'js-debug-adapter',
-    -- }
-
-    -- Available servers: https://github.com/williamboman/mason-lspconfig.nvim
-    local lspservers = {
-      -- 'biome',
-      'tsserver', -- tsserver before eslint so eslint overrides when conflicted
-      -- 'vtsls', -- vtsls before eslint so eslint overrides when conflicted
-      -- 'eslint', -- using eslint_d instead via efm, much faster
-      -- 'efm', -- efm langserver, used for eslint_d, prettier_d
-      -- 'eslint_d',
-      -- 'prettier_d',
-      'pyright',
-      'marksman',
-      'typos_lsp',
-      'vacuum', -- OPEN API Validator
-      'vimls',
-      -- 'sonarlint-language-server',
+    local mason_lsp_servers = {
+      -- biome = {},
+      tsserver = {}, -- tsserver before eslint so eslint overrides when conflicted
+      -- vtsls = {}, -- vtsls before eslint so eslint overrides when conflicted
+      -- eslint = {}, -- using eslint_d instead via efm, much faster
+      -- efm = {}, -- efm langserver, used for eslint_d, prettier_d
+      -- eslint_d = {},
+      -- prettier_d = {},
+      pyright = {},
+      marksman = {},
+      typos_lsp = { name = "typos_lsp", filetypes = { "markdown", "text" } }, -- spelling
+      vacuum = {}, -- OPEN API Validator
+      vimls = {},
+      -- sonarlint_language_server = {},
     }
 
-    require('mason-lspconfig').setup({
-      ensure_installed = lspservers
-    })
+    local custom_lsp_servers = {
+      ["vscode-eslint-language-server manual install"] = {
+        cmd = { "vscode-eslint-language-server", "--stdio" },
+        -- use netcat as a proxy to get visibility into stdin/stdout
+        -- assumes `vscode-eslint-language-server --stdio | nc -l 12345` in another terminal
+        -- cmd = { "nc", "localhost", "12345" },
+        -- use custom proxy to get visibility into stdin/stdout
+        -- cmd = {
+        --     "python3",
+        --     "/home/base/.terminal/scripts/python-stdio-proxy.py",
+        --     "--cmd",
+        --     "vscode-eslint-language-server --stdio",
+        --     "port",
+        --     "12345"
+        -- },
+        filetypes = { "javascript", "typescript" },
+        -- root_dir = custom_root_dir
+        root_dir = require("lspconfig.util").root_pattern("*eslint*", "*.git"),
+        dependencies = { "vscode-eslint-language-server" }
+      }
+    }
 
-    -- remove dependencies that are not lsp servers
+    local function check_dependencies(dependencies)
+      for _, dep in ipairs(dependencies) do
+        if vim.fn.executable(dep) == 0 then
+          vim.notify("Dependency not installed for lspconfig: " .. dep, vim.log.levels.ERROR)
+        end
+      end
+    end
+
+    local mason_servers = {}
+    for server, _ in pairs(mason_lsp_servers) do
+      table.insert(mason_servers, server)
+    end
+
+    require('mason-lspconfig').setup({
+      ensure_installed = mason_servers
+    })
 
     -- Set up cmp_nvim_lsp
     local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
@@ -71,68 +103,36 @@ function! SetupLsp()
       vim.keymap.set('n', 'gi'   , vim.lsp.buf.implementation           , bufopts)
       vim.keymap.set('n', 'go'   , vim.lsp.buf.type_definition          , bufopts)
       vim.keymap.set('n', 'gr'   , vim.lsp.buf.references               , bufopts)
-      --m.keymap.set('n', TODO   , vim.lsp.buf.code_action                           , bufopts) -- lspconfig: <space>ca; lsp-zero: <F4>
+      --m.keymap.set('n', TODO   , vim.lsp.buf.code_action              , bufopts) -- lspconfig: <space>ca; lsp-zero: <F4>
       vim.keymap.set('n', '<space>l', function() vim.lsp.buf.format { async = true } end, bufopts) -- lspconfig: <space>l
-      --m.keymap.set('n', TODO   , vim.lsp.buf.rename                                , bufopts) -- lspconfig: <space>rn; lsp-zero: <F2>
+      --m.keymap.set('n', TODO   , vim.lsp.buf.rename                   , bufopts) -- lspconfig: <space>rn; lsp-zero: <F2>
     end
 
-    -- Custom example. Client fails on sending path. nc used to debug.
-    -- See also: https://github.com/neovim/nvim-lspconfig/issues/2657#issuecomment-1674107409
-    -- root_dir = function(fname)
-    --     -- local root = vim.fn.getcwd()
-    --     -- print("Checking root dir: " .. tostring(root))
-    --     -- return root
-    --     local root = vim.fn.fnamemodify(fname, ':p:h')
-    --     print("Checking root dir: " .. tostring(root))
-    --     return root
-    -- end
-
-    -- customEslint LSP server setup
-    -- this example uses a proxy to give you visibility into stdin/stdout
-    local lsp_configurations = require('lspconfig.configs')
-    if not lsp_configurations.customEslint then
-        lsp_configurations.customEslint = {
-            default_config = {
-                name = 'customEslint',
-                -- cmd = { "nc", "localhost", "12345" },
-                -- cmd = {
-                --     "python3",
-                --     "/home/base/.terminal/scripts/python-stdio-proxy.py",
-                --     "--cmd",
-                --     "vscode-eslint-language-server --stdio",
-                --     "port",
-                --     "12345"
-                -- },
-                cmd = {
-                    "vscode-eslint-language-server",
-                    "--stdio"
-                },
-                filetypes = { 'javascript', 'typescript' },
-                -- root_dir = require('lspconfig.util').root_pattern('*.git'),
-                -- root_dir = require('lspconfig.util').root_pattern("eslint*", "*.git")
-                root_dir = root_dir
-            }
-        }
-    end
-
-    -- lspservers = {unpack(lspservers), 'customEslint', 'customEslint'}
-
-    -- BUG: must load each lsp twice
     local lspconfig = require('lspconfig')
-    for _, server in pairs(lspservers) do
-      lspconfig[server].setup({
-        capabilities = lsp_capabilities,
-        on_attach = lsp_on_attach,
-      })
-      lspconfig[server].setup({
-        capabilities = lsp_capabilities,
-        on_attach = lsp_on_attach,
-      })
+
+    -- Setup mason (preconfigured) LSP servers
+    for server, config in pairs(mason_lsp_servers) do
+      config.capabilities = lsp_capabilities
+      config.on_attach = lsp_on_attach
+      lspconfig[server].setup(config)
+    end
+
+    -- Setup custom LSP servers
+    local lsp_configurations = require('lspconfig.configs')
+    for server, config in pairs(custom_lsp_servers) do
+      if not lsp_configurations[server] then
+        lsp_configurations[server] = {
+          default_config = config
+        }
+      end
+
+      check_dependencies(config.dependencies or {})
+
+      config.capabilities = lsp_capabilities
+      config.on_attach = lsp_on_attach
+      lspconfig[server].setup(config)
     end
 EOF
 endfunction
 
-" Call the function after Vim has finished starting up
 autocmd VimEnter * call SetupLsp()
-
-
