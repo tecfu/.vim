@@ -13,7 +13,6 @@ Plug 'hrsh7th/cmp-cmdline'"
 " copilot-cmp: A completion source for nvim-cmp that integrates with copilot.lua.
 Plug 'zbirenbaum/copilot-cmp'
 
-
 function! SetupCmp()
 
 lua << EOF
@@ -63,7 +62,7 @@ lua << EOF
     --         fallback()
     --     end
     -- end, { 'i', 's' }),
-
+    ['<CR>'] = cmp.mapping.confirm({ select = true }),  -- Add this line
   }
 
   cmp.setup({
