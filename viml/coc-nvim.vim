@@ -91,23 +91,24 @@ endfunction
 "run cmd on range of entire file
 "nmap <S-f>  <Plug>(coc-format)%
 
-"Coc Popup Completion settings
-"Use <tab> for trigger completion and navigate to the next complete item
-"Modified from docs due to error: https://github.com/neoclide/coc.nvim/issues/3167
-"inoremap <silent><expr> <Tab>
-" \ pumvisible() ? "\<C-n>" :
-" \ coc#expandableOrJumpable() ?
-" \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" : "\<Tab>"
-"
-"inoremap <silent><expr> <S-Tab>
-" \ pumvisible() ? "\<C-p>" :
-" \ coc#expandableOrJumpable() ?
-" \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-pre',''])\<CR>" : "\<Tab>"
+" Coc Popup Completion settings
+" Use <tab> for trigger completion and navigate to the next complete item
+" Modified from docs due to error: https://github.com/neoclide/coc.nvim/issues/3167
+inoremap <silent><expr> <Tab>
+ \ pumvisible() ? coc#pum#confirm() :
+ \ coc#expandableOrJumpable() ?
+ \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" : "\<Tab>"
 
-"Select the first completion item and confirm the completion when no item has been selected:
-"inoremap <silent><expr> <CR> pumvisible() ? coc#_select_confirm()
-"    \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-imap <silent><expr> <CR> pumvisible() ? "\<C-y>" : copilot#AcceptWord("\<CR>")
+inoremap <silent><expr> <S-Tab>
+ \ pumvisible() ? "\<C-p>" :
+ \ coc#expandableOrJumpable() ?
+ \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-pre',''])\<CR>" : "\<Tab>"
+
+" Select the first completion item and confirm the completion when no item has been selected:
+inoremap <silent><expr> <CR> 
+\ copilot#Accept("\<CR>") ? copilot#Accept("\<CR>") :
+\ pumvisible() ? coc#_select_confirm() :
+\ "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 "Remap up/down in popupmenu to <C-j>, <C-k>
 inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"

@@ -28,6 +28,7 @@ call plug#begin('~/.vim/plugins-nvim')
     source $HOME/.vim/viml/nvim-lsp-formatting.nvim
     source $HOME/.vim/viml/nvim-cmp.nvim
     " source $HOME/.vim/viml/debugging.nvim
+    source $HOME/.vim/viml/nvim-dap.nvim
   else
     echom 'NVIM_CONFIG=coc'
     source $HOME/.vim/viml/coc-nvim.vim
