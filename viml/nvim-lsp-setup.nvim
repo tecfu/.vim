@@ -53,7 +53,7 @@ function! SetupLsp()
 
     local mason_lsp_servers = {
       -- biome = {},
-      tsserver = {
+      ts_ls= {
         dependencies = { "typescript-language-server" }
       }, -- tsserver before eslint so eslint overrides when conflicted
       -- vtsls = {}, -- vtsls before eslint so eslint overrides when conflicted
