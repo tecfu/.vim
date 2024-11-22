@@ -1,0 +1,12 @@
+Plug 'ahmedkhalf/project.nvim'
+
+function! SetupProject()
+  lua << EOF
+  require("project_nvim").setup {
+    detection_methods = { "lsp", "pattern" },
+    patterns = { ".git", ".project", "package.json", "Makefile" },
+  }
+EOF
+endfunction
+
+autocmd VimEnter * call SetupProject()
