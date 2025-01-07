@@ -58,12 +58,17 @@ function! SetupLsp()
       }, -- tsserver before eslint so eslint overrides when conflicted
       -- vtsls = {}, -- vtsls before eslint so eslint overrides when conflicted
       eslint = {
-        -- if you have the error: [lspconfig] Unable to find ESLint library.
-        -- you need to install an eslint config in your project
-        -- npx eslint --init
-        dependencies = { "eslint" },
-        filetypes = { "javascript", "typescript" },
-      }, -- using eslint_d instead via efm, much faster
+        -- error: [lspconfig] Unable to find ESLint library.
+        --  you need to install an eslint config in your project
+        --  `npx eslint --init`
+        filetypes = {
+          "javascript",
+          "typescript",
+          "javascriptreact",
+          "typescriptreact"
+        },
+        root_dir = require("lspconfig.util").root_pattern(".eslintrc*", "package.json", ".git"),
+      }, -- use eslint_d instead via efm, much faster
       -- efm = {
       --   cmd = { vim.fn.expand("$HOME") .. "/go/bin/efm-langserver" },
       --   filetypes = { "javascript", "typescript" },
