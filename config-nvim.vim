@@ -14,6 +14,7 @@ call plug#begin('~/.vim/plugins-nvim')
   source $HOME/.vim/viml/swagger-preview.nvim
   source $HOME/.vim/viml/project.nvim
   source $HOME/.vim/viml/telescope.nvim
+  source $HOME/.vim/viml/aider.vim
 
   if $NVIM_CONFIG == 'cmp'
     echom 'Using NVIM_CONFIG=cmp. Be sure to run :PlugInstall if you just switched'
