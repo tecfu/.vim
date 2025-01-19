@@ -102,10 +102,20 @@ call plug#begin('~/.vim/plugins-vim')
   "hi QuickFixLine ctermfg=white guifg=white
 
   Plug 'tecfu/tokyonight-vim'
-  let g:tokyonight_style = 'night'
+  "let g:tokyonight_style = 'night'
   let g:tokyonight_enable_italic = 1
-  set background=dark
   set termguicolors
-  autocmd VimEnter * colorscheme tokyonight
+
+  " Define a function to set the colorscheme and background color
+  function! SetColorscheme()
+    highlight Normal guibg=#222436 ctermbg=235
+    highlight EndOfBuffer guibg=#222436 ctermbg=235
+  endfunction
+
+  " Use an autocmd to call the function on VimEnter with ++once to ensure it runs only once
+  autocmd VimEnter * ++once call SetColorscheme()
+
 
 call plug#end()
+
+colorscheme tokyonight
