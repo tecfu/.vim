@@ -1,173 +1,155 @@
-" cmp-nvim-lsp: A Language Server Protocol (LSP) source for nvim-cmp. It provides completion items based on LSP.
-Plug 'hrsh7th/cmp-nvim-lsp'
-
-" mason.nvim: A plugin manager for Neovim. It helps to manage and load plugins.
-Plug 'williamboman/mason.nvim'
-
-" mason-lspconfig.nvim: Provides configurations for setting up Language Server Protocol (LSP) with mason.nvim.
-Plug 'williamboman/mason-lspconfig.nvim'
-
-" nvim-lspconfig: A collection of common configurations for Neovim's built-in LSP client. It makes setting up Neovim's LSP client easier.
 Plug 'neovim/nvim-lspconfig'
 
 function! SetupLsp()
   lua << EOF
-    vim.lsp.set_log_level("debug")
+local lspconfig = require('lspconfig')
 
-    -- See also: https://github.com/neovim/nvim-lspconfig/issues/2657#issuecomment-1674107409
-    custom_root_dir = function(fname)
-      local lspconfig_util = require('lspconfig.util')
-      local root_files = { ".git" }
+-- Enable LSP log level trace (helps for debugging)
+vim.lsp.set_log_level('trace')
 
-      local function search_upwards(startpath)
-        local path = startpath
-        while path do
-          for _, pattern in ipairs(root_files) do
-            if #vim.fn.glob(lspconfig_util.path.join(path, pattern)) > 0 then
-              return path
+-- Global state variables
+_G.lsp_log_buf = nil
+_G.lsp_log_win = nil
+_G.lsp_log_timer = nil
+_G.lsp_log_offset = nil
+
+-- Function to toggle the LSP log panel
+_G.toggle_lsp_log = function()
+  local lsp_log_path = vim.lsp.get_log_path()
+  local buf_name = "LSP Log Viewer"
+
+  -- If window is open, close it
+  if _G.lsp_log_win and vim.api.nvim_win_is_valid(_G.lsp_log_win) then
+    vim.api.nvim_win_close(_G.lsp_log_win, true)
+    _G.lsp_log_win = nil
+    if _G.lsp_log_timer then
+      _G.lsp_log_timer:stop()
+      _G.lsp_log_timer = nil
+    end
+    return
+  end
+
+  -- Function to create or retrieve the log buffer
+  local function get_or_create_log_buffer()
+    if _G.lsp_log_buf and vim.api.nvim_buf_is_valid(_G.lsp_log_buf) then
+      return _G.lsp_log_buf
+    end
+    local buf = vim.api.nvim_create_buf(false, true) -- Create a new unlisted buffer
+    vim.api.nvim_buf_set_name(buf, buf_name) -- Name the buffer
+    vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe") -- Auto-wipe buffer on close
+    vim.api.nvim_buf_set_option(buf, "buftype", "nofile") -- Prevent writing to disk
+    vim.api.nvim_buf_set_option(buf, "modifiable", true) -- Allow editing
+    _G.lsp_log_buf = buf
+    return buf
+  end
+
+  -- Open the buffer in a vsplit
+  local buf = get_or_create_log_buffer()
+  vim.api.nvim_command("vsplit")
+  local win = vim.api.nvim_get_current_win()
+  vim.api.nvim_win_set_buf(win, buf)
+  _G.lsp_log_win = win
+
+  -- Function to read new log entries
+  local function start_tailing_log()
+    local fd = vim.loop.fs_open(lsp_log_path, "r", 438)
+    if not fd then
+      vim.api.nvim_err_writeln("Unable to open LSP log file: " .. lsp_log_path)
+      return
+    end
+
+    -- Start from the end if offset is nil
+    if _G.lsp_log_offset == nil then
+      local stat = vim.loop.fs_fstat(fd)
+      _G.lsp_log_offset = stat and stat.size or 0
+    end
+
+    -- Function to append new lines
+    local function check_for_updates()
+      vim.loop.fs_read(fd, 4096, _G.lsp_log_offset, function(err, chunk)
+        if err then
+          vim.api.nvim_err_writeln("Error reading LSP log file: " .. err)
+          return
+        end
+        if chunk then
+          _G.lsp_log_offset = _G.lsp_log_offset + #chunk
+          vim.schedule(function()
+            local lines = vim.split(chunk, "\n", { trimempty = true })
+            if #lines > 0 and vim.api.nvim_buf_is_valid(buf) then
+              -- Insert new logs at the top (reverse order)
+              local existing_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+              for i = #lines, 1, -1 do
+                table.insert(existing_lines, 1, lines[i])
+              end
+              vim.api.nvim_buf_set_lines(buf, 0, -1, false, existing_lines)
             end
-          end
-          local parent = lspconfig_util.path.dirname(path)
-          if parent == path then
-            break
-          end
-          path = parent
+          end)
         end
-        return nil
-      end
-
-      local root = search_upwards(vim.fn.fnamemodify(fname, ':p:h'))
-      print("Checking root dir: " .. tostring(root))
-      return root
+      end)
     end
 
-    require("mason").setup({
-      ui = {
-        icons = {
-          package_installed = "✓",
-          package_pending = "➜",
-          package_uninstalled = "✗"
-        }
+    -- Run check_for_updates every second (non-blocking)
+    _G.lsp_log_timer = vim.loop.new_timer()
+    _G.lsp_log_timer:start(0, 1000, vim.schedule_wrap(check_for_updates))
+
+    -- Stop the timer when Neovim exits
+    vim.api.nvim_create_autocmd("VimLeavePre", {
+      callback = function()
+        if _G.lsp_log_timer then
+          _G.lsp_log_timer:stop()
+          _G.lsp_log_timer = nil
+        end
+        vim.loop.fs_close(fd)
+      end,
+    })
+  end
+
+  -- Start tailing logs
+  start_tailing_log()
+end
+
+-- Setup efm-langserver
+lspconfig.efm.setup {
+  init_options = { documentFormatting = true },
+  on_attach = function(client, bufnr)
+    print("LSP attached to filetype: " .. vim.bo.filetype)
+  end,
+  settings = {
+    languages = {
+      javascript = {
+        formatCommand = "eslint_d --fix-to-stdout --stdin --stdin-filename=${INPUT}",
+        formatStdin = true,
+        lintCommand = "eslint_d --f unix --stdin --stdin-filename=${INPUT}",
+        lintStdin = true,
+        lintIgnoreExitCode = true,
+        lintAfterOpen = true
+      },
+      typescript = {
+        formatCommand = "eslint_d --fix-to-stdout --stdin --stdin-filename=${INPUT}",
+        formatStdin = true,
+        lintCommand = "eslint_d --f unix --stdin --stdin-filename=${INPUT}",
+        lintStdin = true,
+        lintIgnoreExitCode = true,
+        lintAfterOpen = true
       }
-    })
-
-    local mason_lsp_servers = {
-      -- biome = {},
-      ts_ls= {
-        dependencies = { "typescript-language-server" }
-      }, -- tsserver before eslint so eslint overrides when conflicted
-      -- vtsls = {}, -- vtsls before eslint so eslint overrides when conflicted
-      eslint = {
-        -- error: [lspconfig] Unable to find ESLint library.
-        --  you need to install an eslint config in your project
-        --  `npx eslint --init`
-        filetypes = {
-          "javascript",
-          "typescript",
-          "javascriptreact",
-          "typescriptreact"
-        },
-        root_dir = require("lspconfig.util").root_pattern(".eslintrc*", "package.json", ".git"),
-      }, -- use eslint_d instead via efm, much faster
-      -- efm = {
-      --   cmd = { vim.fn.expand("$HOME") .. "/go/bin/efm-langserver" },
-      --   filetypes = { "javascript", "typescript" },
-      --   dependencies = { vim.fn.expand("$HOME") .. "/go/bin/efm-langserver" },
-      -- }, -- efm langserver, used for eslint_d, prettier_d
-      -- eslint_d = {},
-      -- prettier_d = {},
-      pyright = {},
-      marksman = {},
-      typos_lsp = { 
-        name = "typos_lsp", 
-        filetypes = { "markdown", "text" } 
-      }, -- spelling
-      vacuum = {}, -- OPEN API Validator
-      vimls = {},
-      -- sonarlint_language_server = {},
     }
+  },
+  filetypes = {
+    "javascript",
+    "typescript",
+    "javascriptreact",
+    "typescriptreact",
+    "json",
+    "jsonc"
+  }
+}
 
-    local custom_lsp_servers = {
-    -- not working, use efm instead
-    --   ["vscode-eslint-language-server manual install"] = {
-    --     cmd = { "vscode-eslint-language-server", "--stdio" },
-    --     -- use netcat as a proxy to get visibility into stdin/stdout
-    --     -- assumes `vscode-eslint-language-server --stdio | nc -l 12345` in another terminal
-    --     -- cmd = { "nc", "localhost", "12345" },
-    --     -- use custom proxy to get visibility into stdin/stdout
-    --     -- cmd = { vim.fn.expand("$HOME") .. "/socat-wrap-vscode-eslint-language-server.sh" },
-    --     filetypes = { "javascript", "typescript" },
-    --     root_dir = custom_root_dir,
-    --     -- root_dir = require("lspconfig.util").root_pattern("*eslint*", "*.git"),
-    --     dependencies = { "vscode-eslint-language-server" }
-    --   }
-    }
+-- Keybinding to trigger formatting with <leader>l
+vim.api.nvim_set_keymap('n', '<leader>l', ':lua vim.lsp.buf.format()<CR>', { noremap = true, silent = true })
 
-    local function check_dependencies(dependencies)
-      for _, dep in ipairs(dependencies) do
-        if vim.fn.executable(dep) == 0 then
-          vim.notify("Dependency not installed for lspconfig: " .. dep, vim.log.levels.ERROR)
-        end
-      end
-    end
+-- Keybinding to toggle the LSP log panel
+vim.api.nvim_set_keymap('n', '<leader>tl', ':lua _G.toggle_lsp_log()<CR>', { noremap = true, silent = true })
 
-    local mason_servers = {}
-    for server, _ in pairs(mason_lsp_servers) do
-      table.insert(mason_servers, server)
-    end
-
-    require('mason-lspconfig').setup({
-      ensure_installed = mason_servers
-    })
-
-    -- Set up cmp_nvim_lsp
-    local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
-    local lsp_on_attach = function(client, bufnr)
-      client.server_capabilities.documentFormattingProvider = true
-
-      local bufopts = { noremap=true, silent=true, buffer=bufnr }
-
-      vim.keymap.set('n', 'gh'   , vim.lsp.buf.signature_help           , bufopts)
-      vim.keymap.set('n', 'gv'   , vim.lsp.buf.hover                    , bufopts)
-      vim.keymap.set('n', 'gD'   , vim.lsp.buf.declaration              , bufopts)
-      vim.keymap.set('n', 'gd'   , vim.lsp.buf.definition               , bufopts)
-      vim.keymap.set('n', 'gi'   , vim.lsp.buf.implementation           , bufopts)
-      vim.keymap.set('n', 'go'   , vim.lsp.buf.type_definition          , bufopts)
-      vim.keymap.set('n', 'gr'   , vim.lsp.buf.references               , bufopts)
-      --m.keymap.set('n', TODO   , vim.lsp.buf.code_action              , bufopts) -- lspconfig: <space>ca; lsp-zero: <F4>
-      vim.keymap.set('n', '<space>l', function() vim.lsp.buf.format { async = true } end, bufopts) -- lspconfig: <space>l
-      --m.keymap.set('n', TODO   , vim.lsp.buf.rename                   , bufopts) -- lspconfig: <space>rn; lsp-zero: <F2>
-    end
-
-    local lspconfig = require('lspconfig')
-
-    -- Setup mason (preconfigured) LSP servers
-    for server, config in pairs(mason_lsp_servers) do
-      config.capabilities = lsp_capabilities
-      config.on_attach = lsp_on_attach
-      check_dependencies(config.dependencies or {})
-      -- wont work unless called twice
-      lspconfig[server].setup(config)
-      lspconfig[server].setup(config)
-    end
-
-    -- Setup custom LSP servers
-    local lsp_configurations = require('lspconfig.configs')
-    for server, config in pairs(custom_lsp_servers) do
-      if not lsp_configurations[server] then
-        lsp_configurations[server] = {
-          default_config = config
-        }
-      end
-
-      check_dependencies(config.dependencies or {})
-
-      config.capabilities = lsp_capabilities
-      config.on_attach = lsp_on_attach
-      -- wont work unless called twice
-      lspconfig[server].setup(config)
-      lspconfig[server].setup(config)
-    end
 EOF
 endfunction
 
