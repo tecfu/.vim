@@ -1,5 +1,5 @@
 " CopilotChat
-Plug 'CopilotC-Nvim/CopilotChat.nvim', { 'branch': 'main' }
+Plug 'CopilotC-Nvim/CopilotChat.nvim'
 function! SetupChat()
   lua << EOF
   require('CopilotChat').setup({
