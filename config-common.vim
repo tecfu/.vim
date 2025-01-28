@@ -114,6 +114,12 @@ Plug 'bronson/vim-visual-star-search'
 
 
 "```
+"- Automatically puts bullet points in markdown
+"```
+Plug 'bullets-vim/bullets.vim'
+
+
+"```
 "- Use `:rename[!] {newname}`to rename a buffer within Vim and on the disk
 "```
 Plug 'danro/rename.vim'

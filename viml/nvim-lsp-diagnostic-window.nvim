@@ -1,0 +1,89 @@
+" Customize diagnostics formatting with LSP source name
+lua << EOF
+function _G.custom_diagnostics_format(diagnostic)
+  local source = diagnostic.source or "N/A"
+  return string.format("%s: %s", source, diagnostic.message)
+end
+
+vim.diagnostic.config({
+  virtual_text = {
+    format = function(diagnostic)
+      return _G.custom_diagnostics_format(diagnostic)
+    end,
+  },
+  float = {
+    format = function(diagnostic)
+      return _G.custom_diagnostics_format(diagnostic)
+    end,
+  },
+})
+EOF
+
+
+" Populate location list with LSP diagnostics
+function! SetLocationList()
+  " Clear the location list
+  call setloclist(0, [], 'r')
+
+  " Get diagnostics for the current buffer using Lua
+  let diagnostics = luaeval('vim.diagnostic.get(0)')
+  let items = []
+
+  " Format diagnostics and add them to the location list
+  for diagnostic in diagnostics
+    " Get the LSP source name, defaulting to 'LSP' if not available
+    let source = get(diagnostic, 'source', 'LSP')
+    let lsp_name = get(diagnostic, 'client_name', '')
+
+    " Construct the message with LSP name and diagnostic text
+    let message = '[' . source . ']: ' . diagnostic.message
+
+    " Determine the type based on diagnostic severity
+    let type = 'E'
+    if diagnostic.severity == 'Warning'
+      let type = 'W'
+    elseif diagnostic.severity == 'Information'
+      let type = 'I'
+    elseif diagnostic.severity == 'Hint'
+      let type = 'H'
+    endif
+
+    " Prepare item for the location list
+    let item = {
+          \ 'bufnr': diagnostic.bufnr,
+          \ 'lnum': diagnostic.lnum + 1,
+          \ 'col': diagnostic.col + 1,
+          \ 'text': message,
+          \ 'type': type
+          \ }
+    call add(items, item)
+  endfor
+
+  " Set the location list with the items
+  call setloclist(0, items, 'r')
+endfunction
+
+
+" Define the function to toggle the location list
+function! ToggleLocationList()
+  " Check if the location list is currently open
+  let loclist_open = 0
+  for win in getwininfo()
+    if win['loclist']
+      let loclist_open = 1
+      break
+    endif
+  endfor
+
+  if loclist_open
+    " If location list is open, close it
+    lclose
+  else
+    " If location list is closed, set and open it
+    call SetLocationList()
+    lopen
+  endif
+endfunction
+
+" Map the function to <leader>i
+nnoremap <silent> <leader>i :call ToggleLocationList()<CR>
