@@ -11,3 +11,4 @@ Session.nvim
 .husky
 .DS_Store
 tags
+.aider*

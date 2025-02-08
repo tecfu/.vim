@@ -7,141 +7,15 @@ local lspconfig = require('lspconfig')
 -- Enable LSP log level trace (helps for debugging)
 vim.lsp.set_log_level('trace')
 
--- Global state variables
-_G.lsp_log_buf = nil
-_G.lsp_log_win = nil
-_G.lsp_log_offset = nil
-_G.last_read_time = 0 -- Timestamp of last read
-_G.log_update_running = false -- Prevent multiple loops
-
--- Highlight matches map
-_G.highlightMatches = {
-  error = { "format for LanguageID not supported:" },
-  warning = { "not found" }
-}
-
--- Function to toggle the LSP log panel
-_G.toggle_lsp_log = function()
-  local buf_name = "LSP Log Viewer"
-
-  -- If window is open, close it
-  if _G.lsp_log_win and vim.api.nvim_win_is_valid(_G.lsp_log_win) then
-    vim.api.nvim_win_close(_G.lsp_log_win, true)
-    _G.lsp_log_win = nil
-    _G.log_update_running = false -- Stop update loop
-    return
-  end
-
-  -- Function to create or retrieve the log buffer
-  local function get_or_create_log_buffer()
-    if _G.lsp_log_buf and vim.api.nvim_buf_is_valid(_G.lsp_log_buf) then
-      return _G.lsp_log_buf
-    end
-    local buf = vim.api.nvim_create_buf(false, true) -- Create a new unlisted buffer
-    vim.api.nvim_buf_set_name(buf, buf_name) -- Name the buffer
-    vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe") -- Auto-wipe buffer on close
-    vim.api.nvim_buf_set_option(buf, "buftype", "nofile") -- Prevent writing to disk
-    vim.api.nvim_buf_set_option(buf, "modifiable", true) -- Allow editing
-    _G.lsp_log_buf = buf
-    return buf
-  end
-
-  -- Open the buffer in a vsplit
-  local buf = get_or_create_log_buffer()
-  vim.api.nvim_command("vsplit")
-  local win = vim.api.nvim_get_current_win()
-  vim.api.nvim_win_set_buf(win, buf)
-  _G.lsp_log_win = win
-
-  -- Initial read of the log file
-  _G.read_log()
-
-  -- Start automatic updates
-  if not _G.log_update_running then
-    _G.log_update_running = true
-    _G.schedule_log_updates()
-  end
-
-  -- Keybinding to refresh the log content manually
-  vim.api.nvim_buf_set_keymap(buf, 'n', '<leader>tr', ':lua _G.read_log()<CR>', { noremap = true, silent = true })
-end
-
--- Function to read the LSP log file synchronously
-_G.read_log = function()
-  local lsp_log_path = vim.lsp.get_log_path()
-  local current_time = vim.fn.reltimefloat(vim.fn.reltime())
-
-  -- Throttle reads to once per second
-  if current_time - _G.last_read_time < 1 then
-    return -- Don't read if the cooldown hasn't passed
-  end
-
-  -- Update last read time
-  _G.last_read_time = current_time
-
-  -- Read the LSP log file synchronously
-  local file = io.open(lsp_log_path, "r")
-  if not file then
-    vim.api.nvim_err_writeln("Unable to open LSP log file: " .. lsp_log_path)
-    return
-  end
-
-  -- Read entire log file
-  local lines = {}
-  for line in file:lines() do
-    table.insert(lines, line)
-  end
-  file:close()
-
-  -- Reverse lines so newest appears first
-  local reversed_lines = {}
-  for i = #lines, 1, -1 do
-    table.insert(reversed_lines, lines[i])
-  end
-
-  -- Apply highlighting
-  local function apply_highlight()
-    local ns_id = vim.api.nvim_create_namespace("LspLogHighlight")
-
-    for i, line in ipairs(reversed_lines) do
-      for _, error_msg in ipairs(_G.highlightMatches.error) do
-        if string.find(line, error_msg, 1, true) then
-          vim.api.nvim_buf_add_highlight(_G.lsp_log_buf, ns_id, "ErrorMsg", i - 1, 0, -1)
-        end
-      end
-      for _, warning_msg in ipairs(_G.highlightMatches.warning) do
-        if string.find(line, warning_msg, 1, true) then
-          vim.api.nvim_buf_add_highlight(_G.lsp_log_buf, ns_id, "WarningMsg", i - 1, 0, -1)
-        end
-      end
-    end
-  end
-
-  -- Update buffer
-  if #reversed_lines > 0 and _G.lsp_log_buf and vim.api.nvim_buf_is_valid(_G.lsp_log_buf) then
-    vim.api.nvim_buf_set_option(_G.lsp_log_buf, "modifiable", true)
-    vim.api.nvim_buf_set_lines(_G.lsp_log_buf, 0, -1, false, reversed_lines)
-    vim.api.nvim_buf_set_option(_G.lsp_log_buf, "modifiable", false)
-    apply_highlight()
-  end
-end
-
--- Function to schedule periodic log updates
-_G.schedule_log_updates = function()
-  if not _G.log_update_running then return end
-  _G.read_log()
-  vim.defer_fn(_G.schedule_log_updates, 1000)
-end
-
--- Define highlight groups
-vim.cmd("highlight ErrorMsg guibg=red guifg=white")
-vim.cmd("highlight WarningMsg guibg=yellow guifg=black")
-
--- Keybinding to toggle the LSP log panel
-vim.api.nvim_set_keymap('n', '<leader>tl', ':lua _G.toggle_lsp_log()<CR>', { noremap = true, silent = true })
-
--- Setup efm-langserver
+-- Setup efm-langserver via github.com/tecful/efm-langserver
 lspconfig.efm.setup {
+  cmd = {
+    "efm-langserver",
+    "-loglevel",
+    "4",
+    "-publishLogsToLspMethod",
+    "textDocument/publishDiagnostics"
+  },
   init_options = { documentFormatting = true },
   on_attach = function(client, bufnr)
     print("LSP attached to filetype: " .. vim.bo.filetype)
@@ -178,6 +52,15 @@ lspconfig.efm.setup {
 
 -- Keybinding to trigger formatting with <leader>l
 vim.api.nvim_set_keymap('n', '<leader>l', ':lua vim.lsp.buf.format()<CR>', { noremap = true, silent = true })
+
+-- Keybinding to trigger linting with <leader>t
+_G.lint = function()
+  vim.lsp.buf_request(0, "textDocument/diagnostic", {
+    textDocument = {uri = vim.uri_from_bufnr(0)}
+  }, function() end)
+end
+
+vim.api.nvim_set_keymap('n', '<leader>t', ':lua lint()<CR>', { noremap = true, silent = true })
 
 EOF
 endfunction
