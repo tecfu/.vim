@@ -3,7 +3,7 @@ root-markers:
   - .git
 tools:
   eslint_d: &eslint_d
-    format-command: "eslint_d --f unix --fix-to-stdout --stdin --stdin-filename=${INPUT}"
+    format-command: "eslint_d --fix-to-stdout --stdin --stdin-filename ${INPUT}"
     format-stdin: true
     lint-command: "eslint_d --f unix --stdin --stdin-filename=${INPUT}"
     lint-stdin: true

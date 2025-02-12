@@ -1,66 +1,35 @@
-Plug 'neovim/nvim-lspconfig'
+" We don't use the nvim-lspconfig plugin because it doesn't support efm-langserver
+" https://github.com/neovim/nvim-lspconfig/blob/6c17f8656f667727b27f5f598463afedb7791b18/lua/lspconfig/configs/efm.lua#L27-L29
 
 function! SetupLsp()
   lua << EOF
-local lspconfig = require('lspconfig')
+  -- Enable LSP log level trace (helps for debugging)
+  vim.lsp.set_log_level('trace')
 
--- Enable LSP log level trace (helps for debugging)
-vim.lsp.set_log_level('trace')
-
--- Setup efm-langserver via github.com/tecful/efm-langserver
-lspconfig.efm.setup {
-  cmd = {
-    "efm-langserver",
-    "-loglevel",
-    "4",
-    "-publishLogsToLspMethod",
-    "textDocument/publishDiagnostics"
-  },
-  init_options = { documentFormatting = true },
-  on_attach = function(client, bufnr)
-    print("LSP attached to filetype: " .. vim.bo.filetype)
-  end,
-  settings = {
-    languages = {
-      javascript = {
-        formatCommand = "eslint_d --fix-to-stdout --stdin --stdin-filename=${INPUT}",
-        formatStdin = true,
-        lintCommand = "eslint_d --f unix --stdin --stdin-filename=${INPUT}",
-        lintStdin = true,
-        lintIgnoreExitCode = true,
-        lintAfterOpen = true
-      },
-      typescript = {
-        formatCommand = "eslint_d --fix-to-stdout --stdin --stdin-filename=${INPUT}",
-        formatStdin = true,
-        lintCommand = "eslint_d --f unix --stdin --stdin-filename=${INPUT}",
-        lintStdin = true,
-        lintIgnoreExitCode = true,
-        lintAfterOpen = true
-      }
-    }
-  },
-  filetypes = {
-    "javascript",
-    "typescript",
-    "javascriptreact",
-    "typescriptreact",
-    "json",
-    "jsonc"
+  -- Manually configure efm-langserver
+  local efm_config = {
+    cmd = {"efm-langserver", "-loglevel", "4"},
+    init_options = {documentFormatting = true},
+    on_attach = function(client, bufnr)
+      print("LSP attached to filetype: " .. vim.bo.filetype)
+    end
   }
-}
 
--- Keybinding to trigger formatting with <leader>l
-vim.api.nvim_set_keymap('n', '<leader>l', ':lua vim.lsp.buf.format()<CR>', { noremap = true, silent = true })
+  --vim.defer_fn(function()
+    local efm_client_id = vim.lsp.start_client(efm_config)
+    vim.lsp.buf_attach_client(0, efm_client_id)
+  --end, 10)
 
--- Keybinding to trigger linting with <leader>t
-_G.lint = function()
-  vim.lsp.buf_request(0, "textDocument/diagnostic", {
-    textDocument = {uri = vim.uri_from_bufnr(0)}
-  }, function() end)
-end
+  -- Keybinding to trigger linting with <leader>t
+  _G.lint = function()
+    vim.lsp.buf_request(0, "textDocument/diagnostic", {
+      textDocument = {uri = vim.uri_from_bufnr(0)}
+    }, function() end)
+  end
+  vim.api.nvim_set_keymap('n', '<leader>t', ':lua lint()<CR>', { noremap = true, silent = true })
 
-vim.api.nvim_set_keymap('n', '<leader>t', ':lua lint()<CR>', { noremap = true, silent = true })
+  -- Keybinding to trigger formatting with <leader>l
+  vim.api.nvim_set_keymap('n', '<leader>l', ':lua vim.lsp.buf.format()<CR>', { noremap = true, silent = true })
 
 EOF
 endfunction

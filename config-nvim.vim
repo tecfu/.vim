@@ -25,6 +25,7 @@ call plug#begin('~/.vim/plugins-nvim')
     source $HOME/.vim/viml/copilot.lua.nvim
     source $HOME/.vim/viml/copilot.vim 
     source $HOME/.vim/viml/copilot-chat.nvim
+    "source $HOME/.vim/viml/codecompanion.nvim
     source $HOME/.vim/viml/nvim-lsp-setup.nvim
     source $HOME/.vim/viml/nvim-lsp-diagnostic-window.nvim
     source $HOME/.vim/viml/nvim-cmp.nvim
