@@ -2,6 +2,14 @@ version: 2
 root-markers:
   - .git
 tools:
+  black: &black
+    format-command: "black --fast -"
+    format-stdin: true
+    lint-command: "black --check --diff -"
+    lint-stdin: true
+    lint-ignore-exit-code: true
+    lint-after-open: true
+
   eslint_d: &eslint_d
     format-command: "eslint_d --fix-to-stdout --stdin --stdin-filename ${INPUT}"
     format-stdin: true
@@ -35,6 +43,10 @@ tools:
       - .prettierrc.cjs
       - .prettierrc.toml
 
+  shfmt: &shfmt
+    format-command: "shfmt -ci -s -bn"
+    format-stdin: true
+
 languages:
   javascript:
     - <<: *eslint_d
@@ -42,5 +54,9 @@ languages:
     - <<: *prettierd
   jsonc:
     - <<: *prettierd
+  python:
+    - <<: *black
+  sh:
+    - <<: *shfmt
   typescript:
     - <<: *eslint_d
