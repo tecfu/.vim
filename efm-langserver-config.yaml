@@ -26,6 +26,43 @@ tools:
     lint-ignore-exit-code: true
     lint-after-open: true
 
+  gofmt: &gofmt
+    format-command: "gofmt"
+    format-stdin: true
+
+  goimports: &goimports
+    format-command: "goimports"
+    format-stdin: true
+
+  golangci_lint: &golangci_lint
+    lint-command: "golangci-lint run --out-format=line-number"
+    lint-stdin: false
+    lint-formats:
+      - "%f:%l:%c: %m"
+
+  sql-language-server:
+    command: sql-language-server
+    args: ["up", "--method", "stdio"]
+    filetypes: [sql]
+    rootMarkers: [".git/", "package.json"]
+    settings:
+      sql:
+
+  sql-language-server-ksql:
+    command: sql-language-server
+    args: ["up", "--method", "stdio"]
+    filetypes: [ksql]
+    rootMarkers: [".git/", "package.json"]
+    settings:
+      sql:
+        dialect: "kafka"
+
+  sql-lint:
+    lint-command: "sql-lint --format unix --stdin --stdin-filename=${INPUT}"
+    lint-stdin: true
+    lint-ignore-exit-code: true
+    lint-after-open: true
+
   prettierd: &prettierd
     format-command: >
       prettierd ${INPUT} ${--range-start=charStart} ${--range-end=charEnd} \
@@ -48,15 +85,25 @@ tools:
     format-stdin: true
 
 languages:
+  go:
+    - <<: *golangci_lint
+    - <<: *gofmt
+    - <<: *goimports
   javascript:
     - <<: *eslint_d
   json:
     - <<: *prettierd
   jsonc:
     - <<: *prettierd
+  ksql:
+    - <<: *sql-language-server-ksql
+    - <<: *sql-lint
   python:
     - <<: *black
   sh:
     - <<: *shfmt
+  sql:
+    - <<: *sql-language-server
+    - <<: *sql-lint
   typescript:
     - <<: *eslint_d
