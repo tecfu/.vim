@@ -1,3 +1,4 @@
+" Used ONLY with coc-nvim
 " This plugin produces "ghost text" suggestions using GitHub Copilot, whereas
 " nvim-cmp, coc.nvim and others handle to popup menu completion sources.
 Plug 'github/copilot.vim'

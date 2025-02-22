@@ -1,30 +1,51 @@
-" replaces copilot.vim, prevents autocomplete in non-buflisted buffers (i.e. copilot-chat)
+" Used only with nvim-cmp
 " required for nvim-cmp
+
 Plug 'zbirenbaum/copilot.lua'
 
 function! SetupCopilot()
 lua << EOF
   require('copilot').setup({
     panel = { enabled = false },
-    -- suggestion = {
-    --   enabled = false,
-    -- },
     -- These conflict with nvim-cmp, so any kebindings should be set
     -- in nvim-cmp instead
-    -- suggestion = {
-    --   enabled = true,
-    --   auto_trigger = true,
-    --   debounce = 75,
-    --   keymap = {
-    --     accept = "<Tab>",
-    --     accept_word = "<CR>",
-    --     -- accept_line = "<space>",
-    --     -- next = "<C-j>",
-    --     -- prev = "<C-k>",
-    --     dismiss = "<C-]>",
-    --   },
-    -- },
+    suggestion = {
+      enabled = true,
+      auto_trigger = true,
+      debounce = 75,
+      keymap = {
+        accept = "<Tab>",
+        accept_word = "<CR>",
+        -- accept_line = "<space>",
+        -- next = "<C-j>",
+        -- prev = "<C-k>",
+        dismiss = "<C-]>",
+      },
+    },
+    filetypes = {
+      yaml = false,
+      markdown = false,
+      help = false,
+      gitcommit = false,
+      gitrebase = false,
+      hgcommit = false,
+      svn = false,
+      cvs = false,
+      ["."] = false,
+    },
   })
+
 EOF
 endfunction
 autocmd VimEnter * call SetupCopilot()
+
+" workaround for copilot not working in copilot-chat buffer
+" see also: 
+" https://github.com/zbirenbaum/copilot.lua/issues/279
+" https://github.com/CheesyChocolate/nvim/commit/dd20a290864379e8170815f42775d089775dc85f
+
+augroup CopilotToggle
+  autocmd!
+  autocmd VimEnter * if &filetype == 'copilot-chat' | Copilot! toggle | endif
+augroup END
+
