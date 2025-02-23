@@ -190,8 +190,8 @@ map <space> <leader>
 "imap <space><space> <C-O><leader>
 
 " Treat long lines as break lines (useful when moving around in them)
-map j gj
-map k gk
+nnoremap j gj
+nnoremap k gk
 
 " Map ctrl+j, ctrl+k to down/up 10 lines
 " Scroll up/down 5 lines at a time shift+j,shift+k
