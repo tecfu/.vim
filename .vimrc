@@ -571,6 +571,28 @@ set laststatus=2
 " => Helper Functions
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "{{{
+function! ExecuteHighlighted()
+    let l:old_reg = @"
+    normal! gv"vy
+    let l:command = @"
+    let l:commands = split(l:command, "\n")
+    redraw!
+    let l:timestamp = strftime("%Y-%m-%d %H:%M:%S")
+    redir => l:output
+    echohl Identifier | echom "\nExecuteHighlighted (" . l:timestamp . "):\n" | echohl None
+    for cmd in l:commands
+        echohl Identifier | echom "> " . cmd | echohl None
+        let l:cmd_output = system(cmd)
+        " Remove any trailing newlines or unwanted characters
+        let l:cmd_output = substitute(l:cmd_output, '\n\+$', '', '')
+        echohl Normal | echom l:cmd_output | echohl None
+    endfor
+    redir END
+    silent! echom l:output
+    let @" = l:old_reg
+endfunction
+xnoremap <leader>x :<C-u>call ExecuteHighlighted()<CR>
+
 function! CmdLine(str)
     exe "menu Foo.Bar :" . a:str
     emenu Foo.Bar
