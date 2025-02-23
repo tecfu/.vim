@@ -46,6 +46,9 @@ autocmd VimEnter * call SetupCopilot()
 
 augroup CopilotToggle
   autocmd!
-  autocmd VimEnter * if &filetype == 'copilot-chat' | Copilot! toggle | endif
+  autocmd BufEnter * if &filetype ==# 'copilot-chat' && !exists('b:copilot_toggle_ran') |
+    \ let b:copilot_toggle_ran = 1 |
+    \ echom "CopilotToggle condition met" |
+    \ call timer_start(200, { -> execute('echom "copilotToggle ran" | Copilot! toggle') }) |
+    \ endif
 augroup END
-
