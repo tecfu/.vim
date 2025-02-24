@@ -319,15 +319,6 @@ nmap <S-Tab> <<
 " for insert mode
 "imap <S-Tab> <Esc><<i
 
-" Delete trailing white space on save, useful for Python and CoffeeScript
-func! DeleteTrailingWS()
-  exe "normal mz"
-  %s/\s\+$//ge
-  exe "normal `z"
-endfunc
-autocmd BufWrite *.py :call DeleteTrailingWS()
-autocmd BufWrite *.coffee :call DeleteTrailingWS()
-
 " Delete all buffers except those open in windows / tabs
 " http://stackoverflow.com/questions/1534835/how-do-i-close-all-buffers-that-arent-shown-in-a-window-in-vim/7321131#7321131
 function! DeleteInactiveBufs()
