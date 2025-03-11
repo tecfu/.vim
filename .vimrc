@@ -180,21 +180,21 @@ autocmd InsertEnter * norm zz
 " => Key Mappings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "{{{
-" pum menu mappings
-
-" Map <S-Tab> and <C-k> to previous entry only if pum menu is visible
-inoremap <expr> <S-Tab> pumvisible() ? "<C-p>" : "<S-Tab>"
-inoremap <expr> <C-k> pumvisible() ? "<C-p>" : "<C-k>"
-
-" Map <Tab> and <C-j> to next entry only if pum menu is visible
-inoremap <expr> <Tab> pumvisible() ? "<C-n>" : "<Tab>"
-inoremap <expr> <C-j> pumvisible() ? "<C-n>" : "<C-j>"
-
-" Map <ESC> to exit pum menu without selecting anything
-inoremap <expr> <ESC> pumvisible() ? "<C-e>" : "<ESC>"
-
-" Map <CR> to select current entry in pum menu
-inoremap <expr> <CR> pumvisible() ? "<C-y>" : "<CR>"
+"" pum menu mappings
+" disabled because of coc / keep for reference
+"" Map <S-Tab> and <C-k> to previous entry only if pum menu is visible
+"inoremap <expr> <S-Tab> pumvisible() ? "<C-p>" : "<S-Tab>"
+"inoremap <expr> <C-k> pumvisible() ? "<C-p>" : "<C-k>"
+"
+"" Map <Tab> and <C-j> to next entry only if pum menu is visible
+"inoremap <expr> <Tab> pumvisible() ? "<C-n>" : "<Tab>"
+"inoremap <expr> <C-j> pumvisible() ? "<C-n>" : "<C-j>"
+"
+"" Map <ESC> to exit pum menu without selecting anything
+"inoremap <expr> <ESC> pumvisible() ? "<C-e>" : "<ESC>"
+"
+"" Map <CR> to select current entry in pum menu
+"inoremap <expr> <CR> pumvisible() ? "<C-y>" : "<CR>"
 
 " map leader to spacebar
 map <space> <leader>
