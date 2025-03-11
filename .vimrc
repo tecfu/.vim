@@ -180,14 +180,24 @@ autocmd InsertEnter * norm zz
 " => Key Mappings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "{{{
+" pum menu mappings
 
-"set notimeout ttimeout
+" Map <S-Tab> and <C-k> to previous entry only if pum menu is visible
+inoremap <expr> <S-Tab> pumvisible() ? "<C-p>" : "<S-Tab>"
+inoremap <expr> <C-k> pumvisible() ? "<C-p>" : "<C-k>"
+
+" Map <Tab> and <C-j> to next entry only if pum menu is visible
+inoremap <expr> <Tab> pumvisible() ? "<C-n>" : "<Tab>"
+inoremap <expr> <C-j> pumvisible() ? "<C-n>" : "<C-j>"
+
+" Map <ESC> to exit pum menu without selecting anything
+inoremap <expr> <ESC> pumvisible() ? "<C-e>" : "<ESC>"
+
+" Map <CR> to select current entry in pum menu
+inoremap <expr> <CR> pumvisible() ? "<C-y>" : "<CR>"
+
 " map leader to spacebar
-"nnoremap <Space> <nop>
-"let mapleader = " "
-"let g:mapleader = " "
 map <space> <leader>
-"imap <space><space> <C-O><leader>
 
 " Treat long lines as break lines (useful when moving around in them)
 nnoremap j gj
