@@ -1,0 +1,72 @@
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Built-in Terminal (nvim)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"{{{
+" Set up autocommands for the terminal window
+autocmd TermOpen * setlocal nonumber norelativenumber
+autocmd TermOpen * setlocal bufhidden=hide
+
+" Bind <C-Space> and <C-@> to toggle terminal in a 33% high horizontal split
+nnoremap <C-Space> :call ToggleTerminal()<CR>
+inoremap <C-Space> <esc>:call ToggleTerminal()<CR>
+vnoremap <C-Space> :call ToggleTerminal()<CR>
+
+" linux
+nnoremap <C-@> :call ToggleTerminal()<CR>
+inoremap <C-@> <esc>:call ToggleTerminal()<CR>
+vnoremap <C-@> :call ToggleTerminal()<CR>
+
+let g:custom_terminal_buffer = -1
+let g:terminal_height = 13
+"}}}
+
+" Function to hide a buffer given its number
+function! s:HideBuffer(buffer_number)
+  " Check if the buffer number is valid
+  if a:buffer_number > 0 && buflisted(a:buffer_number)
+    for winnr in range(1, winnr('$'))
+      if bufwinnr(a:buffer_number) == winnr
+        execute winnr . 'wincmd w'
+        execute 'hide'
+        break
+      endif
+    endfor
+  endif
+endfunction
+
+" Function to open the terminal buffer (or create it if it doesn't exist)
+function! s:OpenTerminalBuffer(buffer_number)
+  execute 'bot sp'
+  execute 'resize ' . g:terminal_height
+  let command = buflisted(a:buffer_number) ? 'buffer ' . a:buffer_number : 'term'
+  execute command
+
+  if !buflisted(a:buffer_number)
+    let g:custom_terminal_buffer = bufnr("%")
+    execute 'setlocal modifiable'
+  endif
+endfunction
+
+" Function to check if a buffer is visible in any window
+function! s:IsBufferVisible(buffer_number)
+  for winnr in range(1, winnr('$'))
+    if bufwinnr(a:buffer_number) == winnr
+      return 1
+    endif
+  endfor
+  return 0
+endfunction
+
+" Function to toggle the terminal buffer
+function! ToggleTerminal()
+  if buflisted(g:custom_terminal_buffer)
+    if s:IsBufferVisible(g:custom_terminal_buffer)
+      call s:HideBuffer(g:custom_terminal_buffer)
+    else
+      call s:OpenTerminalBuffer(g:custom_terminal_buffer)
+    endif
+  else
+    call s:OpenTerminalBuffer(g:custom_terminal_buffer)
+  endif
+endfunction
+

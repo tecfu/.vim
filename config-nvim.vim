@@ -10,6 +10,7 @@ call plug#begin('~/.vim/plugins-nvim')
   Plug 'folke/tokyonight.nvim'
   autocmd VimEnter * colorscheme tokyonight
 
+  source $HOME/.vim/viml/toggle-terminal.nvim
   source $HOME/.vim/viml/nvim-plenary.nvim
   source $HOME/.vim/viml/swagger-preview.nvim
   source $HOME/.vim/viml/project.nvim
@@ -23,7 +24,6 @@ call plug#begin('~/.vim/plugins-nvim')
     " copilot.lua.nvim suggestions will show up in nvim-cmp, but does not support accepting next word with <CR>
     " Together they provide desired functionality
     source $HOME/.vim/viml/copilot.lua.nvim
-    source $HOME/.vim/viml/copilot.vim 
     source $HOME/.vim/viml/copilot-chat.nvim
     "source $HOME/.vim/viml/codecompanion.nvim
     source $HOME/.vim/viml/nvim-efm-langserver-setup.nvim

@@ -81,6 +81,88 @@ call plug#begin('~/.vim/plugins-vim')
   Plug 'rhysd/vim-healthcheck'
 
 
+  " ```
+  " - WIDGET: Terminal/ Vimshell
+  " ```
+  Plug 'Shougo/vimproc', {
+      \ 'do' : 'make'
+      \ }
+
+
+  Plug 'Shougo/vimshell'
+  "{{{
+  autocmd FileType vimshell let b:copilot_enabled = v:false
+
+  nnoremap <S-t> :VimShellPop<CR>
+  nnoremap <C-Space> :VimShellPop<CR>
+  inoremap <C-Space> <esc>:VimShellPop<CR>
+  vnoremap <C-Space> :VimShellPop<CR>
+  "linux
+  nnoremap <C-@> :VimShellPop<CR>
+  inoremap <C-@> <esc>:VimShellPop<CR>
+  vnoremap <C-@> :VimShellPop<CR>
+
+  let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
+  let g:vimshell_prompt =  '$ '
+  " open new splits actually in new tab
+  let g:vimshell_split_command = "tabnew"
+
+  if has("gui_running")
+    let g:vimshell_editor_command = "gvim"
+  endif
+
+  " Use same keybindings to go forward and back in prompt as in vim bash
+  "inoremap <buffer> <S-k>  <Plug>(vimshell_previous_prompt)
+  "inoremap <buffer> <S-j>  <Plug>(vimshell_next_prompt)
+
+  " Unmap C-j, C-k in normal mode to use default navigation
+  function! VSmap(...)
+    nmap <buffer><silent> <C-J> 10j
+    nmap <buffer><silent> <C-K> 10k
+  endfunction
+
+  function! VSmapChooser()
+    if has("nvim")
+      call jobstart(['bash','-c','echo "-"; exit;'],{'on_stdout':'VSmap'})
+    else
+      call job_start(['bash','-c','echo "-"; exit;'],{'out_cb':'VSmap'})
+    endif
+  endfunction
+
+  "Group name can be arbitrary so long as doesn't conflict with another
+  augroup VimshellMapping
+    autocmd!
+    "Get filetype with :echom &filetype when in buffer
+    autocmd FileType vimshell :call VSmapChooser()
+  augroup END
+  "}}}
+
+  "Plug 'supermomonga/vimshell-inline-history.vim', { 'depends' : [ 'Shougo/vimshell.vim' ] }
+  Plug 'tecfu/vimshell-inline-history.vim', { 'depends' : [ 'Shougo/vimshell.vim' ] }
+  "{{{
+    function! VSHistmapCB(...)
+      let g:vimshell_inline_history#default_mappings = 0
+      imap <buffer> <C-j>  <Plug>(vimshell_inline_history#next)
+      imap <buffer> <C-k>  <Plug>(vimshell_inline_history#prev)
+    endfunction
+
+    function! VSHistmap()
+      if has("nvim")
+        call jobstart(['bash','-c','echo "-"; exit;'],{'on_stdout':'VSHistmapCB'})
+      else
+        call job_start(['bash','-c','echo "-"; exit;'],{'out_cb':'VSHistmapCB'})
+      endif
+
+    endfunction
+
+      "Group name can be arbitrary so long as doesn't conflict with another
+    augroup VSHistMapping
+      autocmd!
+      "Get filetype with :echom &filetype when in buffer
+      autocmd FileType vimshell :call VSHistmap()
+    augroup END
+  "}}}
+
   " - THEME
   " coc ui styling
   " Not a fan of the gray gutter (SignColumn) that comes with the theme
