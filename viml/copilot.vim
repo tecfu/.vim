@@ -3,10 +3,8 @@
 " nvim-cmp, coc.nvim and others handle to popup menu completion sources.
 Plug 'github/copilot.vim'
 
-" Disable Copilot for markdown files
-" autocmd FileType markdown Copilot disable
 " Disable Copilot for all files containing *.pvt.*
-autocmd BufRead,BufNewFile *.pvt.* Copilot disable
+autocmd BufRead,BufNewFile *.pvt.* let b:copilot_enabled = 0
 
 " Use default <Tab> to accept a suggestion
 let g:copilot_no_tab_map = v:false
