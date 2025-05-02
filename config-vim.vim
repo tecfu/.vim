@@ -64,7 +64,7 @@ endif
 call plug#begin('~/.vim/plugins-vim')
 
   " - common plugins"
-  source ${HOME}/.vim/config-common.vim
+  source $HOME/.vim/config-common.vim
 
   " - Coc.nvim"
   source $HOME/.vim/viml/coc-nvim.vim

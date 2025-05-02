@@ -21,7 +21,6 @@
 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Load Plugins
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -31,6 +30,23 @@
 set encoding=utf8
 set fileencoding=utf8
 
+" Check if $NVIM_CONFIG is empty (unset variables often evaluate to empty)
+if empty($NVIM_CONFIG)
+  " If it is empty, set an internal global Vimscript variable g:nvim_config
+  let g:nvim_config = "coc"
+else
+  " Otherwise, set the internal variable to the value of the environment variable
+  let g:nvim_config = $NVIM_CONFIG
+endif
+
+augroup DelayedEchoMsg
+  autocmd!
+  autocmd VimEnter * call s:ScheduleEchoMessage(
+        \ "Current NVIM_CONFIG=" . g:nvim_config,
+        \ 500
+        \ )
+augroup END
+
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -38,9 +54,9 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 endif
 
 if has("nvim")
-  source ${HOME}/.vim/config-nvim.vim
+  source $HOME/.vim/config-nvim.vim
 else
-  source ${HOME}/.vim/config-vim.vim
+  source $HOME/.vim/config-vim.vim
 endif
 
 " vim-plug unexpectedly configures indentation. undo this
@@ -652,6 +668,14 @@ endfunction
 " Stringify JSON
 command! -range=% StringifyJSON <line1>,<line2>!jq -r tostring | sed 's/\"/\\"/g' | echo "\"$(cat)\""
 vnoremap <silent> <leader>s :!jq -r tostring \| sed 's/"/\\"/g' \| echo "\"$(cat)\""<CR>
+
+function! s:ScheduleEchoMessage(message, delay_ms)
+  let l:timer_id = timer_start(a:delay_ms, function('s:EchoMessageCallback', [a:message]))
+endfunction
+
+function! s:EchoMessageCallback(message, timer_id)
+  echom a:message
+endfunction
 "}}}
 
 
