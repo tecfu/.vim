@@ -40,7 +40,7 @@ tools:
     lint-formats:
       - "%f:%l:%c: %m"
 
-  sql-language-server:
+  sql_language_server: &sql_language_server
     command: sql-language-server
     args: ["up", "--method", "stdio"]
     filetypes: [sql]
@@ -48,16 +48,16 @@ tools:
     settings:
       sql:
 
-  sql-language-server-ksql:
-    command: sql-language-server
-    args: ["up", "--method", "stdio"]
-    filetypes: [ksql]
-    rootMarkers: [".git/", "package.json"]
-    settings:
-      sql:
-        dialect: "kafka"
+  #sql-language-server-ksql:
+  #  command: sql-language-server
+  #  args: ["up", "--method", "stdio"]
+  #  filetypes: [ksql]
+  #  rootMarkers: [".git/", "package.json"]
+  #  settings:
+  #    sql:
+  #      dialect: "kafka"
 
-  sql-lint:
+  sql_lint: &sql_lint
     lint-command: "sql-lint --format unix --stdin --stdin-filename=${INPUT}"
     lint-stdin: true
     lint-ignore-exit-code: true
@@ -95,15 +95,15 @@ languages:
     - <<: *prettierd
   jsonc:
     - <<: *prettierd
-  ksql:
-    - <<: *sql-language-server-ksql
-    - <<: *sql-lint
+  #ksql:
+    #- <<: *sql-language-server-ksql
+    #- <<: *sql-lint
   python:
     - <<: *black
   sh:
     - <<: *shfmt
   sql:
-    - <<: *sql-language-server
-    - <<: *sql-lint
+    - <<: *sql_language_server
+    - <<: *sql_lint
   typescript:
     - <<: *eslint_d
