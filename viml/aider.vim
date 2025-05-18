@@ -1,6 +1,7 @@
 Plug 'joshuavial/aider.nvim'
 
-let g:aider_model = 'gemini/gemini-exp-1206'
+" inherit from ~/.aider.conf.yaml instead
+"let g:aider_model = 'gemini/gemini-exp-1206'
 
 function! SetupAider()
   lua << EOF
@@ -47,7 +48,8 @@ function! ToggleAider()
     endif
   else
     " No Aider buffer exists, open a new session
-    let cmd = 'AiderOpen --model ' . g:aider_model . ' --no-auto-commits'
+    "let cmd = 'AiderOpen --model ' . g:aider_model . ' --no-auto-commits'
+    let cmd = 'AiderOpen --no-auto-commits'
     echom 'Executing: ' . cmd
     execute cmd
   endif
