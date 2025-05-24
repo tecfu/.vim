@@ -10,9 +10,8 @@ autocmd BufRead,BufNewFile *.pvt.* let b:copilot_enabled = 0
 let g:copilot_no_tab_map = v:false
 
 " <Tab> is the default keymap for accepting a suggestion, here's an example of rempping it to <C-j>
-" imap <silent><script><expr> <C-j> copilot#Accept("\<CR>")
-" imap <silent><script><expr> <C-j> copilot#AcceptWord("\<CR>")
- imap <silent><script><expr> <CR> copilot#AcceptWord("\<CR>")
+" We don't want to do this because it will conflict with coc-nvim or whatever autocompletion plugin we are using, and when we hit enter before the copilot autocompletion is populated, we'll get an empty result (unexpected).
+" imap <silent><script><expr> <CR> copilot#AcceptWord("\<CR>")
 
 
 " <M-Right>               Accept the next word of the current suggestion.

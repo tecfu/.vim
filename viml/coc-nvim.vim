@@ -24,8 +24,6 @@ let g:coc_global_extensions = [
 "    \ '@hexuhua/coc-copilot', " https://github.com/hexh250786313/coc-copilot
 "\ ]
 
-call plug#end()
-
 " Function to disable coc-yaml for specific files
 "function! DisableCocYamlForCF()
 "  if search('AWSTemplateFormatVersion', 'nw')
@@ -199,12 +197,35 @@ endfunction
 " \ coc#expandableOrJumpable() ?
 " \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-pre',''])\<CR>" : "\<Tab>"
 "
-"" Select the first completion item and confirm the completion when no item has been selected:
-" seems to be working without this binding
+" Select the first completion item and confirm the completion when no item has been selected:
 "inoremap <silent><expr> <CR> 
 "\ copilot#Accept("\<CR>") ? copilot#Accept("\<CR>") :
 "\ pumvisible() ? coc#_select_confirm() :
 "\ "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" <CR> mapping:
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>"
+
+" <Tab> mapping:
+" 1. If Copilot ghost text is visible, accept Copilot suggestion.
+" 2. Else, if CoC popup menu is visible, confirm the highlighted CoC item.
+" 3. Else, if at start of line or after whitespace, insert a literal Tab.
+" 4. Else, try to trigger CoC completion/expansion.
+inoremap <silent><expr> <Tab>
+    \ luaeval('require("copilot.suggestion").is_visible()')
+    \ ? luaeval('(function() require("copilot.suggestion").accept(); return "" end)()')
+    \ : coc#pum#visible()
+    \   ? coc#pum#confirm()
+    \   : CheckBackspace()
+    \     ? "\<Tab>"
+    \     : coc#expandableOrJumpable()
+    \       ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>"
+    \       : coc#refresh()
 
 "Remap up/down in popupmenu to <C-j>, <C-k>
 inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
