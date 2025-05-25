@@ -30,6 +30,16 @@
 set encoding=utf8
 set fileencoding=utf8
 
+" For nvim on windows
+if has('win32') || has('win64')
+  set shellslash
+
+  if executable('bash')
+       set shell=bash
+       set shellcmdflag=-c
+  endif
+endif
+
 " Check if $NVIM_CONFIG is empty (unset variables often evaluate to empty)
 if empty($NVIM_CONFIG)
   " If it is empty, set an internal global Vimscript variable g:nvim_config
