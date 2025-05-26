@@ -29,6 +29,18 @@ tools:
     lint-ignore-exit-code: true
     lint-after-open: true
 
+  # python linters
+  pyright: &pyright
+    lint-command: 'pyright --outputFormat=json -'
+    lint-stdin: true
+    lint-formats:
+      - '%f:%l:%c - %m'
+    lint-ignore-exit-code: true
+    lint-severity: 
+      information: hint
+      warning: warning
+      error: error
+
   # javascript and typescript formatters
   eslint_d: &eslint_d
     format-command: "eslint_d --fix-to-stdout --stdin --stdin-filename ${INPUT}"
@@ -106,6 +118,7 @@ languages:
     #- <<: *sql-lint
   python:
     - <<: *black
+    - <<: *pyright
   sh:
     - <<: *shfmt
   sql:
