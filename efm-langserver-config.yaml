@@ -2,6 +2,25 @@ version: 2
 root-markers:
   - .git
 tools:
+  # general formatters
+  prettierd: &prettierd
+    format-command: >
+      prettierd ${INPUT} ${--range-start=charStart} ${--range-end=charEnd} \
+        ${--tab-width=tabSize}
+    format-stdin: true
+    lint-after-open: true
+    root-markers:
+      - .prettierrc
+      - .prettierrc.json
+      - .prettierrc.js
+      - .prettierrc.yml
+      - .prettierrc.yaml
+      - .prettierrc.json5
+      - .prettierrc.mjs
+      - .prettierrc.cjs
+      - .prettierrc.toml
+
+  # python formatters
   black: &black
     format-command: "black --fast -"
     format-stdin: true
@@ -10,6 +29,7 @@ tools:
     lint-ignore-exit-code: true
     lint-after-open: true
 
+  # javascript and typescript formatters
   eslint_d: &eslint_d
     format-command: "eslint_d --fix-to-stdout --stdin --stdin-filename ${INPUT}"
     format-stdin: true
@@ -26,6 +46,7 @@ tools:
     lint-ignore-exit-code: true
     lint-after-open: true
 
+  # go formatters
   gofmt: &gofmt
     format-command: "gofmt"
     format-stdin: true
@@ -40,6 +61,7 @@ tools:
     lint-formats:
       - "%f:%l:%c: %m"
 
+  # sql formatters and linters
   sql_language_server: &sql_language_server
     command: sql-language-server
     args: ["up", "--method", "stdio"]
@@ -63,23 +85,7 @@ tools:
     lint-ignore-exit-code: true
     lint-after-open: true
 
-  prettierd: &prettierd
-    format-command: >
-      prettierd ${INPUT} ${--range-start=charStart} ${--range-end=charEnd} \
-        ${--tab-width=tabSize}
-    format-stdin: true
-    lint-after-open: true
-    root-markers:
-      - .prettierrc
-      - .prettierrc.json
-      - .prettierrc.js
-      - .prettierrc.yml
-      - .prettierrc.yaml
-      - .prettierrc.json5
-      - .prettierrc.mjs
-      - .prettierrc.cjs
-      - .prettierrc.toml
-
+  # shell formatters
   shfmt: &shfmt
     format-command: "shfmt -ci -s -bn"
     format-stdin: true
