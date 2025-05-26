@@ -7,10 +7,15 @@ Plug 'github/copilot.vim'
 autocmd BufRead,BufNewFile *.pvt.* let b:copilot_enabled = 0
 
 " Use default <Tab> to accept a suggestion
-let g:copilot_no_tab_map = v:false
+" let g:copilot_no_tab_map = v:false
+" We switch this to true so that our autocompletion (i.e. coc, nvim-cmp) plugin can handle the <Tab> key exclusively
+let g:copilot_no_tab_map = v:true
+
+" Accept next word on C-Enter
+" Note: vim can't handle this key combination, nvim can
+imap <silent><expr> <C-Enter> copilot#AcceptWord()
 
 " <Tab> is the default keymap for accepting a suggestion, here's an example of rempping it to <C-j>
-" We don't want to do this because it will conflict with coc-nvim or whatever autocompletion plugin we are using, and when we hit enter before the copilot autocompletion is populated, we'll get an empty result (unexpected).
 " imap <silent><script><expr> <CR> copilot#AcceptWord("\<CR>")
 
 

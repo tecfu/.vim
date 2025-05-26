@@ -14,7 +14,6 @@ Plug 'saadparwaiz1/cmp_luasnip' " Snippet source for nvim-cmp
 
 function! SetupCmp()
 lua << EOF
-  -- ... (copilot.lua and copilot_cmp.setup() as before) ...
   local copilot_status_ok, copilot = pcall(require, "copilot")
   if copilot_status_ok then
     copilot.setup({
@@ -48,35 +47,17 @@ lua << EOF
     return col ~= 0 and vim.api.nvim_get_current_line():sub(col, col):match('%s') == nil
   end
 
-  local is_copilot_native_suggestion_visible = function()
-    local suggestion_mod_ok, copilot_sug = pcall(require, "copilot.suggestion")
-    if suggestion_mod_ok and copilot_sug and copilot_sug.is_visible then
-      return copilot_sug.is_visible()
-    end
-    return false
-  end
-
-  local accept_copilot_native_suggestion = function(accept_fn_name)
-    local suggestion_mod_ok, copilot_sug = pcall(require, "copilot.suggestion")
-    if suggestion_mod_ok and copilot_sug and copilot_sug[accept_fn_name] then
-      copilot_sug[accept_fn_name]()
-      return true
-    end
-    return false
-  end
-
-  -- Define the custom navigation functions again, ensuring `cmp` is in scope
   local CustomDown = function(fallback)
     if cmp.visible() then
-      cmp.select_next_item({ behavior = cmp.SelectBehavior.Select }) -- Select, don't insert
+      cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
     else
-      fallback() -- Or trigger completion if not visible: cmp.complete()
+      fallback()
     end
   end
 
   local CustomUp = function(fallback)
     if cmp.visible() then
-      cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select }) -- Select, don't insert
+      cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
     else
       fallback()
     end
@@ -89,12 +70,26 @@ lua << EOF
     ['<C-e>'] = cmp.mapping.abort(),
 
     ['<Tab>'] = cmp.mapping(function(fallback)
+      if vim.fn.TabCompletion_CopilotLuaIsVisible() == 1 then
+        if vim.fn.TabCompletion_AcceptCopilotLua() == "" then
+          return
+        end
+      end
+
+      if vim.fn.TabCompletion_CopilotVimIsVisible() == 1 then
+        local copilot_vim_cmd = vim.fn.TabCompletion_AcceptCopilotVim()
+        if copilot_vim_cmd ~= vim.api.nvim_replace_termcodes("<Tab>", true, false, true) then
+          if copilot_vim_cmd ~= "" then
+            vim.fn.feedkeys(copilot_vim_cmd, 'i')
+          end
+          return
+        end
+      end
+
       if cmp.visible() then
         cmp.confirm({ select = true })
       elseif luasnip_ok and luasnip.expand_or_jumpable() then
         luasnip.expand_or_jump()
-      -- elseif is_copilot_native_suggestion_visible() then -- Optional native copilot interaction
-      --   accept_copilot_native_suggestion("accept")
       elseif has_words_before() then
         cmp.complete()
       else
@@ -104,7 +99,7 @@ lua << EOF
 
     ['<S-Tab>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
-        cmp.select_prev_item() -- Standard S-Tab for previous item in cmp menu
+        cmp.select_prev_item()
       elseif luasnip_ok and luasnip.jumpable(-1) then
         luasnip.jump(-1)
       else
@@ -115,21 +110,11 @@ lua << EOF
     ['<CR>'] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.confirm({ select = true })
-      -- elseif is_copilot_native_suggestion_visible() then -- Optional native copilot interaction
-      --  accept_copilot_native_suggestion("accept_line")
       else
         fallback()
       end
     end, { "i", "s" }),
 
-    ['<C-Enter>'] = cmp.mapping(function(fallback)
-      if is_copilot_native_suggestion_visible() then
-        accept_copilot_native_suggestion("accept_word")
-      end
-      -- No fallback, C-Enter is dedicated
-    end, { "i" }),
-
-    -- Re-add C-j and C-k for explicit cmp menu navigation
     ['<C-j>'] = cmp.mapping(CustomDown, { 'i', 's' }),
     ['<C-k>'] = cmp.mapping(CustomUp, { 'i', 's' }),
   }
@@ -143,9 +128,9 @@ lua << EOF
       end,
     },
     completion = {
-      completeopt = 'menu,menuone' -- Your preference
+      completeopt = 'menu,menuone'
     },
-    mapping = baseMappings, -- Apply the map with C-j/C-k
+    mapping = baseMappings,
     sources = cmp.config.sources({
       { name = 'nvim_lsp', group_index = 1 },
       { name = 'luasnip',  group_index = 1, keyword_length = 2},
@@ -154,7 +139,6 @@ lua << EOF
       { name = 'path',     group_index = 3 },
     }),
     experimental = {
-      -- Conflicts with copilot ghost text by showing both
       ghost_text = false,
     },
     enabled = function()
@@ -167,7 +151,6 @@ lua << EOF
     end,
   })
 
-  -- ... (rest of your cmp.setup.filetype and cmdline setups) ...
   cmp.setup.cmdline('/', {
     mapping = cmp.mapping.preset.cmdline(),
     sources = cmp.config.sources({{ name = 'buffer' }})
@@ -184,7 +167,7 @@ lua << EOF
     completion = { autocomplete = false },
   })
 
-  vim.notify("nvim-cmp setup with C-j/C-k (from VimL heredoc) complete.", vim.log.levels.INFO)
+  vim.notify("nvim-cmp setup with C-Enter using shared Copilot logic complete.", vim.log.levels.INFO)
 EOF
 endfunction
 

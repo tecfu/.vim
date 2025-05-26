@@ -58,6 +58,7 @@ endif
 " Use "coc.preferences.formatOnType": true to enable format on type feature.
 " https://vi.stackexchange.com/a/31087/5223
 " https://github.com/neoclide/coc-prettier
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => PLUGINS
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -70,8 +71,7 @@ call plug#begin('~/.vim/plugins-vim')
   source $HOME/.vim/viml/coc-nvim.vim
 
   " - AI
-  Plug 'github/copilot.vim'
-
+  source $HOME/.vim/viml/copilot.vim
 
   " - Makes Gvim only colorschems work in term / nc with neovim
   Plug 'godlygeek/csapprox'

@@ -212,20 +212,21 @@ endfunction
 inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>"
 
 " <Tab> mapping:
-" 1. If Copilot ghost text is visible, accept Copilot suggestion.
-" 2. Else, if CoC popup menu is visible, confirm the highlighted CoC item.
-" 3. Else, if at start of line or after whitespace, insert a literal Tab.
-" 4. Else, try to trigger CoC completion/expansion.
+" Priority:
+" 1. Try to accept copilot.lua suggestion if visible.
+" 2. Else, try to accept github/copilot.vim suggestion if visible.
+" 3. Else, CoC popup menu.
+" 4. Else, literal Tab if at start of line/after whitespace.
+" 5. Else, CoC snippet expansion.
+" 6. Else, CoC refresh.
 inoremap <silent><expr> <Tab>
-    \ luaeval('require("copilot.suggestion").is_visible()')
-    \ ? luaeval('(function() require("copilot.suggestion").accept(); return "" end)()')
-    \ : coc#pum#visible()
-    \   ? coc#pum#confirm()
-    \   : CheckBackspace()
-    \     ? "\<Tab>"
-    \     : coc#expandableOrJumpable()
-    \       ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>"
-    \       : coc#refresh()
+    \ TabCompletion_CopilotLuaIsVisible() ? TabCompletion_AcceptCopilotLua() :
+    \ TabCompletion_CopilotVimIsVisible() ? TabCompletion_AcceptCopilotVim() :
+    \ coc#pum#visible() ? coc#pum#confirm() :
+    \ CheckBackspace() ? "\<Tab>" :
+    \ coc#expandableOrJumpable() ?
+    \ "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+    \ coc#refresh()
 
 "Remap up/down in popupmenu to <C-j>, <C-k>
 inoremap <expr> <C-j> pumvisible() ? "\<C-n>" : "\<C-j>"
