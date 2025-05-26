@@ -14,12 +14,12 @@ call plug#begin('~/.vim/plugins-nvim')
   source $HOME/.vim/viml/toggle-terminal.nvim
   source $HOME/.vim/viml/nvim-plenary.nvim
   source $HOME/.vim/viml/swagger-preview.nvim
-  source $HOME/.vim/viml/project.nvim
+  "source $HOME/.vim/viml/project.nvim
   source $HOME/.vim/viml/telescope.nvim
   source $HOME/.vim/viml/aider.vim
   source $HOME/.vim/viml/copilot-chat.nvim
-  "source $HOME/.vim/viml/copilot.lua.nvim
-  source $HOME/.vim/viml/copilot.vim
+  source $HOME/.vim/viml/copilot.lua.nvim
+  "source $HOME/.vim/viml/copilot.vim
 
   if $NVIM_CONFIG == 'cmp'
     "source $HOME/.vim/viml/codecompanion.nvim
