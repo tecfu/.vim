@@ -58,11 +58,12 @@ tools:
       - .prettierrc.toml
 
   pyright: &pyright
-    lint-command: 'pyright --outputFormat=json -'
-    lint-stdin: true
+    lint-command: 'pyright --outputFormat=json ${INPUT}'
+    lint-stdin: false
     lint-formats:
       - '%f:%l:%c - %m'
     lint-ignore-exit-code: true
+    lint-after-open: true
     lint-severity: 
       information: hint
       warning: warning
@@ -111,6 +112,7 @@ languages:
     #- <<: *sql-lint
   python:
     - <<: *black
+    - <<: *pyright
   sh:
     - <<: *shfmt
   sql:

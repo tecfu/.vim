@@ -8,16 +8,44 @@ function! SetupLsp()
 
   -- Manually configure efm-langserver
   local efm_config = {
-    cmd = {"efm-langserver", "-loglevel", "4"},
-    init_options = {documentFormatting = true},
+    cmd = {"efm-langserver", "-loglevel", "4", "-c", vim.fn.expand("~/.config/efm-langserver/config.yaml")},
+    init_options = {documentFormatting = true, codeAction = true},
+    filetypes = {"python", "javascript", "typescript", "json", "jsonc", "sh", "sql", "go"},
+    root_dir = vim.fn.getcwd(),
+    settings = {},
     on_attach = function(client, bufnr)
       print("LSP attached to filetype: " .. vim.bo.filetype)
+
+      -- Enable diagnostics
+      vim.diagnostic.config({
+        virtual_text = true,
+        signs = true,
+        underline = true,
+        update_in_insert = false,
+        severity_sort = true,
+      })
+
+      -- Automatically show diagnostics when file is opened
+      vim.api.nvim_create_autocmd("BufEnter", {
+        buffer = bufnr,
+        once = true,
+        callback = function()
+          vim.schedule(function()
+            vim.diagnostic.enable(bufnr)
+            vim.lsp.buf.document_highlight()
+          end)
+        end,
+      })
     end
   }
 
   vim.defer_fn(function()
     local efm_client_id = vim.lsp.start_client(efm_config)
-    vim.lsp.buf_attach_client(0, efm_client_id)
+    if efm_client_id then
+      vim.lsp.buf_attach_client(0, efm_client_id)
+    else
+      print("Failed to start efm-langserver")
+    end
   end, 10)
 
   -- Keybinding to trigger linting with <leader>t
