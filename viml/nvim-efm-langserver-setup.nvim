@@ -8,53 +8,73 @@ function! SetupLsp()
 
   -- Manually configure efm-langserver
   local efm_config = {
-    cmd = {"efm-langserver", "-loglevel", "4", "-c", vim.fn.expand("~/.config/efm-langserver/config.yaml")},
-    init_options = {documentFormatting = true, codeAction = true},
-    filetypes = {"python", "javascript", "typescript", "json", "jsonc", "sh", "sql", "go"},
-    root_dir = vim.fn.getcwd(),
-    settings = {},
+    cmd = {"efm-langserver", "-logfile", "/tmp/efm-langserver-nvim.log", "-loglevel", "5"},
+    filetypes = {},
+    init_options = {
+      documentFormatting = true,
+      documentRangeFormatting = true,
+      hover = true,
+      documentSymbol = true,
+      codeAction = true,
+      completion = true
+    },    
     on_attach = function(client, bufnr)
-      print("LSP attached to filetype: " .. vim.bo.filetype)
-
-      -- Enable diagnostics
-      vim.diagnostic.config({
-        virtual_text = true,
-        signs = true,
-        underline = true,
-        update_in_insert = false,
-        severity_sort = true,
-      })
-
-      -- Automatically show diagnostics when file is opened
-      vim.api.nvim_create_autocmd("BufEnter", {
-        buffer = bufnr,
-        once = true,
-        callback = function()
-          vim.schedule(function()
-            vim.diagnostic.enable(bufnr)
-            vim.lsp.buf.document_highlight()
-          end)
-        end,
-      })
-    end
+      print("LSP attached to filetype: " .. vim.bo.filetype .. " with client ID: " .. client.id .. " and buffer number: " .. bufnr .. " and name: " .. client.name)
+      
+      -- Enable completion triggered by <c-x><c-o>
+      vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+      
+      -- Enable document formatting
+      vim.api.nvim_buf_set_option(bufnr, 'formatexpr', 'v:lua.vim.lsp.formatexpr()')
+      
+      -- Show diagnostics on hover
+      vim.cmd [[autocmd CursorHold <buffer> lua vim.diagnostic.open_float()]]
+      
+      -- Ensure diagnostics are refreshed when saving file
+      vim.cmd [[autocmd BufWritePost <buffer> lua vim.lsp.buf.document_highlight()]]
+    end,
+    settings = {
+      rootMarkers = {".git/"},
+      languages = {} -- Let efm-langserver use the config file
+    }
   }
 
-  vim.defer_fn(function()
-    local efm_client_id = vim.lsp.start_client(efm_config)
-    if efm_client_id then
-      vim.lsp.buf_attach_client(0, efm_client_id)
-    else
-      print("Failed to start efm-langserver")
+  -- Make sure the efm server is started for each file
+  local function ensure_efm()
+    local clients = vim.lsp.get_active_clients()
+    local has_efm = false
+    
+    for _, client in ipairs(clients) do
+      if client.name == "efm" then
+        has_efm = true
+        break
+      end
     end
-  end, 10)
-
-  -- Keybinding to trigger linting with <leader>t
-  _G.lint = function()
-    vim.lsp.buf_request(0, "textDocument/diagnostic", {
-      textDocument = {uri = vim.uri_from_bufnr(0)}
-    }, function() end)
+    
+    if not has_efm then
+      local efm_client_id = vim.lsp.start_client(efm_config)
+      if efm_client_id then
+        vim.lsp.buf_attach_client(0, efm_client_id)
+        print("Started and attached efm-langserver")
+      else
+        print("Failed to start EFM language server")
+      end
+    else
+      print("EFM server already running")
+    end
   end
-  vim.api.nvim_set_keymap('n', '<leader>t', ':lua lint()<CR>', { noremap = true, silent = true })
+
+  -- Set up automatic attachment
+  vim.api.nvim_create_autocmd({"FileType"}, {
+    pattern = filetypes,
+    callback = function()
+      vim.defer_fn(ensure_efm, 100)
+    end,
+  })
+
+  -- Call it once for the current buffer
+  vim.defer_fn(ensure_efm, 100)
+
 
   -- Keybinding to trigger formatting with <leader>l
   vim.api.nvim_set_keymap('n', '<leader>l', ':lua vim.lsp.buf.format()<CR>', { noremap = true, silent = true })

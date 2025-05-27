@@ -5,10 +5,10 @@ tools:
   black: &black
     format-command: "black --fast -"
     format-stdin: true
-    #lint-command: "black --check --diff -"
-    #lint-stdin: true
-    #lint-ignore-exit-code: true
-    #lint-after-open: true
+    lint-command: "black --check --diff -"
+    lint-stdin: true
+    lint-ignore-exit-code: true
+    lint-after-open: true
 
   eslint_d: &eslint_d
     format-command: "eslint_d --fix-to-stdout --stdin --stdin-filename ${INPUT}"
@@ -40,34 +40,39 @@ tools:
     lint-formats:
       - "%f:%l:%c: %m"
 
-  prettierd: &prettierd
-    format-command: >
-      prettierd ${INPUT} ${--range-start=charStart} ${--range-end=charEnd} \
-        ${--tab-width=tabSize}
-    format-stdin: true
-    lint-after-open: true
-    root-markers:
-      - .prettierrc
-      - .prettierrc.json
-      - .prettierrc.js
-      - .prettierrc.yml
-      - .prettierrc.yaml
-      - .prettierrc.json5
-      - .prettierrc.mjs
-      - .prettierrc.cjs
-      - .prettierrc.toml
-
-  pyright: &pyright
-    lint-command: 'pyright --outputFormat=json ${INPUT}'
+  mypy_lint: &mypy_lint
+    lint-command: 'mypy --no-error-summary --show-column-numbers --ignore-missing-imports --disallow-untyped-defs --disallow-incomplete-defs ${INPUT}'
     lint-stdin: false
     lint-formats:
-      - '%f:%l:%c - %m'
+      - '%f:%l:%c: %trror: %m'
+      - '%f:%l:%c: %tarning: %m'
+      - '%f:%l:%c: %tote: %m'
     lint-ignore-exit-code: true
     lint-after-open: true
-    lint-severity: 
-      information: hint
-      warning: warning
-      error: error
+
+  pylint: &pylint
+    lint-command: 'pylint --output-format text --score no --msg-template {path}:{line}:{column}:{C}:{msg} ${INPUT}'
+    lint-stdin: false
+    lint-formats:
+      - '%f:%l:%c:%t:%m'
+    lint-offset-columns: 1
+    lint-category-map:
+      I: H
+      R: I
+      C: I
+      W: W
+      E: E
+      F: E
+    lint-ignore-exit-code: true
+
+  ruff: &ruff
+    lint-command: 'ruff check --force-exclude --output-format=text ${INPUT}'
+    lint-stdin: false
+    lint-formats:
+      - '%f:%l:%c: %m'
+    lint-ignore-exit-code: true
+    format-command: 'ruff format -'
+    format-stdin: true
 
   sql_language_server: &sql_language_server
     command: sql-language-server
@@ -92,6 +97,23 @@ tools:
     lint-ignore-exit-code: true
     lint-after-open: true
 
+  prettierd: &prettierd
+    format-command: >
+      prettierd ${INPUT} ${--range-start=charStart} ${--range-end=charEnd} \
+        ${--tab-width=tabSize}
+    format-stdin: true
+    lint-after-open: true
+    root-markers:
+      - .prettierrc
+      - .prettierrc.json
+      - .prettierrc.js
+      - .prettierrc.yml
+      - .prettierrc.yaml
+      - .prettierrc.json5
+      - .prettierrc.mjs
+      - .prettierrc.cjs
+      - .prettierrc.toml
+
   shfmt: &shfmt
     format-command: "shfmt -ci -s -bn"
     format-stdin: true
@@ -111,8 +133,9 @@ languages:
     #- <<: *sql-language-server-ksql
     #- <<: *sql-lint
   python:
+    - <<: *mypy_lint
+    - <<: *ruff
     - <<: *black
-    - <<: *pyright
   sh:
     - <<: *shfmt
   sql:
