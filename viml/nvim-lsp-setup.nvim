@@ -1,0 +1,50 @@
+Plug 'neovim/nvim-lspconfig'
+
+function! SetupLsp()
+  lua << EOF
+local lspconfig = require('lspconfig')
+
+-- Enable LSP log level trace (helps for debugging)
+vim.lsp.set_log_level('trace')
+
+-- Setup efm-langserver via github.com/tecful/efm-langserver
+local efm_config = {
+  cmd = { "efm-langserver", "-loglevel", "5" },
+  init_options = {
+    documentFormatting = true,
+    documentRangeFormatting = true,
+    hover = true,
+    documentSymbol = true,
+    codeAction = true,
+    completion = true
+  },    
+  -- push diagnostics even while typing (not just on save/open)
+  handlers = {
+    ["textDocument/publishDiagnostics"] = vim.lsp.with(
+      vim.lsp.diagnostic.on_publish_diagnostics,
+      { update_in_insert = true }
+    )
+  },
+  on_attach = function(client, bufnr)
+    print("LSP attached to filetype: " ..
+      vim.bo.filetype ..
+      " with client ID: " .. client.id ..
+      " and buffer: " .. bufnr ..
+      " name: " .. client.name)
+  end,
+  settings = {}
+  -- filetypes = {}
+}
+
+lspconfig.efm.setup(efm_config)
+lspconfig.efm.setup(efm_config)
+
+-- Keybinding to trigger formatting with <leader>l
+vim.api.nvim_set_keymap('n', '<leader>l',
+  '<cmd>lua vim.lsp.buf.formatting()<CR>',
+  { noremap = true, silent = true })
+EOF
+endfunction
+
+" Call SetupLsp after delay on VimEnter
+autocmd VimEnter * call timer_start(200, {-> SetupLsp()})

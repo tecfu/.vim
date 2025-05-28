@@ -26,15 +26,9 @@ function! SetupLsp()
       
       -- Enable document formatting
       vim.api.nvim_buf_set_option(bufnr, 'formatexpr', 'v:lua.vim.lsp.formatexpr()')
-      
-      -- Show diagnostics on hover
-      vim.cmd [[autocmd CursorHold <buffer> lua vim.diagnostic.open_float()]]
-      
-      -- Ensure diagnostics are refreshed when saving file
-      vim.cmd [[autocmd BufWritePost <buffer> lua vim.lsp.buf.document_highlight()]]
     end,
     settings = {
-      rootMarkers = {".git/"},
+      rootMarkers = {},
       languages = {} -- Let efm-langserver use the config file
     }
   }
@@ -74,7 +68,6 @@ function! SetupLsp()
 
   -- Call it once for the current buffer
   vim.defer_fn(ensure_efm, 100)
-
 
   -- Keybinding to trigger formatting with <leader>l
   vim.api.nvim_set_keymap('n', '<leader>l', ':lua vim.lsp.buf.format()<CR>', { noremap = true, silent = true })

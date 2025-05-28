@@ -65,6 +65,12 @@ tools:
       F: E
     lint-ignore-exit-code: true
 
+  pyright: &pyright
+    lint-command: "pyright-langserver --stdio"
+    lint-stdin: true
+    lint-ignore-exit-code: true
+    lint-after-open: true
+
   ruff: &ruff
     lint-command: 'ruff check --force-exclude --output-format=text ${INPUT}'
     lint-stdin: false
@@ -134,8 +140,6 @@ languages:
     #- <<: *sql-lint
   python:
     - <<: *mypy_lint
-    - <<: *ruff
-    - <<: *black
   sh:
     - <<: *shfmt
   sql:
