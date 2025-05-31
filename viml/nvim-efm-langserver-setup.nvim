@@ -8,8 +8,9 @@ function! SetupLsp()
 
   -- Manually configure efm-langserver
   local efm_config = {
-    cmd = {"efm-langserver", "-logfile", "/tmp/efm-langserver-nvim.log", "-loglevel", "5"},
-    filetypes = {},
+    -- NOTE: loglevel is set in the config file
+    cmd = {"efm-langserver", "-logfile", "/tmp/efm-langserver-nvim.log"},
+    filetypes = { "javascript", "python" },
     init_options = {
       documentFormatting = true,
       documentRangeFormatting = true,
@@ -29,7 +30,7 @@ function! SetupLsp()
     end,
     settings = {
       rootMarkers = {},
-      languages = {} -- Let efm-langserver use the config file
+      languages = { "javascript", "python" } -- Let efm-langserver use the config file
     }
   }
 
