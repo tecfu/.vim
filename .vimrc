@@ -32,23 +32,18 @@ set fileencoding=utf8
 
 " For running nvim on git bash in windows
 if has('win32') || has('win64')
-  " Point to the bash.exe that comes with Git for Windows.
-  " Ensure this path is correct for your system.
-  " Sometimes it's 'C:/Program Files/Git/bin/bash.exe'
+  " This is a message to confirm the block is running. You can remove it later.
+  echom "Configuring shell for Windows..."
+
+  " 1. Set the shell executable. Use forward slashes.
   let &shell = 'C:/Program Files/Git/usr/bin/bash.exe'
 
-  " Necessary flags for bash
+  " 2. Set the flag to execute a command string.
   let &shellcmdflag = '-c'
-  let &shellxquote = ''    " Bash handles its own quoting for -c
-  let &shellquote = '"'    " Enclose command in double quotes
 
-  " Optional: For better handling of pipes and redirection with bash
-  " Check if these improve or break things with other plugins/commands
-  let &shellpipe = '2>&1 | tee'
-  let &shellredir = '>%s 2>&1'
-
-  " Optional: Use forward slashes for paths given to the shell
-  set shellslash
+  " 3. CRITICAL: Tell Neovim NOT to add extra quotes around the command.
+  " This fixes the ""git ..."" error.
+  let &shellxquote = ''
 endif
 
 " Check if $NVIM_CONFIG is empty (unset variables often evaluate to empty)
