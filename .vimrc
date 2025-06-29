@@ -543,12 +543,56 @@ autocmd Filetype nvim,vim,vimrc,uml
 autocmd Filetype javascript,typescript
   \ let &foldlevel=max(map(range(1, line('$')), 'foldlevel(v:val)'))
 
-" Use native codefolding for markdown
-" Enable spellchecking for markdown
-" See: https://bitcrowd.dev/folding-sections-of-markdown-in-vim
-let g:markdown_folding=1
-autocmd Filetype markdown
-  \ setlocal foldlevel=2 spell
+" Better markdown folding (Robust Vimscript for legacy Vim / no Treesitter)
+" Set to 1 to enable, 0 to disable.
+let g:markdown_folding = 1
+
+if g:markdown_folding
+    autocmd FileType markdown setlocal foldmethod=expr foldexpr=MarkdownLevel() foldlevel=1 | setlocal spell
+endif
+
+function! MarkdownLevel()
+    " --- CHECK IF INSIDE A FENCED CODE BLOCK ---
+    " This is the definitive fix. We search for the enclosing ``` fences.
+    " searchpairpos() finds the [line, col] of matching patterns.
+    " 'b' flag searches backwards from the current line. 'W' prevents file wrap.
+    let start_fence = searchpairpos('^```', '', '^```', 'nbW')
+
+    " If start_fence[0] is not 0, it means we found an opening ``` before our line.
+    if start_fence[0] != 0
+        " Now, from that opening fence, search forward for the closing fence.
+        let end_fence = searchpairpos('^```', '', '^```', 'nW', 'line("'.start_fence[0].'")')
+        " If we are after the start and before the end (or if the block is unclosed),
+        " we are inside a code block. Return '=' to treat it as simple content.
+        if end_fence[0] == 0 || v:lnum < end_fence[0]
+            return '='
+        endif
+    endif
+
+    " --- If not in a code block, proceed with header checking ---
+    let line = getline(v:lnum)
+
+    " Match ATX-style headers (e.g., ### Header)
+    let atx_level = len(matchstr(line, '^#\+'))
+    if atx_level > 0 && atx_level < len(line) && line[atx_level] == ' '
+        return '>' . atx_level
+    endif
+
+    " Match Setext-style headers by looking at the *next* line.
+    if v:lnum < line('$')
+        let next_line = getline(v:lnum + 1)
+        if line !~ '^\s*$' " Ensure current line is not blank
+            if next_line =~ '^=\+$'
+                return '>1'
+            elseif next_line =~ '^\-+$'
+                return '>2'
+            endif
+        endif
+    endif
+
+    " If it's not a header, keep the same fold level.
+    return '='
+endfunction
 
 autocmd Filetype text
   \ setlocal spell
@@ -558,7 +602,6 @@ augroup no_filetype
   autocmd BufEnter * if &filetype ==# '' | setlocal nospell | endif
 augroup END
 "}}}
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Files, Backups, Undo, and Sessions
