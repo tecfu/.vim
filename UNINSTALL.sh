@@ -10,42 +10,43 @@
 #
 ###
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
-
-# declare array
+# declare array of symlinks to be removed
 SYMLINKS=()
-SYMLINKS+=("$DIR/.vim $HOME/.vim")
+SYMLINKS+=("$DIR $HOME/.vim")
 SYMLINKS+=("$DIR/.vimrc $HOME/.vimrc")
 SYMLINKS+=("$DIR/init.vim $HOME/.config/nvim/init.vim")
 SYMLINKS+=("$DIR/coc-settings.json $HOME/.config/nvim/coc-settings.json")
-SYMLINKS+=("$DIR/efn-langserver-config.yaml $HOME/.config/efm-langserver/config.yaml")
+# --- ADDED EFM-LANGSERVER CONFIG AND WRAPPER SCRIPT ---
+SYMLINKS+=("$DIR/efm-langserver-config.yaml $HOME/.config/efm-langserver/config.yaml")
+SYMLINKS+=("$DIR/efm-langserver-linter-wrapper.sh $HOME/.config/efm-langserver/efm-langserver-linter-wrapper.sh")
 
 for i in "${SYMLINKS[@]}"; do
-  #echo $i
-  # split each command at the space to get config path
   IFS=' ' read -ra OUT <<< "$i"
-  #${OUT[1]} is path config file should be at
+  SOURCE="${OUT[0]}"
+  TARGET="${OUT[1]}"
 
-  #nothing to do
-  if [ ! -f "${OUT[1]}" ] && [ ! -d "${OUT[1]}" ]; then
-    echo "CONFIG FILES ALREADY REMOVED"
-  #restore old configs
-  elif [ "$(readlink -- "${OUT[1]}")" != "${OUT[0]}" ]; then
-    echo "REMOVING ${OUT[1]}.saved"
-    mv "${OUT[1]}.saved" "${OUT[1]}"
+  # Check if the target is a symlink and points to our source file/dir
+  if [ -L "$TARGET" ] && [ "$(readlink -- "$TARGET")" == "$SOURCE" ]; then
+    echo "REMOVING SYMLINK: $TARGET"
+    rm "$TARGET"
+
+    # If a backup exists from the installation, restore it
+    if [ -e "$TARGET.saved" ]; then
+      echo "RESTORING BACKUP: $TARGET.saved -> $TARGET"
+      mv "$TARGET.saved" "$TARGET"
+    fi
+  else
+    echo "SKIPPING: $TARGET is not a symlink managed by this script."
   fi
 done
 
-#### Disable capturing of Ctrl-S, Ctrl-Q in terminal mode:
-TARGETFILE1=$HOME"/.bashrc"
-SEARCHSTRING1="stty -ixon > /dev/null 2>/dev/null"
-
-if grep -Fxq "$SEARCHSTRING1" $TARGETFILE1
-then
-  #remove code from file
-  sed -i '/$SEARCHSTRING1/d' $TARGETFILE1
+# Clean up the efm-langserver directory if it's now empty
+if [ -d "$HOME/.config/efm-langserver" ] && [ -z "$(ls -A "$HOME/.config/efm-langserver")" ]; then
+    echo "REMOVING empty directory: $HOME/.config/efm-langserver"
+    rmdir "$HOME/.config/efm-langserver"
 fi
 
 printf "\n"
 echo DONE.
-

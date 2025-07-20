@@ -12,3 +12,4 @@ Session.nvim
 .DS_Store
 tags
 .aider*
+efm-langserver.log

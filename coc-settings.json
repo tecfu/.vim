@@ -20,29 +20,30 @@
       "settings": {},
       "sources": ["https://github.com/hashicorp/terraform-ls"]
     },
-    "coc-vscode-json-language-server": {
-      "filetypes": ["json", "jsonc"],
-      "command": "vscode-json-language-server",
-      "args": ["--stdio"],
-      "settings": {
-        "json": {
-          "schemas": [],
-          "format": {
-            "enable": false
-          },
-          "validate": {
-            "enable": true
-          }
-        }
-      },
-      "trace.server": "verbose",
-      "initializationOptions": {
-        "documentFormatting": false,
-        "documentRangeFormatting": false
-      },
-      "sources": ["npm i -g vscode-langservers-extracted"],
-      "rationale": "vscode-json-language-server for linting."
-    },
+    // this server works great, commenting out to use coc-efm-langserver for testing
+    // "coc-vscode-json-language-server": {
+    //   "filetypes": ["json", "jsonc"],
+    //   "command": "vscode-json-language-server",
+    //   "args": ["--stdio"],
+    //   "settings": {
+    //     "json": {
+    //       "schemas": [],
+    //       "format": {
+    //         "enable": false
+    //       },
+    //       "validate": {
+    //         "enable": true
+    //       }
+    //     }
+    //   },
+    //   "trace.server": "verbose",
+    //   "initializationOptions": {
+    //     "documentFormatting": false,
+    //     "documentRangeFormatting": false
+    //   },
+    //   "sources": ["npm i -g vscode-langservers-extracted"],
+    //   "rationale": "vscode-json-language-server for linting."
+    // },
     // coc chokes on diagnostics from this server, errors on workspace/didChangeWorkspaceFolders
     // "coc-vscode-eslint-language-server": {
     //   "filetypes": ["javascript", "typescript"],
@@ -106,10 +107,10 @@
     //},
     "coc-efm-langserver-json-jsonc": {
       "filetypes": ["json", "jsonc"],
-      "command": "$HOME/go/bin/efm-langserver",
-      "args": [],
-      //   "command": "nc",
-      //   "args": ["localhost", "12345"],
+      //"command": "$HOME/go/bin/efm-langserver",
+      //"args": [],
+      "command": "nc",
+      "args": ["localhost", "12345"],
 
       "rootPatterns": [".git/"],
       "trace.server": "verbose",
@@ -127,6 +128,29 @@
       ],
       "alternatives": ["coc-json"]
     },
+    "coc-efm-langserver-markdownlint": {
+      "filetypes": ["markdown", "md"],
+      //"command": "$HOME/go/bin/efm-langserver",
+      //"args": [
+      //  "-c",
+      //  "/home/base/.vim/efm-langserver-config.yaml"
+      //],
+      "command": "nc",
+      "args": ["localhost", "12345"],
+      "trace.server": "verbose",
+      "initializationOptions": {
+        "documentFormatting": true,
+        "documentRangeFormatting": true,
+        "documentSymbol": true,
+        "codeAction": true,
+        "completion": true
+      },
+      "rationale": "More granular than coc-markdownlint, uses efm-langserver",
+      "sources": [
+        "npm install -g markdownlint-cli"
+      ],
+      "alternatives": ["coc-markdownlint"]
+    },
     "pyright": {
       "command": "pyright-langserver",
       "filetypes": ["python"],
@@ -143,12 +167,6 @@
       "sources": ["npm install -g pyright"],
       "rationale": "Static type checker for Python"
     }
-  },
-  "markdownlint.config": {
-    "default": true,
-    "line_length": false,
-    "no-bare-urls": false,
-    "fenced-code-language": false
   },
   "suggest.enablePreselect": false,
   "yaml.customTags": [
