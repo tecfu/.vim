@@ -543,56 +543,62 @@ autocmd Filetype nvim,vim,vimrc,uml
 autocmd Filetype javascript,typescript
   \ let &foldlevel=max(map(range(1, line('$')), 'foldlevel(v:val)'))
 
-" Better markdown folding (Robust Vimscript for legacy Vim / no Treesitter)
-" Set to 1 to enable, 0 to disable.
-let g:markdown_folding = 1
+"======================================================================
+" => Better Markdown Folding
+"======================================================================
+" This autocmd group sets up custom folding for markdown files.
+augroup MarkdownFolding
+    " Clear any existing autocommands in this group to prevent duplication
+    autocmd!
+    " When a markdown file is opened, set our custom folding rules.
+    autocmd FileType markdown setlocal foldmethod=expr foldexpr=MarkdownLevel() foldlevel=1
+    autocmd FileType markdown setlocal spell
+augroup END
 
-if g:markdown_folding
-    autocmd FileType markdown setlocal foldmethod=expr foldexpr=MarkdownLevel() foldlevel=1 | setlocal spell
-endif
-
+" The function that determines the fold level of each line in a markdown file.
 function! MarkdownLevel()
     " --- CHECK IF INSIDE A FENCED CODE BLOCK ---
-    " This is the definitive fix. We search for the enclosing ``` fences.
-    " searchpairpos() finds the [line, col] of matching patterns.
-    " 'b' flag searches backwards from the current line. 'W' prevents file wrap.
+    " searchpairpos() is perfect for finding matching fences.
+    " 'nbW' means: search backwards ('b'), don't update cursor ('n'), no wrap ('W').
     let start_fence = searchpairpos('^```', '', '^```', 'nbW')
 
-    " If start_fence[0] is not 0, it means we found an opening ``` before our line.
+    " If start_fence[0] is not 0, we found an opening fence before the current line.
     if start_fence[0] != 0
-        " Now, from that opening fence, search forward for the closing fence.
+        " Now search forward for the closing fence from the line where the block started.
         let end_fence = searchpairpos('^```', '', '^```', 'nW', 'line("'.start_fence[0].'")')
-        " If we are after the start and before the end (or if the block is unclosed),
-        " we are inside a code block. Return '=' to treat it as simple content.
+        " If the block is unclosed (end_fence[0] == 0) or we are before the closing fence,
+        " then we are inside a code block. Return '=' to keep it at the same fold level.
         if end_fence[0] == 0 || v:lnum < end_fence[0]
             return '='
         endif
     endif
 
-    " --- If not in a code block, proceed with header checking ---
+    " --- If not in a code block, check for headers ---
     let line = getline(v:lnum)
 
-    " Match ATX-style headers (e.g., ### Header)
+    " Match ATX-style headers (e.g., # Header, ## Header).
     let atx_level = len(matchstr(line, '^#\+'))
+    " Check that there's a space after the hashes, which is required by spec.
     if atx_level > 0 && atx_level < len(line) && line[atx_level] == ' '
         return '>' . atx_level
     endif
 
     " Match Setext-style headers by looking at the *next* line.
-    if v:lnum < line('$')
+    if v:lnum < line('$') " Make sure we're not on the last line
         let next_line = getline(v:lnum + 1)
-        if line !~ '^\s*$' " Ensure current line is not blank
-            if next_line =~ '^=\+$'
+        if line !~ '^\s*$' " Current line must not be blank
+            if next_line =~ '^=\+$' " Next line is all '='
                 return '>1'
-            elseif next_line =~ '^\-+$'
+            elseif next_line =~ '^\-+$' " Next line is all '-'
                 return '>2'
             endif
         endif
     endif
 
-    " If it's not a header, keep the same fold level.
+    " If it's not a header or inside a code block, it's regular content.
     return '='
 endfunction
+
 
 autocmd Filetype text
   \ setlocal spell
