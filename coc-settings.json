@@ -107,10 +107,10 @@
     //},
     "coc-efm-langserver-json-jsonc": {
       "filetypes": ["json", "jsonc"],
-      //"command": "$HOME/go/bin/efm-langserver",
-      //"args": [],
-      "command": "nc",
-      "args": ["localhost", "12345"],
+      "command": "$HOME/go/bin/efm-langserver",
+      "args": [],
+      //"command": "nc",
+      //"args": ["localhost", "12345"],
 
       "rootPatterns": [".git/"],
       "trace.server": "verbose",
@@ -130,13 +130,10 @@
     },
     "coc-efm-langserver-markdownlint": {
       "filetypes": ["markdown", "md"],
-      //"command": "$HOME/go/bin/efm-langserver",
-      //"args": [
-      //  "-c",
-      //  "/home/base/.vim/efm-langserver-config.yaml"
-      //],
-      "command": "nc",
-      "args": ["localhost", "12345"],
+      "command": "$HOME/go/bin/efm-langserver",
+      "args": [],
+      //  "command": "nc",
+      //  "args": ["localhost", "12345"],
       "trace.server": "verbose",
       "initializationOptions": {
         "documentFormatting": true,
