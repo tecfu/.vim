@@ -10,7 +10,7 @@ vim.lsp.set_log_level('trace')
 -- Setup efm-langserver via github.com/tecful/efm-langserver
 local efm_config = {
   -- NOTE: loglevel is set in the config file
-    cmd = { vim.fn.expand("~") .. "/Applications/efm-langserver-updated", "-logfile", "/tmp/efm-langserver-nvim.log" },
+    cmd = { vim.fn.expand("~") .. "/go/bin/efm-langserver", "-logfile", "/tmp/efm-langserver-nvim.log" },
   init_options = {
     documentFormatting = true,
     documentRangeFormatting = true,
