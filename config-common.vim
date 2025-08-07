@@ -249,7 +249,7 @@ Plug 'joshdick/onedark.vim'
 "nmap ga <Plug>(EasyAlign)
 
 
-Plug 'jupyter-vim/jupyter-vim'
+" Plug 'jupyter-vim/jupyter-vim'
 
 
 " Plug 'kien/ctrlp.vim'
