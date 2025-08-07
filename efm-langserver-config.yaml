@@ -22,8 +22,8 @@ tools:
   #   rootMarkers: [".git/", "package.json"]
 
   eslint_d: &eslint_d
-    lint-command: "$HOME/.config/efm-langserver/efm-langserver-linter-wrapper.sh --filenames='eslint.config.js,eslint.config.mjs,eslint.config.cjs,eslint.config.ts,eslint.config.mts,eslint.config.cts' --fallback-config=\"$HOME/.config/eslint/eslint.config.js\" --filename-arg-prefix='--stdin-filename=' --config-flag='-c' -- eslint_d --f unix --stdin --stdin-filename=${INPUT}"
-    format-command: "$HOME/.config/efm-langserver/efm-langserver-linter-wrapper.sh --filenames='eslint.config.js,eslint.config.mjs,eslint.config.cjs,eslint.config.ts,eslint.config.mts,eslint.config.cts' --fallback-config=\"$HOME/.config/eslint/eslint.config.js\" --filename-arg-prefix='--stdin-filename=' --config-flag='-c' -- eslint_d --fix-to-stdout --stdin --stdin-filename=${INPUT}"
+    lint-command: "$HOME/.vim/efm-langserver-linter-wrapper.sh --filenames='eslint.config.js,eslint.config.mjs,eslint.config.cjs,eslint.config.ts,eslint.config.mts,eslint.config.cts' --fallback-config=\"$HOME/.config/eslint/eslint.config.js\" --filename-arg-prefix='--stdin-filename=' --config-flag='-c' -- eslint_d --f unix --stdin --stdin-filename=${INPUT}"
+    format-command: "$HOME/.vim/efm-langserver-linter-wrapper.sh --filenames='eslint.config.js,eslint.config.mjs,eslint.config.cjs,eslint.config.ts,eslint.config.mts,eslint.config.cts' --fallback-config=\"$HOME/.config/eslint/eslint.config.js\" --filename-arg-prefix='--stdin-filename=' --config-flag='-c' -- eslint_d --fix-to-stdout --stdin --stdin-filename=${INPUT}"
     lint-stdin: true
     format-stdin: true
     lint-ignore-exit-code: true
@@ -41,8 +41,8 @@ tools:
   #   rootMarkers: [".git/", "package.json"]
 
   eslint: &eslint
-    lint-command: "$HOME/.config/efm-langserver/efm-langserver-linter-wrapper.sh --filenames='eslint.config.js,eslint.config.mjs,eslint.config.cjs,eslint.config.ts,eslint.config.mts,eslint.config.cts' --fallback-config=\"$HOME/.config/eslint/eslint.config.js\" --filename-arg-prefix='--stdin-filename=' --config-flag='-c' -- eslint --format unix --stdin --stdin-filename=${INPUT}"
-    format-command: "$HOME/.config/efm-langserver/efm-langserver-linter-wrapper.sh --filenames='eslint.config.js,eslint.config.mjs,eslint.config.cjs,eslint.config.ts,eslint.config.mts,eslint.config.cts' --fallback-config=\"$HOME/.config/eslint/eslint.config.js\" --filename-arg-prefix='--stdin-filename=' --config-flag='-c' -- eslint --format unix --fix-to-stdout --stdin --stdin-filename=${INPUT}"
+    lint-command: "$HOME/.vim/efm-langserver-linter-wrapper.sh --filenames='eslint.config.js,eslint.config.mjs,eslint.config.cjs,eslint.config.ts,eslint.config.mts,eslint.config.cts' --fallback-config=\"$HOME/.config/eslint/eslint.config.js\" --filename-arg-prefix='--stdin-filename=' --config-flag='-c' -- eslint --format unix --stdin --stdin-filename=${INPUT}"
+    format-command: "$HOME/.vim/efm-langserver-linter-wrapper.sh --filenames='eslint.config.js,eslint.config.mjs,eslint.config.cjs,eslint.config.ts,eslint.config.mts,eslint.config.cts' --fallback-config=\"$HOME/.config/eslint/eslint.config.js\" --filename-arg-prefix='--stdin-filename=' --config-flag='-c' -- eslint --format unix --fix-to-stdout --stdin --stdin-filename=${INPUT}"
     lint-stdin: true
     format-stdin: true
     lint-ignore-exit-code: true
@@ -74,7 +74,7 @@ tools:
 
   md_markdownlint: &md_markdownlint
     # The LINT command still uses the wrapper for intelligent config detection.
-    lint-command: "$HOME/.config/efm-langserver/efm-langserver-linter-wrapper.sh --filenames='.markdownlint.json,.markdownlint.yaml,.markdownlint.yml,.markdownlintrc' --fallback-config=\"$HOME/.config/markdownlint/config.json\" --filename-arg-prefix='' --config-flag='--config' -- /home/base/.volta/bin/markdownlint ${INPUT}"
+    lint-command: "$HOME/.vim/efm-langserver-linter-wrapper.sh --filenames='.markdownlint.json,.markdownlint.yaml,.markdownlint.yml,.markdownlintrc' --fallback-config=\"$HOME/.config/markdownlint/config.json\" --filename-arg-prefix='' --config-flag='--config' -- /home/base/.volta/bin/markdownlint ${INPUT}"
     lint-stdin: false
     lint-after-open: true
     lint-formats:
