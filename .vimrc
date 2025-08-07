@@ -58,7 +58,7 @@ endif
 augroup DelayedEchoMsg
   autocmd!
   autocmd VimEnter * call s:ScheduleEchoMessage(
-        \ "Current NVIM_CONFIG=" . g:nvim_config,
+        \ "NVIM_CONFIG=" . g:nvim_config . " | COC_PROFILE=" . g:coc_profile,
         \ 500
         \ )
 augroup END

@@ -1,0 +1,39 @@
+// For unknown reasons this file will always be noexpandtab in nvim
+{
+  "diagnostic.virtualTextCurrentLineOnly": false,
+  "diagnostic.messageTarget": "echo",
+  "diagnostic.virtualText": true,
+  "diagnostic.checkCurrentLine": true,
+  "diagnostic.enable": true,
+  "diagnostic.autoRefresh": true,
+  "diagnostic.locationlistUpdate": true,
+  "diagnostic.errorSign": "✖",
+  "diagnostic.warningSign": "⚑",
+  "diagnostic.infoSign": "⚑",
+  "diagnostic.hintSign": "⚑",
+  "languageserver": {
+  },
+  "suggest.enablePreselect": false,
+  "yaml.customTags": [
+    "!Ref scalar",
+    "!Sub scalar",
+    "!GetAtt",
+    "!Base64",
+    "!FindInMap",
+    "!GetAZs",
+    "!ImportValue",
+    "!Join",
+    "!Select",
+    "!Split",
+    "!If",
+    "!Equals",
+    "!Equals mapping",
+    "!Not",
+    "!And",
+    "!Or",
+    "!Condition"
+  ],
+  "yaml.format.enable": true,
+  "yaml.hover": true,
+  "yaml.completion": true
+}

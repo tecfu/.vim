@@ -39,6 +39,35 @@ git clone --recurse-submodules git://github.com/tecfu/.vim ~/.vim
 :CocConfig
 ```
 
+#### CoC Profiles
+
+This configuration supports multiple, isolated `coc.nvim` profiles. Each profile has its own `coc-settings.json` and `extensions.json`, located in `~/.vim/coc-profiles/<profile_name>/`.
+
+The active profile is determined by the `COC_PROFILE` environment variable. If it's not set, it defaults to `default`.
+
+**Switching Profiles:**
+
+To use a different profile for a single session, set the `COC_PROFILE` environment variable when launching Neovim. For example, to use a profile named `efm`:
+
+```sh
+COC_PROFILE=efm nvim
+```
+
+To make a profile the default for all sessions, you can export the variable in your shell's startup file (e.g., `~/.bashrc`, `~/.zshrc`):
+
+```sh
+export COC_PROFILE=efm
+```
+
+**Creating a New Profile:**
+
+1.  Create a directory for your new profile:
+    ```sh
+    mkdir -p ~/.vim/coc-profiles/my-new-profile
+    ```
+2.  Add a `coc-settings.json` to that directory.
+3.  Add an `extensions.json` to that directory to define the CoC extensions for that profile.
+
 ## Installation for Neovim
 
 - Add the following to ~.config/nvim/init.vim:

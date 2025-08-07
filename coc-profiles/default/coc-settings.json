@@ -1,0 +1,120 @@
+// For unknown reasons this file will always be noexpandtab in nvim
+{
+  "diagnostic.virtualTextCurrentLineOnly": false,
+  "diagnostic.messageTarget": "echo",
+  "diagnostic.virtualText": true,
+  "diagnostic.checkCurrentLine": true,
+  "diagnostic.enable": true,
+  "diagnostic.autoRefresh": true,
+  "diagnostic.locationlistUpdate": true,
+  "diagnostic.errorSign": "✖",
+  "diagnostic.warningSign": "⚑",
+  "diagnostic.infoSign": "⚑",
+  "diagnostic.hintSign": "⚑",
+  "languageserver": {
+    "coc-efm-langserver": {
+      "filetypes": [
+        "javascript",
+        "typescript",
+        "json",
+        "jsonc",
+        "markdown",
+        "md",
+        "python"
+      ],
+      "command": "efm-langserver",
+      "args": [],
+      //  "command": "nc",
+      //  "args": ["localhost", "12345"],
+      "trace.server": "verbose",
+      "initializationOptions": {
+        "documentFormatting": true,
+        "documentRangeFormatting": true,
+        "documentSymbol": true,
+        "codeAction": true,
+        "completion": true
+      },
+    },
+    "coc-terraform-ls": {
+      "filetypes": ["terraform", "tf"],
+      "command": "terraform-ls",
+      "args": ["serve"],
+      "initializationOptions": {},
+      "settings": {},
+      "sources": ["https://github.com/hashicorp/terraform-ls"]
+    },
+    // this server works great, commenting out to use coc-efm-langserver for testing
+    // "coc-vscode-json-language-server": {
+    //   "filetypes": ["json", "jsonc"],
+    //   "command": "vscode-json-language-server",
+    //   "args": ["--stdio"],
+    //   "settings": {
+    //     "json": {
+    //       "schemas": [],
+    //       "format": {
+    //         "enable": false
+    //       },
+    //       "validate": {
+    //         "enable": true
+    //       }
+    //     }
+    //   },
+    //   "trace.server": "verbose",
+    //   "initializationOptions": {
+    //     "documentFormatting": false,
+    //     "documentRangeFormatting": false
+    //   },
+    //   "sources": ["npm i -g vscode-langservers-extracted"],
+    //   "rationale": "vscode-json-language-server for linting."
+    // },
+    // coc chokes on diagnostics from this server, errors on workspace/didChangeWorkspaceFolders
+    // "coc-vscode-eslint-language-server": {
+    //   "filetypes": ["javascript", "typescript"],
+    //   //"command": "nc",
+    //   //"args": ["localhost", "12345"],
+    //   "command": "vscode-eslint-language-server",
+    //   "args": ["--stdio"],
+    //   "trace.server": "verbose",
+    //   "initializationOptions": {},
+    //   "sources": ["npm i -g vscode-langservers-extracted"],
+    //   "rationale": "uses vscode eslint, but not working"
+    // },
+    // "coc-manual-vscode-eslint-language-server": {
+    //   "filetypes": ["javascript", "typescript"],
+    //   "command": "nc",
+    //   "args": ["localhost", "12346"],
+    //   // "command": "node",
+    //   // "args": ["/home/base/vscode-eslint/server/out/eslintServer.js", "--stdio"],
+    //   "trace.server": "verbose",
+    //   "initializationOptions": {
+    //     "workspaceFolder": "/home/base/Documents/bitbucket/aws-lambda-ts-sls-cloudformation",
+    //     "workingDirectory": "/home/base/Documents/bitbucket/aws-lambda-ts-sls-cloudformation"
+    //   },
+    //   "sources": ["https://github.com/microsoft/vscode-eslint"],
+    //   "rationale": "uses vscode eslint, manually extracted/installed"
+    // },
+  },
+  "suggest.enablePreselect": false,
+  "yaml.customTags": [
+    "!Ref scalar",
+    "!Sub scalar",
+    "!GetAtt",
+    "!Base64",
+    "!FindInMap",
+    "!GetAZs",
+    "!ImportValue",
+    "!Join",
+    "!Select",
+    "!Split",
+    "!If",
+    "!Equals",
+    "!Equals mapping",
+    "!Not",
+    "!And",
+    "!Or",
+    "!Condition"
+  ],
+  "yaml.format.enable": true,
+  "yaml.hover": true,
+  "yaml.completion": true
+}

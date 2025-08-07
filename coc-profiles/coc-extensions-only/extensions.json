@@ -1,0 +1,15 @@
+[
+  "coc-explorer",
+  "coc-cfn-lint",
+  "coc-eslint",
+  "coc-html",
+  "coc-markdownlint",
+  "coc-marketplace",
+  "coc-sh",
+  "coc-sql",
+  "coc-toml",
+  "coc-tsserver",
+  "coc-vimlsp",
+  "coc-yaml",
+  "@hexuhua/coc-copilot"
+]

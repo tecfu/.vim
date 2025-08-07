@@ -1,28 +1,25 @@
-let g:coc_config_home = expand('$HOME/.vim')
+" Determine CoC profile, default to 'default' if not set by .vimrc
+" Check if $COC_PROFILE is empty
+if empty($COC_PROFILE)
+  let g:coc_profile = "default"
+else
+  let g:coc_profile = $COC_PROFILE
+endif
+
+let g:coc_profile_dir = expand('$HOME/.vim/coc-profiles/') . g:coc_profile
+
+" Set coc_config_home to the profile directory. CoC will look for coc-settings.json here.
+let g:coc_config_home = g:coc_profile_dir
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-" coc extensions
-"
-" @todo change lsps to use efm langserver
-let g:coc_global_extensions = [
-      \ 'coc-cfn-lint',
-      \ 'coc-eslint',
-      \ 'coc-html',
-      \ 'coc-markdownlint',
-      \ 'coc-marketplace',
-      \ 'coc-sh',
-      \ 'coc-sql',
-      \ 'coc-toml',
-      \ 'coc-tsserver',
-      \ 'coc-vimlsp',
-      \ 'coc-yaml',
-      \ '@hexuhua/coc-copilot',
-      \ ]
-
-"let g:coc_global_extensions = [
-"    \ 'coc-copilot',
-"    \ '@hexuhua/coc-copilot', " https://github.com/hexh250786313/coc-copilot
-"\ ]
+" Load extensions from extensions.json if it exists
+let s:extensions_json_path = g:coc_profile_dir . '/extensions.json'
+if filereadable(s:extensions_json_path)
+  let g:coc_global_extensions = json_decode(join(readfile(s:extensions_json_path), "\n"))
+else
+  " Fallback to a minimal set of extensions if file doesn't exist
+  let g:coc_global_extensions = ['coc-marketplace', '@hexuhua/coc-copilot']
+endif
 
 " Function to disable coc-yaml for specific files
 "function! DisableCocYamlForCF()
