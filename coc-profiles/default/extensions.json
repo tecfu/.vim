@@ -1,5 +1,4 @@
 [
   "coc-explorer",
-  "coc-marketplace",
-  "@hexuhua/coc-copilot"
+  "coc-marketplace"
 ]

@@ -168,7 +168,25 @@ tools:
     format-command: "shfmt -ci -s -bn"
     format-stdin: true
 
+  csharpier-formatter: &csharpier-formatter
+    format-command: "csharpier --write-stdin"
+    format-stdin: true
+
+  dotnet-format-linter: &dotnet-format-linter
+    lint-command: "dotnet-format --verify-no-changes --verbosity diagnostic ${INPUT}"
+    lint-stdin: false
+    lint-formats:
+      - "%f(%l,%c): warning %m"
+      - "%f(%l,%c): error %m"
+    root-markers:
+      - ".git/"
+      - "*.sln"
+      - "*.csproj"
+
 languages:
+  csharp:
+    - <<: *csharpier-formatter
+    - <<: *dotnet-format-linter
   go:
     - <<: *golangci_lint
     - <<: *gofmt
