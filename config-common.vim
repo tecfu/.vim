@@ -432,10 +432,11 @@ Plug 'tecfu/YankRing.vim'
 
 " ```
 " - GIT: Switch branches quickly (fugitive plugin) run :Merginal
+"   Disabled due to installation issues
 " ```
-Plug 'tecfu/vim-merginal'
-autocmd FileType merginal nnoremap <buffer> <Enter> :MerginalCheckout<CR>
-nnoremap <leader>b :Merginal<CR>
+"Plug 'tecfu/vim-merginal'
+"autocmd FileType merginal nnoremap <buffer> <Enter> :MerginalCheckout<CR>
+"nnoremap <leader>b :Merginal<CR>
 
 
 " Move highlighted text
