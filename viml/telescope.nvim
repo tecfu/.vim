@@ -296,7 +296,7 @@ endfunction
 
 autocmd VimEnter * call SetupTelescopeCoc()
 
-nnoremap <leader>fs <cmd>Telescope lsp_document_symbols<cr>
+nnoremap <leader>fs <cmd>Telescope lsp_workspace_symbols<cr>
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep initial_mode=insert default_selection_index=1<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
