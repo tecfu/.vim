@@ -76,10 +76,15 @@ call plug#begin('~/.vim/plugins-vim')
   " - Makes Gvim only colorschems work in term / nc with neovim
   Plug 'godlygeek/csapprox'
 
+  " - Replaces gitgutter, which erros on managed windows devices
+  if has('nvim') || has('patch-8.0.902')
+    Plug 'mhinz/vim-signify'
+  else
+    Plug 'mhinz/vim-signify', { 'tag': 'legacy' }
+  endif
 
   " - POLYFILL: Neovim Healthcheck
   Plug 'rhysd/vim-healthcheck'
-
 
   " ```
   " - WIDGET: Terminal/ Vimshell

@@ -57,15 +57,6 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => COMMON PLUGINS
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-Plug 'airblade/vim-gitgutter'
-if has('nvim')
-  let g:gitgutter_sign_removed_first_line = "^_"
-  let g:gitgutter_highlight_lines = 1
-endif
-"let g:gitgutter_highlight_linenrs = 1
-
-
 Plug 'ap/vim-css-color'
 
 

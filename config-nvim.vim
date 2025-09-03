@@ -17,7 +17,9 @@ call plug#begin('~/.vim/plugins-nvim')
   "source $HOME/.vim/viml/project.nvim
   source $HOME/.vim/viml/telescope.nvim
   source $HOME/.vim/viml/aider.vim
-  source $HOME/.vim/viml/copilot-chat.nvim
+  " disabled until can configure not to use premium requests from github
+  "source $HOME/.vim/viml/copilot-chat.nvim 
+  source $HOME/.vim/viml/gitsigns.nvim
 
   if $NVIM_CONFIG == 'cmp'
     "source $HOME/.vim/viml/codecompanion.nvim
