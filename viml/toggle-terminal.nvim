@@ -10,11 +10,13 @@ autocmd TermOpen * setlocal bufhidden=hide
 nnoremap <C-Space> :call ToggleTerminal()<CR>
 inoremap <C-Space> <esc>:call ToggleTerminal()<CR>
 vnoremap <C-Space> :call ToggleTerminal()<CR>
+tnoremap <C-Space> <C-\><C-n>:call ToggleTerminal()<CR>
 
 " linux
 nnoremap <C-@> :call ToggleTerminal()<CR>
 inoremap <C-@> <esc>:call ToggleTerminal()<CR>
 vnoremap <C-@> :call ToggleTerminal()<CR>
+tnoremap <C-@> <C-\><C-n>:call ToggleTerminal()<CR>
 
 let g:custom_terminal_buffer = -1
 let g:terminal_height = 13
