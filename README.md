@@ -133,22 +133,37 @@ export NVIM_CONFIG=cmp-efm
 
 **Configuration:**
 
-The list of enabled language servers is defined in `~/.vim/lua/lsp_servers.lua`:
+Language servers are dynamically loaded from `~/.vim/efm-langserver-config.yaml`. This provides a single source of truth for all your development tools.
 
-```lua
-return {
-  'ts_ls',    -- TypeScript/JavaScript
-  'pyright',  -- Python
-  'gopls',    -- Go
-  -- Add more servers here
-}
+**Adding a Language Server:**
+
+To add a new LSP, edit `~/.vim/efm-langserver-config.yaml` and add a tool entry with the `lspconfig_name` field:
+
+```yaml
+tools:
+  ts_ls: &ts_ls
+    lspconfig_name: "ts_ls"
+    checkInstalled: "which typescript-language-server"
+    install: "npm install -g typescript-language-server typescript"
+    rootMarkers: [".git/", "package.json", "tsconfig.json"]
+
+  pyright: &pyright
+    lspconfig_name: "pyright"
+    checkInstalled: "which pyright"
+    install: "npm install -g pyright"
+    rootMarkers: [".git/", "requirements.txt"]
 ```
 
-Server names must match those used by [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md).
+**Configuration Fields:**
+
+- `lspconfig_name`: (Required) The name of the server in [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md)
+- `checkInstalled`: Command to check if the server is installed
+- `install`: Command to install the server
+- `rootMarkers`: Array of files/directories that indicate the project root (optional, defaults to common markers)
 
 **Installing language servers:**
 
-You must install the actual language server binaries on your system:
+You must install the actual language server binaries on your system. Use the `install` command from your YAML config:
 
 ```sh
 # TypeScript/JavaScript
@@ -171,14 +186,30 @@ rustup component add rust-analyzer
 2. Run `:LspInfo` to see active language servers
 3. You should see the server listed as attached to the buffer
 
+**Debug Logging:**
+
+To see detailed debug messages about LSP setup and attachment, set the `VIM_LOG_LEVEL` environment variable:
+
+```sh
+# Enable debug logging (level 3 or higher)
+VIM_LOG_LEVEL=3 nvim yourfile.js
+
+# Or export it for all sessions
+export VIM_LOG_LEVEL=3
+```
+
+Then check `:messages` to see the debug output.
+
 **Common language servers:**
 
 - JavaScript/TypeScript: `ts_ls`
-- Python: `pyright` or `pylsp`
+- Python: `pyright`, `basedpyright`, or `ruff`
 - Go: `gopls`
 - Rust: `rust_analyzer`
 - C/C++: `clangd`
 - Lua: `lua_ls`
+- SQL: `sqlls`
+- C#: `csharp_ls`
 
 See the [full list of available servers](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md).
 
@@ -301,12 +332,13 @@ npm config set registry https://registry.npmjs.org
 ## Plugin List
 
 <!---PLUGINS-->
+
 | Name                                         | Description                                                                                                 | Website                                                        |
 | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
 | ahmedkhalf/project.nvim                      | The superior project management solution for neovim.                                                        | http://github.com/ahmedkhalf/project.nvim                      |
 | ap/vim-css-color                             | Preview colours in source code while editing                                                                | http://github.com/ap/vim-css-color                             |
 | bling/vim-airline                            | lean & mean status/tabline for vim that's light as air                                                      | http://github.com/bling/vim-airline                            |
-| bronson/vim-visual-star-search               | Start a * or # search from a visual block                                                                   | http://github.com/bronson/vim-visual-star-search               |
+| bronson/vim-visual-star-search               | Start a \* or # search from a visual block                                                                  | http://github.com/bronson/vim-visual-star-search               |
 | bullets-vim/bullets.vim                      | 🔫 Bullets.vim is a Vim/NeoVim plugin for automated bullet lists.                                           | http://github.com/bullets-vim/bullets.vim                      |
 | CopilotC-Nvim/CopilotChat.nvim               | Chat with GitHub Copilot in Neovim                                                                          | http://github.com/CopilotC-Nvim/CopilotChat.nvim               |
 | danro/rename.vim                             | Rename the current file in the vim buffer + retain relative path.                                           | http://github.com/danro/rename.vim                             |
@@ -346,7 +378,7 @@ npm config set registry https://registry.npmjs.org
 | nvim-telescope/telescope-live-grep-args.nvim | Live grep with args                                                                                         | http://github.com/nvim-telescope/telescope-live-grep-args.nvim |
 | nvim-telescope/telescope.nvim                | Find, Filter, Preview, Pick. All lua, all the time.                                                         | http://github.com/nvim-telescope/telescope.nvim                |
 | nvim-treesitter/nvim-treesitter              | Nvim Treesitter configurations and abstraction layer                                                        | http://github.com/nvim-treesitter/nvim-treesitter              |
-| olimorris/codecompanion.nvim                 | ✨ AI Coding, Vim Style                                                                                      | http://github.com/olimorris/codecompanion.nvim                 |
+| olimorris/codecompanion.nvim                 | ✨ AI Coding, Vim Style                                                                                     | http://github.com/olimorris/codecompanion.nvim                 |
 | othree/eregex.vim                            | Perl/Ruby style regexp notation for Vim                                                                     | http://github.com/othree/eregex.vim                            |
 | preservim/vim-markdown                       | Markdown Vim Mode                                                                                           | http://github.com/preservim/vim-markdown                       |
 | rcarriga/nvim-dap-ui                         | A UI for nvim-dap                                                                                           | http://github.com/rcarriga/nvim-dap-ui                         |
@@ -364,6 +396,7 @@ npm config set registry https://registry.npmjs.org
 | vinnymeller/swagger-preview.nvim             | Start/stop a live preview of Swagger files from Neovim                                                      | http://github.com/vinnymeller/swagger-preview.nvim             |
 | zbirenbaum/copilot-cmp                       | Lua plugin to turn github copilot into a cmp source                                                         | http://github.com/zbirenbaum/copilot-cmp                       |
 | zbirenbaum/copilot.lua                       | Fully featured & enhanced replacement for copilot.vim complete with API for interacting with Github Copilot | http://github.com/zbirenbaum/copilot.lua                       |
+
 <!---ENDPLUGINS-->
 
 ### Notes

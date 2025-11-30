@@ -26,8 +26,8 @@ tools:
   eslint_d: &eslint_d
     checkInstalled: "which eslint_d"
     install: "npm install -g eslint_d"
-    lint-command: "$HOME/.vim/efm-langserver-linter-wrapper.sh --filenames='eslint.config.js,eslint.config.mjs,eslint.config.cjs,eslint.config.ts,eslint.config.mts,eslint.config.cts' --fallback-config=\"$HOME/.config/eslint/eslint.config.js\" --filename-arg-prefix='--stdin-filename=' --config-flag='-c' -- eslint_d --f unix --stdin --stdin-filename=${INPUT}"
-    format-command: "$HOME/.vim/efm-langserver-linter-wrapper.sh --filenames='eslint.config.js,eslint.config.mjs,eslint.config.cjs,eslint.config.ts,eslint.config.mts,eslint.config.cts' --fallback-config=\"$HOME/.config/eslint/eslint.config.js\" --filename-arg-prefix='--stdin-filename=' --config-flag='-c' -- eslint_d --fix-to-stdout --stdin --stdin-filename=${INPUT}"
+    lint-command: '$HOME/.vim/efm-langserver-linter-wrapper.sh --filenames=''eslint.config.js,eslint.config.mjs,eslint.config.cjs,eslint.config.ts,eslint.config.mts,eslint.config.cts'' --fallback-config="$HOME/.config/eslint/eslint.config.js" --filename-arg-prefix=''--stdin-filename='' --config-flag=''-c'' -- eslint_d --f unix --stdin --stdin-filename=${INPUT}'
+    format-command: '$HOME/.vim/efm-langserver-linter-wrapper.sh --filenames=''eslint.config.js,eslint.config.mjs,eslint.config.cjs,eslint.config.ts,eslint.config.mts,eslint.config.cts'' --fallback-config="$HOME/.config/eslint/eslint.config.js" --filename-arg-prefix=''--stdin-filename='' --config-flag=''-c'' -- eslint_d --fix-to-stdout --stdin --stdin-filename=${INPUT}'
     lint-stdin: true
     format-stdin: true
     lint-ignore-exit-code: true
@@ -47,13 +47,19 @@ tools:
   eslint: &eslint
     checkInstalled: "which eslint"
     install: "npm install -g eslint"
-    lint-command: "$HOME/.vim/efm-langserver-linter-wrapper.sh --filenames='eslint.config.js,eslint.config.mjs,eslint.config.cjs,eslint.config.ts,eslint.config.mts,eslint.config.cts' --fallback-config=\"$HOME/.config/eslint/eslint.config.js\" --filename-arg-prefix='--stdin-filename=' --config-flag='-c' -- eslint --format unix --stdin --stdin-filename=${INPUT}"
-    format-command: "$HOME/.vim/efm-langserver-linter-wrapper.sh --filenames='eslint.config.js,eslint.config.mjs,eslint.config.cjs,eslint.config.ts,eslint.config.mts,eslint.config.cts' --fallback-config=\"$HOME/.config/eslint/eslint.config.js\" --filename-arg-prefix='--stdin-filename=' --config-flag='-c' -- eslint --format unix --fix-to-stdout --stdin --stdin-filename=${INPUT}"
+    lint-command: '$HOME/.vim/efm-langserver-linter-wrapper.sh --filenames=''eslint.config.js,eslint.config.mjs,eslint.config.cjs,eslint.config.ts,eslint.config.mts,eslint.config.cts'' --fallback-config="$HOME/.config/eslint/eslint.config.js" --filename-arg-prefix=''--stdin-filename='' --config-flag=''-c'' -- eslint --format unix --stdin --stdin-filename=${INPUT}'
+    format-command: '$HOME/.vim/efm-langserver-linter-wrapper.sh --filenames=''eslint.config.js,eslint.config.mjs,eslint.config.cjs,eslint.config.ts,eslint.config.mts,eslint.config.cts'' --fallback-config="$HOME/.config/eslint/eslint.config.js" --filename-arg-prefix=''--stdin-filename='' --config-flag=''-c'' -- eslint --format unix --fix-to-stdout --stdin --stdin-filename=${INPUT}'
     lint-stdin: true
     format-stdin: true
     lint-ignore-exit-code: true
     lint-after-open: true
     rootMarkers: [".git/", "package.json"]
+
+  ts_ls: &ts_ls
+    lspconfig_name: "ts_ls"
+    checkInstalled: "which typescript-language-server"
+    install: "npm install -g typescript-language-server typescript"
+    rootMarkers: [".git/", "package.json", "tsconfig.json"]
 
   gofmt: &gofmt
     checkInstalled: "which gofmt"
@@ -88,21 +94,22 @@ tools:
     checkInstalled: "which markdownlint"
     install: "npm install -g markdownlint-cli"
     # The LINT command still uses the wrapper for intelligent config detection.
-    lint-command: "$HOME/.vim/efm-langserver-linter-wrapper.sh --filenames='.markdownlint.json,.markdownlint.yaml,.markdownlint.yml,.markdownlintrc' --fallback-config=\"$HOME/.config/markdownlint/config.json\" --filename-arg-prefix='' --config-flag='--config' -- /home/base/.volta/bin/markdownlint ${INPUT}"
+    lint-command: '$HOME/.vim/efm-langserver-linter-wrapper.sh --filenames=''.markdownlint.json,.markdownlint.yaml,.markdownlint.yml,.markdownlintrc'' --fallback-config="$HOME/.config/markdownlint/config.json" --filename-arg-prefix='''' --config-flag=''--config'' -- /home/base/.volta/bin/markdownlint ${INPUT}'
     lint-stdin: false
     lint-after-open: true
     lint-formats:
-      - '%f:%l %m'
-      - '%f:%l:%c %m'
+      - "%f:%l %m"
+      - "%f:%l:%c %m"
     # FORMAT command uses our forked efm-langserver, native in-place feature.
     format-command: "markdownlint --fix ${INPUT}"
     format-inplace: true # This activates the patched Go logic.
-    format-stdin: false  # Must be false for ${INPUT} to work.
+    format-stdin: false # Must be false for ${INPUT} to work.
     rootMarkers:
       - .git/
       - package.json
 
   basedpyright_wrapped: &basedpyright_wrapped
+    lspconfig_name: "basedpyright"
     checkInstalled: "which basedpyright"
     install: "pip install basedpyright"
     lint-command: "~/.vim/efm-stdin-file-wrapper.sh basedpyright --outputjson $tempfile"
@@ -143,6 +150,7 @@ tools:
       - .git/
 
   pyright: &pyright
+    lspconfig_name: "pyright"
     checkInstalled: "which pyright"
     install: "npm install -g pyright"
     lint-command: "~/.vim/efm-stdin-file-wrapper.sh pyright --outputjson $tempfile"
@@ -155,6 +163,7 @@ tools:
       - requirements.txt
 
   ruff: &ruff
+    lspconfig_name: "ruff"
     checkInstalled: "which ruff"
     install: "pip install ruff"
     lint-command: "ruff check --force-exclude --output-format=text ${INPUT}"
@@ -166,6 +175,7 @@ tools:
     format-stdin: true
 
   sql_language_server: &sql_language_server
+    lspconfig_name: "sqlls"
     checkInstalled: "which sql-language-server"
     install: "npm install -g sql-language-server"
     command: sql-language-server
@@ -199,6 +209,7 @@ tools:
     format-stdin: true
 
   csharp_ls: &csharp_ls
+    lspconfig_name: "csharp_ls"
     checkInstalled: "which csharp-ls"
     install: "dotnet tool install --global csharp-ls"
     passthrough:
@@ -244,7 +255,7 @@ languages:
     - <<: *eslint_d
   markdown:
     - <<: *md_markdownlint # Lints the Markdown structure and prose
-    - <<: *eslint_d        # Lints code blocks (js/ts) within the Markdown
+    - <<: *eslint_d # Lints code blocks (js/ts) within the Markdown
   python:
     - <<: *basedpyright_wrapped
   sh:
