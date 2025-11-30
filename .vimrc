@@ -66,12 +66,17 @@ endif
 let g:coc_profile_dir = expand('$HOME/.vim/coc-profiles/') . g:coc_profile
 let g:coc_config_home = g:coc_profile_dir
 
+function! s:ShowStartupMessage()
+  let msg = "NVIM_CONFIG=" . g:nvim_config
+  if g:nvim_config == 'coc'
+    let msg = msg . " | COC_PROFILE=" . get(g:, 'coc_profile', 'unset') . " | COC_CONFIG_HOME=" . get(g:, 'coc_config_home', 'unset')
+  endif
+  call s:ScheduleEchoMessage(msg, 500)
+endfunction
+
 augroup DelayedEchoMsg
   autocmd!
-  autocmd VimEnter * call s:ScheduleEchoMessage(
-        \ "NVIM_CONFIG=" . g:nvim_config . " | COC_PROFILE=" . g:coc_profile . " | COC_CONFIG_HOME=" . g:coc_config_home,
-        \ 500
-        \ )
+  autocmd VimEnter * call s:ShowStartupMessage()
 augroup END
 
 if empty(glob('~/.vim/autoload/plug.vim'))
