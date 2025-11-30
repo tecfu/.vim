@@ -3,8 +3,8 @@
 ## Prerequisites
 
 - Mac: You will to want to use a terminal that supports Truecolor, like:
-  + Alacritty
-  + Extraterm
+  - Alacritty
+  - Extraterm
 
 ## Installation for Vim
 
@@ -68,6 +68,120 @@ export COC_PROFILE=efm
 2.  Add a `coc-settings.json` to that directory.
 3.  Add an `extensions.json` to that directory to define the CoC extensions for that profile.
 
+### Configuration Modes
+
+This configuration supports three completion/LSP modes via the `NVIM_CONFIG` environment variable:
+
+1. **`coc`** - Uses `coc.nvim` for completion and language server support
+2. **`cmp-efm`** - Uses `nvim-cmp` for completion with `efm-langserver` for diagnostics
+3. **`cmp-builtin`** (Default) - Uses `nvim-cmp` for completion with builtin language servers
+
+#### Switching Modes
+
+To use a different mode for a single session:
+
+```sh
+NVIM_CONFIG=coc nvim
+```
+
+To make a mode the default, export it in your shell's startup file (e.g., `~/.bashrc`, `~/.zshrc`):
+
+```sh
+export NVIM_CONFIG=cmp-efm
+```
+
+#### Mode 1: CoC (`coc`)
+
+**What it is:** Uses the `coc.nvim` extension host, which provides VSCode-like language server integration.
+
+**When to use:** If you prefer the VSCode extension ecosystem or need specific CoC extensions.
+
+**Configuration:**
+
+- Language servers are configured via CoC extensions in `~/.vim/coc-profiles/<profile>/extensions.json`
+- Settings are in `~/.vim/coc-profiles/<profile>/coc-settings.json`
+- See the [CoC Profiles](#coc-profiles) section above for managing multiple profiles
+
+**Installing language servers:**
+
+```vim
+:CocInstall coc-tsserver coc-pyright coc-go
+```
+
+#### Mode 2: nvim-cmp + EFM (`cmp-efm`)
+
+**What it is:** Uses `nvim-cmp` for completion and `efm-langserver` as a universal language server that wraps linters and formatters.
+
+**When to use:** If you want a single language server that can handle multiple tools (ESLint, Prettier, etc.) with project-specific configurations.
+
+**Configuration:**
+
+- EFM configuration is in `~/.vim/efm-langserver-config.yaml`
+- The wrapper script at `~/.vim/efm-langserver-linter-wrapper.sh` intelligently uses project-local configs when available
+- See [Advanced Linting with EFM-Langserver](#advanced-linting-with-efm-langserver) section for details
+
+**Installing language servers:**
+
+- EFM-langserver itself: Install from [github.com/mattn/efm-langserver](https://github.com/mattn/efm-langserver)
+- Individual tools (ESLint, Prettier, etc.): Install via npm/pip as needed
+
+#### Mode 3: nvim-cmp + Builtin (`cmp-builtin`) - Default
+
+**What it is:** Uses `nvim-cmp` for completion and native Neovim LSP with individual language servers.
+
+**When to use:** For a modern, lightweight setup with direct LSP integration. Recommended for most users.
+
+**Configuration:**
+
+The list of enabled language servers is defined in `~/.vim/lua/lsp_servers.lua`:
+
+```lua
+return {
+  'ts_ls',    -- TypeScript/JavaScript
+  'pyright',  -- Python
+  'gopls',    -- Go
+  -- Add more servers here
+}
+```
+
+Server names must match those used by [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md).
+
+**Installing language servers:**
+
+You must install the actual language server binaries on your system:
+
+```sh
+# TypeScript/JavaScript
+npm install -g typescript-language-server typescript
+
+# Python
+npm install -g pyright
+# or: pip install pyright
+
+# Go
+go install golang.org/x/tools/gopls@latest
+
+# Rust
+rustup component add rust-analyzer
+```
+
+**Verifying LSP is working:**
+
+1. Open a file of the appropriate type (e.g., `.js`, `.py`)
+2. Run `:LspInfo` to see active language servers
+3. You should see the server listed as attached to the buffer
+
+**Common language servers:**
+
+- JavaScript/TypeScript: `ts_ls`
+- Python: `pyright` or `pylsp`
+- Go: `gopls`
+- Rust: `rust_analyzer`
+- C/C++: `clangd`
+- Lua: `lua_ls`
+
+See the [full list of available servers](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md).
+
 ## Installation for Neovim
 
 - Add the following to ~.config/nvim/init.vim:
@@ -108,8 +222,8 @@ The installer symlinks a generic wrapper script (`efm-langserver-linter-wrapper.
 
 The installer automatically symlinks:
 
--   `efm-langserver-config.yaml` -> `~/.config/efm-langserver/config.yaml`
--   `efm-langserver-linter-wrapper.sh` -> `~/.config/efm-langserver/efm-langserver-linter-wrapper.sh`
+- `efm-langserver-config.yaml` -> `~/.config/efm-langserver/config.yaml`
+- `efm-langserver-linter-wrapper.sh` -> `~/.config/efm-langserver/efm-langserver-linter-wrapper.sh`
 
 #### One-Time Setup for Fallback Configs
 
@@ -188,8 +302,8 @@ npm config set registry https://registry.npmjs.org
 
 <!---PLUGINS-->
 
-| Name                              | Description                                                                                                                                                                           | Website                                             |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| Name                              | Description                                                                                                                                                                           | Website                                               |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
 | airblade/vim-gitgutter            | A Vim plugin which shows git diff markers in the sign column and stages/previews/undoes hunks and partial hunks.                                                                      | <http://github.com/airblade/vim-gitgutter>            |
 | altercation/vim-colors-solarized  | precision colorscheme for the vim text editor                                                                                                                                         | <http://github.com/altercation/vim-colors-solarized>  |
 | ap/vim-css-color                  | Preview colours in source code while editing                                                                                                                                          | <http://github.com/ap/vim-css-color>                  |
@@ -212,7 +326,7 @@ npm config set registry https://registry.npmjs.org
 | leafgarland/typescript-vim        | Typescript syntax files for Vim                                                                                                                                                       | <http://github.com/leafgarland/typescript-vim>        |
 | luochen1990/rainbow               | Rainbow Parentheses Improved, shorter code, no level limit, smooth and fast, powerful configuration.                                                                                  | <http://github.com/luochen1990/rainbow>               |
 | maksimr/vim-jsbeautify            | vim plugin which formated javascript files by js-beautify                                                                                                                             | <http://github.com/maksimr/vim-jsbeautify>            |
-| mattn/emmet-vim                   | emmet for vim: <http://emmet.io/>                                                                                                                                                       | <http://github.com/mattn/emmet-vim>                   |
+| mattn/emmet-vim                   | emmet for vim: <http://emmet.io/>                                                                                                                                                     | <http://github.com/mattn/emmet-vim>                   |
 | mbbill/undotree                   | The undo history visualizer for VIM                                                                                                                                                   | <http://github.com/mbbill/undotree>                   |
 | mechatroner/rainbow_csv           | 🌈Rainbow CSV - Vim plugin: Highlight columns in CSV and TSV files and run queries in SQL-like language                                                                               | <http://github.com/mechatroner/rainbow_csv>           |
 | mileszs/ack.vim                   | Vim plugin for the Perl module / CLI script 'ack'                                                                                                                                     | <http://github.com/mileszs/ack.vim>                   |

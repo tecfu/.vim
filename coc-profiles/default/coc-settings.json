@@ -100,7 +100,13 @@
     //   "rationale": "uses vscode eslint, manually extracted/installed"
     // },
   },
+  "path.relativeToCwd": true,
   "suggest.enablePreselect": false,
+  "suggest.noselect": false,
+  "suggest.completionItemKindLabels": {
+    "file": "F",
+    "path": "P"
+  },
   "yaml.customTags": [
     "!Ref scalar",
     "!Sub scalar",

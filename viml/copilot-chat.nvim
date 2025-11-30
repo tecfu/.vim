@@ -2,6 +2,12 @@
 Plug 'CopilotC-Nvim/CopilotChat.nvim'
 function! SetupChat()
   lua << EOF
+  -- Fetch API key from environment variable
+  local api_key = os.getenv("OPENROUTER_API_KEY")
+  if not api_key or api_key == "" then
+    error("OPENROUTER_API_KEY environment variable is not set. Add `export OPENROUTER_API_KEY=...` to your shell config.")
+  end
+
   require('CopilotChat').setup({
     debug = true,
     mappings = {
@@ -10,6 +16,37 @@ function! SetupChat()
         -- IMPORTANT: Default <Tab> mapping to accept completion conflicts with copilot.vim <Tab> mapping.
         -- Must change insert mode or accept completion won't work.
         insert = '<S-Tab>'
+      }
+    },
+    github_models = {
+        disabled = false,
+    },
+    provider = "openrouter",
+    providers = {
+      openrouter = {
+        -- docs expect a function: get_url(opts) -> string
+        get_url = function(opts)
+          return "https://openrouter.ai/api/v1/chat/completions"
+        end,
+
+        -- docs expect get_headers() -> table
+        get_headers = function()
+          return {
+            ["Authorization"] = "Bearer " .. api_key,
+            ["Content-Type"] = "application/json",
+          }
+        end,
+
+        -- docs expect get_models() -> { { id = "...", name = "..." }, ... }
+        get_models = function()
+          return {
+            { id = "openrouter/deepseek/deepseek-r1-0528:free", name = "DeepSeek R1 (Free via OpenRouter)" },
+            { id = "openrouter/google/gemini-2.0-flash-exp:free", name = "Gemini 2.0-flash-exp (Free via OpenRouter)" },
+          }
+        end,
+
+        prepare_input = require('CopilotChat.config.providers').copilot.prepare_input,
+        prepare_output = require('CopilotChat.config.providers').copilot.prepare_output,
       }
     }
   })

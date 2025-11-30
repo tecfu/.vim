@@ -68,6 +68,11 @@ call plug#begin('~/.vim/plugins-vim')
   source $HOME/.vim/config-common.vim
 
   " - Coc.nvim"
+  if empty($COC_PROFILE)
+    let g:coc_profile = "default"
+  else
+    let g:coc_profile = $COC_PROFILE
+  endif
   source $HOME/.vim/viml/coc-nvim.vim
 
   " - AI

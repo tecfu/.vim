@@ -21,21 +21,18 @@ call plug#begin('~/.vim/plugins-nvim')
   "source $HOME/.vim/viml/copilot-chat.nvim 
   source $HOME/.vim/viml/gitsigns.nvim
 
-  if $NVIM_CONFIG == 'cmp'
-    "source $HOME/.vim/viml/codecompanion.nvim
-    "source $HOME/.vim/viml/nvim-efm-langserver-setup.nvim
-    source $HOME/.vim/viml/nvim-lsp-setup.nvim
+  if $NVIM_CONFIG == 'coc'
+    source $HOME/.vim/viml/coc-nvim.vim
+    source $HOME/.vim/viml/copilot.vim
+  elseif $NVIM_CONFIG == 'cmp-efm'
+    source $HOME/.vim/viml/nvim-lsp-efm.nvim
     source $HOME/.vim/viml/nvim-lsp-diagnostic-window.nvim
     source $HOME/.vim/viml/nvim-cmp.nvim
-    " copilot.vim doesn't duplicate ghost text, coplot.lua.nvim does     
-    " source $HOME/.vim/viml/copilot.lua.nvim
-    " but copilot.vim causes lsp to crash
-    "source $HOME/.vim/viml/copilot.vim
-    " source $HOME/.vim/viml/debugging.nvim
-    " source $HOME/.vim/viml/nvim-dap.nvim
   else
-    source $HOME/.vim/viml/copilot.vim
-    source $HOME/.vim/viml/coc-nvim.vim
+    " Default to cmp-builtin
+    source $HOME/.vim/viml/nvim-lsp-builtin.nvim
+    source $HOME/.vim/viml/nvim-lsp-diagnostic-window.nvim
+    source $HOME/.vim/viml/nvim-cmp.nvim
   endif
 call plug#end()
 "}}}

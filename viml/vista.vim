@@ -4,7 +4,7 @@ Plug 'liuchengxu/vista.vim'
 " See all the avaliable executables via `:echo g:vista#executives`.
 if g:nvim_config == 'coc'
   let g:vista_default_executive = 'coc'
-elseif g:nvim_config == 'cmp'
+elseif g:nvim_config == 'cmp-builtin' || g:nvim_config == 'cmp-efm'
   let g:vista_default_executive = 'nvim_lsp'
 else
   throw "Invalid NVIM_CONFIG value: " . g:nvim_config

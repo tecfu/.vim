@@ -17,6 +17,7 @@
 "  -> Files, Backups, Undo, and Sessions
 "  -> Status Line
 "  -> Helper Functions
+"  -> Readline Config (When vim is launched from shell vi mode)
 "  -> Misc
 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -49,16 +50,26 @@ endif
 " Check if $NVIM_CONFIG is empty (unset variables often evaluate to empty)
 if empty($NVIM_CONFIG)
   " If it is empty, set an internal global Vimscript variable g:nvim_config
-  let g:nvim_config = "coc"
+  let g:nvim_config = "cmp-builtin"
 else
   " Otherwise, set the internal variable to the value of the environment variable
   let g:nvim_config = $NVIM_CONFIG
 endif
 
+" Initialize CoC variables (used in echo message even if not in CoC mode)
+if empty($COC_PROFILE)
+  let g:coc_profile = "default"
+else
+  let g:coc_profile = $COC_PROFILE
+endif
+
+let g:coc_profile_dir = expand('$HOME/.vim/coc-profiles/') . g:coc_profile
+let g:coc_config_home = g:coc_profile_dir
+
 augroup DelayedEchoMsg
   autocmd!
   autocmd VimEnter * call s:ScheduleEchoMessage(
-        \ "NVIM_CONFIG=" . g:nvim_config . " | COC_PROFILE=" . g:coc_profile,
+        \ "NVIM_CONFIG=" . g:nvim_config . " | COC_PROFILE=" . g:coc_profile . " | COC_CONFIG_HOME=" . g:coc_config_home,
         \ 500
         \ )
 augroup END
@@ -647,7 +658,6 @@ endif
 set laststatus=2
 "}}}
 
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Helper Functions
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -743,6 +753,20 @@ function! s:EchoMessageCallback(message, timer_id)
 endfunction
 "}}}
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Readline Config (When vim is launched from shell vi mode)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" If Vim is launched from shell vi mode (`V`), switch to shell's PWD
+" Automatically change the working directory for temporary files from git, etc.
+augroup SetWorkingDirectoryForShell
+  autocmd!
+  " Use BufEnter with specific file patterns for a reliable trigger.
+  autocmd BufEnter COMMIT_EDITMSG,MERGE_MSG,TAG_EDITMSG,*.tmp,*/tmp/*
+        " Use a safe execution method to handle paths with spaces.
+        \ if $PWD != ''
+        \ | silent! execute 'lcd' fnameescape($PWD)
+        \ | endif
+augroup END
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Misc

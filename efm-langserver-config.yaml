@@ -229,7 +229,7 @@ tools:
 
 languages:
   csharp:
-    - <<: *csharp_ls
+    #- <<: *csharp_ls
     - <<: *csharpier_formatter
     - <<: *dotnet_linter
   go:

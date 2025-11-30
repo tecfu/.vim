@@ -1,0 +1,37 @@
+" Config for builtin langservers (no EFM)
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/cmp-nvim-lsp'
+
+function! SetupLspBuiltin()
+  lua << EOF
+-- Enable LSP log level trace
+vim.lsp.set_log_level('trace')
+
+-- Configure builtin servers
+local servers = require('lsp_servers')
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+for _, lsp in ipairs(servers) do
+  vim.lsp.config[lsp] = {
+    cmd = { lsp },
+    filetypes = vim.lsp.config[lsp] and vim.lsp.config[lsp].filetypes or nil,
+    root_dir = vim.fs.root(0, {'.git', 'package.json', 'pyproject.toml', 'go.mod'}),
+    capabilities = capabilities,
+    on_attach = function(client, bufnr)
+      -- Enable completion triggered by <c-x><c-o>
+      vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+    end,
+  }
+  vim.lsp.enable(lsp)
+end
+
+-- Keybinding to trigger formatting with <leader>l
+vim.api.nvim_set_keymap('n', '<leader>l', '<cmd>lua vim.lsp.buf.format()<CR>', { noremap = true, silent = true })
+EOF
+endfunction
+
+" Call setup on VimEnter
+autocmd VimEnter * call SetupLspBuiltin()
+
+" Trigger LSP attachment for supported filetypes (with guard to prevent infinite loop)
+autocmd FileType javascript,typescript,python,go lua if not vim.b.lsp_attach_triggered then vim.b.lsp_attach_triggered = true; vim.schedule(function() local pos = vim.api.nvim_win_get_cursor(0); vim.cmd('edit'); vim.api.nvim_win_set_cursor(0, pos) end) end

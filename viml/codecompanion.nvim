@@ -1,0 +1,22 @@
+Plug 'olimorris/codecompanion.nvim'
+
+function! SetupCmp()
+lua << EOF
+  require("codecompanion").setup({
+    strategies = {
+      chat = {
+        adapter = "copilot",
+      },
+      inline = {
+        adapter = "copilot",
+      },
+    },
+  }),
+EOF
+endfunction
+
+"Add a keybinding to open the chat window
+nnoremap <C-M-i> :CodeCompanionChat Toggle<CR>
+
+" <Ctrl-Command-letter> for Mac
+nnoremap <D-C-i> :CodeCompanionChat Toggle<CR>

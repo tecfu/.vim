@@ -1,0 +1,63 @@
+" nvim-dap for debugging
+Plug 'mfussenegger/nvim-dap'
+
+" nvim-dap-ui for a better UI experience
+Plug 'rcarriga/nvim-dap-ui'
+Plug 'nvim-neotest/nvim-nio'
+
+" Plugin for virtual text display in nvim-dap
+Plug 'theHamsta/nvim-dap-virtual-text'
+
+function SetupNvimDap()
+lua << EOF
+  local dap = require('dap')
+  local dapui = require('dapui')
+
+  dap.adapters.node2 = {
+    type = 'executable',
+    command = 'node',
+    args = {os.getenv('HOME') .. '/.vim/plugged/vscode-node-debug2/out/src/nodeDebug.js'},
+  }
+
+  dap.configurations.javascript = {
+    {
+      name = "Attach to process",
+      type = "node2",
+      request = "attach",
+      processId = require'dap.utils'.pick_process,
+      cwd = vim.fn.getcwd(),
+    },
+  }
+
+  dap.configurations.typescript = dap.configurations.javascript
+
+  dapui.setup()
+
+  -- Automatically open and close the dapui
+  dap.listeners.after.event_initialized['dapui_config'] = function()
+    dapui.open()
+  end
+  dap.listeners.before.event_terminated['dapui_config'] = function()
+    dapui.close()
+  end
+  dap.listeners.before.event_exited['dapui_config'] = function()
+    dapui.close()
+  end
+
+  require('nvim-dap-virtual-text').setup()
+EOF
+endfunction
+
+autocmd VimEnter * call SetupNvimDap()
+
+" Key mappings for nvim-dap
+nnoremap <silent> <F5> :lua require'dap'.continue()<CR>
+nnoremap <silent> <F10> :lua require'dap'.step_over()<CR>
+nnoremap <silent> <F11> :lua require'dap'.step_into()<CR>
+nnoremap <silent> <F12> :lua require'dap'.step_out()<CR>
+nnoremap <silent> <leader>b :lua require'dap'.toggle_breakpoint()<CR>
+nnoremap <silent> <leader>B :lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>
+nnoremap <silent> <leader>lp :lua require'dap'.set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<CR>
+nnoremap <silent> <leader>dr :lua require'dap'.repl.open()<CR>
+nnoremap <silent> <leader>dl :lua require'dap'.run_last()<CR>
+nnoremap <silent> <leader>dapui :lua require'dapui'.toggle()<CR>
