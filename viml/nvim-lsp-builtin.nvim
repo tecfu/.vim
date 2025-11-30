@@ -1,38 +1,56 @@
-" Config for builtin langservers (no EFM)
+" Config for builtin langservers
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/cmp-nvim-lsp'
 
 function! SetupLspBuiltin()
   lua << EOF
--- Enable LSP log level trace
-vim.lsp.set_log_level('trace')
-
--- Check VIM_LOG_LEVEL environment variable (default to 0 if not set)
+-- 1. Setup Logging
 local log_level = tonumber(vim.env.VIM_LOG_LEVEL or "0")
+if log_level >= 3 then vim.lsp.set_log_level('trace') end
 
--- Helper function for debug logging
 local function debug_log(msg)
   if log_level >= 3 then
-    vim.cmd('echom "' .. msg .. '"')
+    vim.cmd('echom "SetupLsp: ' .. msg .. '"')
   end
 end
 
-debug_log("SetupLspBuiltin: Starting LSP setup")
+debug_log("Starting LSP setup (Native Nvim 0.11+)")
 
-local lspconfig = require('lspconfig')
+-- 2. Global Defaults (Capabilities & Attach Logic)
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
--- Track which servers we've already set up to prevent duplicates
-local setup_servers = {}
+-- In Nvim 0.11+, use LspAttach autocmd instead of passing on_attach to every server
+vim.api.nvim_create_autocmd('LspAttach', {
+  desc = 'LSP actions',
+  callback = function(event)
+    local client = vim.lsp.get_client_by_id(event.data.client_id)
+    local buf = event.buf
 
--- Function to parse efm-langserver-config.yaml and find LSPs with their config
+    debug_log("LSP " .. client.name .. " attached to buffer " .. buf)
+
+    -- Enable completion triggered by <c-x><c-o>
+    vim.bo[buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
+    
+    -- Enable document formatting via <leader>l
+    -- (Note: formatexpr is usually set automatically by the client now, 
+    -- but you can force it here if preferred)
+    vim.bo[buf].formatexpr = 'v:lua.vim.lsp.formatexpr()'
+
+    -- Keybinding for formatting
+    vim.keymap.set('n', '<leader>l', function() 
+      vim.lsp.buf.format({ async = true }) 
+    end, { buffer = buf, desc = "Format buffer" })
+  end
+})
+
+-- 3. Configuration Parser (Your existing logic, untouched)
 local function get_efm_lsps()
   local efm_config_path = vim.fn.expand('~/.vim/efm-langserver-config.yaml')
-  debug_log("SetupLspBuiltin: Reading config from " .. efm_config_path)
+  debug_log("Reading config from " .. efm_config_path)
   
   local f = io.open(efm_config_path, "r")
   if not f then
-    debug_log("SetupLspBuiltin: ERROR - Could not open " .. efm_config_path)
+    debug_log("ERROR - Could not open " .. efm_config_path)
     return {}
   end
 
@@ -43,13 +61,10 @@ local function get_efm_lsps()
   local in_root_markers = false
 
   for line in f:lines() do
-    -- Check if we are in the tools section
     if line:match("^tools:") then
       in_tools = true
     elseif line:match("^%S") and not line:match("^tools:") then
-      -- If we hit a top-level key that isn't tools, save current and exit tools section
       if current_lsp_config and current_lsp_config.name then
-        debug_log("SetupLspBuiltin: Saving LSP " .. current_lsp_config.name .. " from tool " .. current_tool)
         table.insert(lsps, current_lsp_config)
       end
       in_tools = false
@@ -59,38 +74,29 @@ local function get_efm_lsps()
     end
 
     if in_tools then
-      -- Match "  tool_name: &anchor" - this starts a new tool
       local tool_name = line:match("^%s+(%w+):%s*&")
       if tool_name then
-        -- Save previous tool if it had an lspconfig_name
         if current_lsp_config and current_lsp_config.name then
-          debug_log("SetupLspBuiltin: Saving LSP " .. current_lsp_config.name .. " from tool " .. current_tool)
           table.insert(lsps, current_lsp_config)
         end
-        -- Start new tool
         current_tool = tool_name
         current_lsp_config = { root_markers = {} }
         in_root_markers = false
       end
       
-      -- Match "    lspconfig_name: \"name\""
       if current_tool and current_lsp_config then
         local lsp_name = line:match("^%s+lspconfig_name:%s*[\"']?([%w_]+)[\"']?")
         if lsp_name then
           current_lsp_config.name = lsp_name
-          debug_log("SetupLspBuiltin: Found LSP " .. lsp_name .. " in tool " .. current_tool)
         end
         
-        -- Check if we're entering rootMarkers section
         if line:match("^%s+rootMarkers:") then
           in_root_markers = true
         elseif in_root_markers then
-          -- Match array items under rootMarkers
           local marker = line:match("^%s+%-%s+[\"']?([^\"']+)[\"']?%s*$")
           if marker then
             table.insert(current_lsp_config.root_markers, marker)
           else
-            -- If we hit a non-array-item line, we're out of rootMarkers
             in_root_markers = false
           end
         end
@@ -98,127 +104,48 @@ local function get_efm_lsps()
     end
   end
   
-  -- Don't forget the last tool
   if current_lsp_config and current_lsp_config.name then
-    debug_log("SetupLspBuiltin: Saving LSP " .. current_lsp_config.name .. " from tool " .. current_tool)
     table.insert(lsps, current_lsp_config)
   end
-  
   f:close()
-  debug_log("SetupLspBuiltin: Found " .. #lsps .. " LSPs total")
   return lsps
 end
 
+-- 4. Server Setup
 local servers = get_efm_lsps()
+local setup_servers = {}
 
--- Store all configured filetypes for autocmd
-local all_filetypes = {}
-
-for _, lsp_config in ipairs(servers) do
-  local lsp = lsp_config.name
+for _, lsp_config_data in ipairs(servers) do
+  local name = lsp_config_data.name
   
-  -- Skip if we've already set up this server
-  if setup_servers[lsp] then
-    debug_log("SetupLspBuiltin: Skipping " .. lsp .. " (already setup)")
-    goto continue
-  end
-  
-  -- Check if the server config exists in lspconfig
-  if lspconfig[lsp] then
-    debug_log("SetupLspBuiltin: Setting up " .. lsp)
+  if not setup_servers[name] then
+    debug_log("Configuring " .. name)
     
-    local root_markers = lsp_config.root_markers
-    -- Fallback to common markers if none specified
-    if #root_markers == 0 then
-      root_markers = {'.git', 'package.json', 'pyproject.toml', 'go.mod'}
+    -- Determine root markers
+    local roots = lsp_config_data.root_markers
+    if #roots == 0 then
+      roots = {'.git', 'package.json', 'pyproject.toml', 'go.mod'}
     end
-    
-    lspconfig[lsp].setup {
+
+    -- Update the configuration in Neovim's registry
+    -- In Nvim 0.11, root_markers is a native option (no need for root_dir function)
+    vim.lsp.config(name, {
       capabilities = capabilities,
-      root_dir = function(fname)
-        return vim.fs.root(fname, root_markers)
-      end,
-      on_attach = function(client, bufnr)
-        debug_log("SetupLspBuiltin: LSP " .. client.name .. " attached to buffer " .. bufnr .. " (filetype: " .. vim.bo.filetype .. ")")
-        
-        -- Enable completion triggered by <c-x><c-o>
-        vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-        
-        -- Enable document formatting
-        vim.api.nvim_buf_set_option(bufnr, 'formatexpr', 'v:lua.vim.lsp.formatexpr()')
-      end,
-      -- Ensure single file support (server will be reused across buffers)
+      root_markers = roots, 
       single_file_support = true,
-    }
+    })
+
+    -- Enable the server globally
+    -- This automatically sets up the FileType autocmds based on the defaults
+    -- provided by nvim-lspconfig
+    vim.lsp.enable(name)
     
-    -- Collect filetypes from the server config
-    local server_filetypes = lspconfig[lsp].filetypes or {}
-    debug_log("SetupLspBuiltin: " .. lsp .. " supports filetypes: " .. table.concat(server_filetypes, ", "))
-    for _, ft in ipairs(server_filetypes) do
-      all_filetypes[ft] = true
-    end
-    
-    -- Mark this server as set up
-    setup_servers[lsp] = true
-  else
-    debug_log("SetupLspBuiltin: ERROR - LSP " .. lsp .. " not found in lspconfig")
+    setup_servers[name] = true
   end
-  
-  ::continue::
 end
 
--- Create a list of filetypes for the autocmd
-local ft_list = {}
-for ft, _ in pairs(all_filetypes) do
-  table.insert(ft_list, ft)
-end
-
-debug_log("SetupLspBuiltin: Creating FileType autocmd for: " .. table.concat(ft_list, ", "))
-
--- Set up FileType autocmd to trigger LSP attachment
-if #ft_list > 0 then
-  vim.api.nvim_create_autocmd("FileType", {
-    pattern = ft_list,
-    callback = function()
-      debug_log("SetupLspBuiltin: FileType autocmd triggered for " .. vim.bo.filetype)
-      
-      -- Guard to prevent infinite loop
-      if vim.b.lsp_attach_triggered then
-        debug_log("SetupLspBuiltin: LSP attachment already triggered for this buffer, skipping")
-        return
-      end
-      vim.b.lsp_attach_triggered = true
-      
-      vim.defer_fn(function()
-        debug_log("SetupLspBuiltin: Triggering buffer reload for LSP attachment")
-        -- Trigger a buffer reload to ensure LSP attaches
-        local pos = vim.api.nvim_win_get_cursor(0)
-        vim.cmd('edit')
-        vim.api.nvim_win_set_cursor(0, pos)
-      end, 100)
-    end,
-  })
-end
-
--- Trigger LSP for current buffer after a short delay
-vim.defer_fn(function()
-  local buf = vim.api.nvim_get_current_buf()
-  local ft = vim.bo[buf].filetype
-  debug_log("SetupLspBuiltin: Initial buffer check - filetype: " .. (ft or "none"))
-  if ft and ft ~= "" then
-    debug_log("SetupLspBuiltin: Triggering initial buffer reload")
-    local pos = vim.api.nvim_win_get_cursor(0)
-    vim.cmd('edit')
-    vim.api.nvim_win_set_cursor(0, pos)
-  end
-end, 100)
-
--- Keybinding to trigger formatting with <leader>l
-vim.api.nvim_set_keymap('n', '<leader>l', '<cmd>lua vim.lsp.buf.format()<CR>', { noremap = true, silent = true })
-
-debug_log("SetupLspBuiltin: Setup complete")
+debug_log("Setup complete")
 EOF
 endfunction
 
-" Call setup on VimEnter
 autocmd VimEnter * call SetupLspBuiltin()
