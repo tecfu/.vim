@@ -36,11 +36,29 @@ else
 endif
 
 " Load unix-only extensions if on Linux (excluding Git Bash/Cygwin) or WSL
-if (has('unix') && !has('win32unix')) || HasWSL()
-  let s:extensions_unix_json_path = g:coc_profile_dir . '/extensions-unix.json'
+let s:is_unix_or_wsl = (has('unix') && !has('win32unix')) || HasWSL()
+let s:extensions_unix_json_path = g:coc_profile_dir . '/extensions-unix.json'
+
+if s:is_unix_or_wsl
   if filereadable(s:extensions_unix_json_path)
     let s:unix_extensions = json_decode(join(readfile(s:extensions_unix_json_path), "\n"))
     call extend(s:loaded_extensions, s:unix_extensions)
+  endif
+else
+  " If we are NOT in a unix/wsl environment, ensure ALL unix-only extensions are uninstalled
+  if filereadable(s:extensions_unix_json_path)
+    let s:unix_extensions_to_remove = json_decode(join(readfile(s:extensions_unix_json_path), "\n"))
+
+    function! s:UninstallUnixExtensions(timer) abort
+      for l:ext in s:unix_extensions_to_remove
+        call coc#rpc#notify('runCommand', ['coc.action.uninstallExtension', l:ext])
+      endfor
+    endfunction
+    
+    " Run this check after Coc is initialized
+    if !empty(s:unix_extensions_to_remove)
+      autocmd User CocNvimInit call timer_start(5000, function('s:UninstallUnixExtensions'))
+    endif
   endif
 endif
 
