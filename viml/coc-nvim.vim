@@ -44,25 +44,78 @@ if s:is_unix_or_wsl
     let s:unix_extensions = json_decode(join(readfile(s:extensions_unix_json_path), "\n"))
     call extend(s:loaded_extensions, s:unix_extensions)
   endif
-else
-  " If we are NOT in a unix/wsl environment, ensure ALL unix-only extensions are uninstalled
-  if filereadable(s:extensions_unix_json_path)
-    let s:unix_extensions_to_remove = json_decode(join(readfile(s:extensions_unix_json_path), "\n"))
-
-    function! s:UninstallUnixExtensions(timer) abort
-      for l:ext in s:unix_extensions_to_remove
-        call coc#rpc#notify('runCommand', ['coc.action.uninstallExtension', l:ext])
-      endfor
-    endfunction
-    
-    " Run this check after Coc is initialized
-    if !empty(s:unix_extensions_to_remove)
-      autocmd User CocNvimInit call timer_start(5000, function('s:UninstallUnixExtensions'))
-    endif
-  endif
 endif
 
 let g:coc_global_extensions = s:loaded_extensions
+
+" Sync extensions: Remove extensions from filesystem that are not in g:coc_global_extensions
+" This runs immediately to ensure clean state before Coc starts
+function! s:SyncExtensionsFilesystem() abort
+  " Determine coc data home
+  let l:coc_data_home = get(g:, 'coc_data_home', '')
+  if empty(l:coc_data_home)
+    if has('win32') || has('win64')
+      let l:coc_data_home = '~/AppData/Local/coc'
+    elseif has('win32unix') " Git Bash
+      let l:coc_data_home = '~/AppData/Local/coc'
+    else
+      let l:coc_data_home = '~/.config/coc'
+    endif
+  endif
+  
+  " Check both standard node_modules location and direct extensions folder
+  let l:roots = [
+        \ expand(l:coc_data_home . '/extensions/node_modules'),
+        \ expand(l:coc_data_home . '/extensions')
+        \ ]
+  
+  let l:allowed_extensions = g:coc_global_extensions
+  
+  for l:root in l:roots
+    if !isdirectory(l:root)
+      continue
+    endif
+
+    let l:installed_dirs = glob(l:root . '/*', 1, 1)
+    
+    for l:dir in l:installed_dirs
+      let l:name = fnamemodify(l:dir, ':t')
+      
+      " Skip if it's not a directory
+      if !isdirectory(l:dir)
+        continue
+      endif
+
+      " Skip system directories/files in extensions folder
+      if l:name ==# 'node_modules' || l:name ==# '.cache'
+        continue
+      endif
+
+      if l:name =~# '^@'
+        " Scoped package, check subdirectories
+        let l:subdirs = glob(l:dir . '/*', 1, 1)
+        for l:subdir in l:subdirs
+          let l:subname = fnamemodify(l:subdir, ':t')
+          let l:full_name = l:name . '/' . l:subname
+          if index(l:allowed_extensions, l:full_name) == -1
+             call system('rm -rf ' . shellescape(l:subdir))
+          endif
+        endfor
+        " Remove scope dir if empty
+        if empty(glob(l:dir . '/*', 1, 1))
+           call system('rm -rf ' . shellescape(l:dir))
+        endif
+      else
+        " Normal package
+        if index(l:allowed_extensions, l:name) == -1
+           call system('rm -rf ' . shellescape(l:dir))
+        endif
+      endif
+    endfor
+  endfor
+endfunction
+
+call s:SyncExtensionsFilesystem()
 
 " Function to disable coc-yaml for specific files
 "function! DisableCocYamlForCF()
