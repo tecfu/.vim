@@ -36,6 +36,11 @@ else
 endif
 
 " Load unix-only extensions if on Linux or WSL
+echom "Debug: has('unix')=" . has('unix')
+echom "Debug: has('win32')=" . has('win32')
+echom "Debug: has('win32unix')=" . has('win32unix')
+echom "Debug: HasWSL()=" . HasWSL()
+
 if has('unix') || HasWSL()
   let s:extensions_unix_json_path = g:coc_profile_dir . '/extensions-unix.json'
   if filereadable(s:extensions_unix_json_path)
