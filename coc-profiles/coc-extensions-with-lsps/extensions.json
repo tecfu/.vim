@@ -6,7 +6,6 @@
   "coc-markdownlint",
   "coc-marketplace",
   "coc-omnisharp",
-  "coc-sh",
   "coc-sql",
   "coc-toml",
   "coc-tsserver",

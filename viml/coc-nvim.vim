@@ -1,3 +1,17 @@
+function! HasWSL() abort
+  if has('win32') || has('win64')
+    " Check if wsl.exe is in the PATH or in a standard system location.
+    " This is a common indicator of WSL being installed and available.
+    if executable('wsl.exe')
+      return 1
+    else
+      return 0
+    endif
+  endif
+  " Not on Windows, so WSL is not relevant in the context of this check
+  return 0
+endfunction
+
 " Determine CoC profile, default to 'default' if not set by .vimrc
 " Check if $COC_PROFILE is empty
 if empty($COC_PROFILE)
@@ -15,11 +29,22 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Load extensions from extensions.json if it exists
 let s:extensions_json_path = g:coc_profile_dir . '/extensions.json'
 if filereadable(s:extensions_json_path)
-  let g:coc_global_extensions = json_decode(join(readfile(s:extensions_json_path), "\n"))
+  let s:loaded_extensions = json_decode(join(readfile(s:extensions_json_path), "\n"))
 else
   " Fallback to a minimal set of extensions if file doesn't exist
-  let g:coc_global_extensions = ['coc-marketplace', '@hexuhua/coc-copilot']
+  let s:loaded_extensions = ['coc-marketplace', '@hexuhua/coc-copilot']
 endif
+
+" Load unix-only extensions if on Linux or WSL
+if has('unix') || HasWSL()
+  let s:extensions_unix_json_path = g:coc_profile_dir . '/extensions-unix.json'
+  if filereadable(s:extensions_unix_json_path)
+    let s:unix_extensions = json_decode(join(readfile(s:extensions_unix_json_path), "\n"))
+    call extend(s:loaded_extensions, s:unix_extensions)
+  endif
+endif
+
+let g:coc_global_extensions = s:loaded_extensions
 
 " Function to disable coc-yaml for specific files
 "function! DisableCocYamlForCF()
