@@ -35,13 +35,8 @@ else
   let s:loaded_extensions = ['coc-marketplace', '@hexuhua/coc-copilot']
 endif
 
-" Load unix-only extensions if on Linux or WSL
-echom "Debug: has('unix')=" . has('unix')
-echom "Debug: has('win32')=" . has('win32')
-echom "Debug: has('win32unix')=" . has('win32unix')
-echom "Debug: HasWSL()=" . HasWSL()
-
-if has('unix') || HasWSL()
+" Load unix-only extensions if on Linux (excluding Git Bash/Cygwin) or WSL
+if (has('unix') && !has('win32unix')) || HasWSL()
   let s:extensions_unix_json_path = g:coc_profile_dir . '/extensions-unix.json'
   if filereadable(s:extensions_unix_json_path)
     let s:unix_extensions = json_decode(join(readfile(s:extensions_unix_json_path), "\n"))
