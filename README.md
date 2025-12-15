@@ -5,6 +5,7 @@
 - Mac: You will to want to use a terminal that supports Truecolor, like:
   - Alacritty
   - Extraterm
+- Ubuntu: The install script will attempt to install `xsel` for clipboard support. This is preferred over `clipman`.
 
 ## Installation for Vim
 

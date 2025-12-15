@@ -29,6 +29,17 @@ if ! [ -x "$(which curl)" ]; then
   exit 1
 fi
 
+### Check for xsel on Ubuntu
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    if [ "$ID" == "ubuntu" ]; then
+        if ! [ -x "$(which xsel)" ]; then
+            echo "Installing xsel for clipboard support (preferred over clipman)..."
+            sudo apt-get update && sudo apt-get install -y xsel
+        fi
+    fi
+fi
+
 ### Check for node
 if ! [ -x "$(which node)" ]; then
   echo "ERROR: You must install \"nodejs\" prior to installing due to coc-vim."
