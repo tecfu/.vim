@@ -13,14 +13,24 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
 ### Check for make
 if ! [ -x "$(which make)" ]; then
-  echo "ERROR: You must install \"make\" prior to installing."
-  exit 1
+  if [[ "$(uname -s)" == *"MINGW"* ]] || [[ "$(uname -s)" == *"MSYS"* ]] || [[ "$(uname -s)" == *"CYGWIN"* ]]; then
+      if ! [ -x "$(which mingw32-make)" ]; then
+        echo "WARNING: \"make\" (or \"mingw32-make\") not found. Some plugins might not compile."
+      fi
+  else
+      echo "ERROR: You must install \"make\" prior to installing."
+      exit 1
+  fi
 fi
 
 ### Check for gcc
 if ! [ -x "$(which gcc)" ]; then
-  echo "ERROR: You must install \"gcc\" prior to installing."
-  exit 1
+  if [[ "$(uname -s)" == *"MINGW"* ]] || [[ "$(uname -s)" == *"MSYS"* ]] || [[ "$(uname -s)" == *"CYGWIN"* ]]; then
+      echo "WARNING: \"gcc\" not found. Some plugins might not compile."
+  else
+      echo "ERROR: You must install \"gcc\" prior to installing."
+      exit 1
+  fi
 fi
 
 ### Check for curl
@@ -42,8 +52,12 @@ fi
 
 ### Check for node
 if ! [ -x "$(which node)" ]; then
-  echo "ERROR: You must install \"nodejs\" prior to installing due to coc-vim."
-  exit 1
+  if [[ "$(uname -s)" == *"MINGW"* ]] || [[ "$(uname -s)" == *"MSYS"* ]] || [[ "$(uname -s)" == *"CYGWIN"* ]]; then
+    echo "WARNING: \"nodejs\" not found. coc-vim will not work."
+  else
+    echo "ERROR: You must install \"nodejs\" prior to installing due to coc-vim."
+    exit 1
+  fi
 fi
 
 # --- Create required config directories if they don't exist ---

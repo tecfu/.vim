@@ -94,9 +94,17 @@ call plug#begin('~/.vim/plugins-vim')
   " ```
   " - WIDGET: Terminal/ Vimshell
   " ```
-  Plug 'Shougo/vimproc', {
-      \ 'do' : 'make'
-      \ }
+  if executable('mingw32-make')
+    Plug 'Shougo/vimproc', {
+        \ 'do' : 'mingw32-make -f make_mingw32.mak'
+        \ }
+  elseif executable('make')
+    Plug 'Shougo/vimproc', {
+        \ 'do' : 'make'
+        \ }
+  else
+    Plug 'Shougo/vimproc'
+  endif
 
 
   Plug 'Shougo/vimshell'
