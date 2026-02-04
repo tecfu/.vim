@@ -75,9 +75,6 @@ call plug#begin('~/.vim/plugins-vim')
   endif
   source $HOME/.vim/viml/coc-nvim.vim
 
-  " - AI
-  source $HOME/.vim/viml/copilot.vim
-
   " - Makes Gvim only colorschems work in term / nc with neovim
   Plug 'godlygeek/csapprox'
 
