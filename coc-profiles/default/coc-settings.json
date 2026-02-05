@@ -12,67 +12,30 @@
   "diagnostic.infoSign": "⚑",
   "diagnostic.hintSign": "⚑",
   "languageserver": {
-    "coc-efm-langserver": {
-      "filetypes": [
-        "javascript",
-        "typescript",
-        "json",
-        "jsonc",
-        "markdown",
-        "md",
-        "python"
-      ],
-      "command": "efm-langserver",
-      "args": [],
-      //  "command": "nc",
-      //  "args": ["localhost", "12345"],
-      "initializationOptions": {
-        "documentFormatting": true,
-        "documentRangeFormatting": true,
-        "documentSymbol": true,
-        "codeAction": true,
-        "completion": true
-      },
-      "trace.server": "verbose"
-    },
-    "csharp_ls": {
-      "command": "csharp-ls",
-      "filetypes": ["cs"],
-      "rootPatterns": [".git/", "*.sln", "*.csproj"],
-      "trace.server": "verbose"
-    }
-    //"coc-terraform-ls": {
-    //  "filetypes": ["terraform", "tf"],
-    //  "command": "terraform-ls",
-    //  "args": ["serve"],
-    //  "initializationOptions": {},
-    //  "settings": {},
-    //  "sources": ["https://github.com/hashicorp/terraform-ls"]
-    //},
     // this server works great, commenting out to use coc-efm-langserver for testing
-    // "coc-vscode-json-language-server": {
-    //   "filetypes": ["json", "jsonc"],
-    //   "command": "vscode-json-language-server",
-    //   "args": ["--stdio"],
-    //   "settings": {
-    //     "json": {
-    //       "schemas": [],
-    //       "format": {
-    //         "enable": false
-    //       },
-    //       "validate": {
-    //         "enable": true
-    //       }
-    //     }
-    //   },
-    //   "trace.server": "verbose",
-    //   "initializationOptions": {
-    //     "documentFormatting": false,
-    //     "documentRangeFormatting": false
-    //   },
-    //   "sources": ["npm i -g vscode-langservers-extracted"],
-    //   "rationale": "vscode-json-language-server for linting."
-    // },
+    "coc-vscode-json-language-server": {
+      "filetypes": ["json", "jsonc"],
+      "command": "vscode-json-language-server",
+      "args": ["--stdio"],
+      "settings": {
+        "json": {
+          "schemas": [],
+          "format": {
+            "enable": false
+          },
+          "validate": {
+            "enable": true
+          }
+        }
+      },
+      "trace.server": "verbose",
+      "initializationOptions": {
+        "documentFormatting": false,
+        "documentRangeFormatting": false
+      },
+      "sources": ["npm i -g vscode-langservers-extracted"],
+      "rationale": "vscode-json-language-server for linting."
+    },
     // coc chokes on diagnostics from this server, errors on workspace/didChangeWorkspaceFolders
     // "coc-vscode-eslint-language-server": {
     //   "filetypes": ["javascript", "typescript"],
