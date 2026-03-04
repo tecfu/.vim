@@ -795,6 +795,119 @@ function! s:EchoMessageCallback(message, timer_id)
 endfunction
 "}}}
 
+
+function! s:FormatTable() range
+  " ---- collect lines ----
+  let l:lines = getline(a:firstline, a:lastline)
+  if empty(l:lines) | return | endif
+
+  " ---- parse every row into trimmed cells ----
+  " Each line looks like:  [whitespace] | cell | cell | ...
+  " We strip ALL leading whitespace before parsing so mixed-indent tables
+  " are handled correctly.  Indentation of the output is taken from whichever
+  " non-blank line has the least leading whitespace.
+  let l:rows    = []   " list-of-lists  (string cells)
+  let l:is_sep  = []   " 1 when the row is a separator (---|---) row
+
+  for l:raw in l:lines
+    " Strip leading and trailing whitespace from the whole line
+    let l:line = substitute(l:raw, '^\s*\|\s*$', '', 'g')
+
+    " Strip the surrounding outer pipes, then split on inner pipes
+    let l:inner = substitute(l:line, '^|\(.*\)|$', '\1', '')
+    let l:parts = split(l:inner, '|', 1)
+
+    " Trim each cell
+    let l:cells = map(copy(l:parts), 'substitute(v:val, "^\\s*\\|\\s*$", "", "g")')
+
+    " A separator row has every non-empty cell matching /^[-: ]+$/
+    let l:sep = 1
+    for l:c in l:cells
+      if l:c !~# '^[-: ]*$'
+        let l:sep = 0
+        break
+      endif
+    endfor
+
+    call add(l:rows,   l:cells)
+    call add(l:is_sep, l:sep)
+  endfor
+
+  " ---- find original indentation (minimum leading whitespace of table lines) ----
+  let l:indent = ''
+  let l:min_ws = -1
+  for l:raw in l:lines
+    if l:raw =~# '^\s*|'
+      let l:ws = len(matchstr(l:raw, '^\s*'))
+      if l:min_ws < 0 || l:ws < l:min_ws
+        let l:min_ws = l:ws
+        let l:indent = matchstr(l:raw, '^\s*')
+      endif
+    endif
+  endfor
+
+  " ---- determine column count ----
+  let l:ncols = 0
+  for l:row in l:rows
+    if len(l:row) > l:ncols | let l:ncols = len(l:row) | endif
+  endfor
+
+  " ---- compute per-column max widths (from data rows only) ----
+  let l:widths = repeat([0], l:ncols)
+  for l:ri in range(len(l:rows))
+    if l:is_sep[l:ri] | continue | endif   " skip separator rows
+    let l:row = l:rows[l:ri]
+    for l:i in range(len(l:row))
+      let l:w = strdisplaywidth(l:row[l:i])
+      if l:w > l:widths[l:i] | let l:widths[l:i] = l:w | endif
+    endfor
+  endfor
+
+  " Separator cells need at least 3 dashes
+  for l:i in range(l:ncols)
+    if l:widths[l:i] < 3 | let l:widths[l:i] = 3 | endif
+  endfor
+
+  " ---- re-render ----
+  let l:new_lines = []
+  for l:ri in range(len(l:rows))
+    let l:row   = l:rows[l:ri]
+    let l:parts = []
+    for l:i in range(l:ncols)
+      let l:cell = get(l:row, l:i, '')
+      let l:w    = l:widths[l:i]
+      if l:is_sep[l:ri]
+        let l:cell = repeat('-', l:w)
+      else
+        let l:pad  = l:w - strdisplaywidth(l:cell)
+        if l:pad < 0 | let l:pad = 0 | endif
+        let l:cell = l:cell . repeat(' ', l:pad)
+      endif
+      call add(l:parts, ' ' . l:cell . ' ')
+    endfor
+    call add(l:new_lines, l:indent . '|' . join(l:parts, '|') . '|')
+  endfor
+
+  call setline(a:firstline, l:new_lines)
+endfunction
+
+command! -range=% FormatTable <line1>,<line2>call s:FormatTable()
+
+" <leader>tf: auto-detect the table block around the cursor and format it
+function! TableFormat()
+  let l:start = line('.')
+  let l:end   = line('.')
+  while l:start > 1 && getline(l:start - 1) =~# '^\s*|'
+    let l:start -= 1
+  endwhile
+  while l:end < line('$') && getline(l:end + 1) =~# '^\s*|'
+    let l:end += 1
+  endwhile
+  execute l:start . ',' . l:end . 'call s:FormatTable()'
+  echo 'Table formatted (' . (l:end - l:start + 1) . ' rows)'
+endfunction
+nnoremap <leader>tf :call TableFormat()<CR>
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Readline Config (When vim is launched from shell vi mode)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
