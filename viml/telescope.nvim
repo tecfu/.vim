@@ -89,9 +89,9 @@ local function read_history_from_file(history_file)
       table.insert(history, line)
     end
     file:close()
-  else
-    print("Error: Could not open file " .. history_file)
   end
+  -- If the file doesn't exist yet (e.g. first run), just return an empty
+  -- history table instead of erroring; it will be created on first write.
   return history
 end
 

@@ -60,6 +60,31 @@ if ! [ -x "$(which node)" ]; then
   fi
 fi
 
+### Install LSP servers/linters defined in lsp-servers.json (shared by both
+### the coc and cmp/native-LSP flows -- see viml/coc-nvim.vim and
+### viml/nvim-lsp-builtin.nvim). Best-effort: skipped with a warning if jq
+### or the relevant package manager (pip/npm/go) isn't available.
+if [ -x "$(which jq)" ]; then
+  echo "Installing shared LSP servers from lsp-servers.json..."
+  jq -r '.servers[] | select(.install) | "\(.name)\t\(.install)"' "$DIR/lsp-servers.json" |
+  while IFS=$'\t' read -r NAME INSTALL_CMD; do
+    BIN="$(echo "$INSTALL_CMD" | awk '{print $NF}')"
+    if [ -x "$(which "$BIN" 2>/dev/null)" ] || [ -x "$(which "$NAME" 2>/dev/null)" ]; then
+      echo "ALREADY INSTALLED: $NAME"
+      continue
+    fi
+    MANAGER="$(echo "$INSTALL_CMD" | awk '{print $1}')"
+    if ! [ -x "$(which "$MANAGER" 2>/dev/null)" ]; then
+      echo "WARNING: \"$MANAGER\" not found. Skipping install of $NAME ($INSTALL_CMD)."
+      continue
+    fi
+    echo "INSTALLING: $NAME ($INSTALL_CMD)"
+    eval "$INSTALL_CMD" || echo "WARNING: Failed to install $NAME."
+  done
+else
+  echo "WARNING: \"jq\" not found. Skipping auto-install of servers listed in lsp-servers.json."
+fi
+
 # --- Create required config directories if they don't exist ---
 mkdir -p "$HOME/.config/nvim"
 mkdir -p "$HOME/.config/efm-langserver"

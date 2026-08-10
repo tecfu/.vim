@@ -36,15 +36,51 @@ if has('win32') || has('win64')
   " This is a message to confirm the block is running. You can remove it later.
   echom "Configuring shell for Windows..."
 
-  " 1. Set the shell executable. Use forward slashes.
-  let &shell = 'C:/Program Files/Git/usr/bin/bash.exe'
+  " Locate a real bash.exe to use as &shell (needed by plugins like
+  " vim-airline that shell out for git status, etc.) Don't hardcode a
+  " single install path -- Git for Windows may be installed per-machine
+  " (e.g. "C:/Program Files/Git") or per-user (e.g. under
+  " "AppData/Local/Programs/Git"), so derive it from wherever `git` itself
+  " resolves on PATH, falling back to common install locations.
+  function! s:FindGitBash() abort
+    let l:git_path = exepath('git')
+    if !empty(l:git_path)
+      " git.exe lives at "<GitRoot>/cmd/git.exe" or "<GitRoot>/bin/git.exe"
+      let l:git_root = fnamemodify(l:git_path, ':h:h')
+      for l:candidate in [l:git_root . '/usr/bin/bash.exe', l:git_root . '/bin/bash.exe']
+        if filereadable(l:candidate)
+          return l:candidate
+        endif
+      endfor
+    endif
 
-  " 2. Set the flag to execute a command string.
-  let &shellcmdflag = '-c'
+    for l:candidate in [
+          \ 'C:/Program Files/Git/usr/bin/bash.exe',
+          \ 'C:/Program Files (x86)/Git/usr/bin/bash.exe',
+          \ expand('~/AppData/Local/Programs/Git/usr/bin/bash.exe'),
+          \ ]
+      if filereadable(l:candidate)
+        return l:candidate
+      endif
+    endfor
 
-  " 3. CRITICAL: Tell Neovim NOT to add extra quotes around the command.
-  " This fixes the ""git ..."" error.
-  let &shellxquote = ''
+    return ''
+  endfunction
+
+  let s:git_bash = s:FindGitBash()
+  if !empty(s:git_bash)
+    " 1. Set the shell executable. Use forward slashes.
+    let &shell = s:git_bash
+
+    " 2. Set the flag to execute a command string.
+    let &shellcmdflag = '-c'
+
+    " 3. CRITICAL: Tell Neovim NOT to add extra quotes around the command.
+    " This fixes the ""git ..."" error.
+    let &shellxquote = ''
+  else
+    echom "WARNING: Could not find Git Bash (bash.exe) on this machine. Leaving 'shell' at its default; some plugins (e.g. vim-airline git status) may not work."
+  endif
 endif
 
 " Check if $NVIM_CONFIG is empty (unset variables often evaluate to empty)

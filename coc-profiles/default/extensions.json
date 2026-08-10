@@ -1,5 +1,4 @@
 [
-  "@yaegassy/coc-pylsp",
   "coc-tsserver",
   "coc-eslint",
   "coc-marketplace"
