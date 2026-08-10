@@ -338,10 +338,6 @@ let g:rbql_meta_language='Javascript'
 Plug 'moll/vim-node'
 
 
-Plug 'nathanaelkane/vim-indent-guides'
-let g:indent_guides_start_level = 2
-
-
 "Must be manually triggered by M:/ when SearchComplete plugin enabled
 Plug 'othree/eregex.vim'
 "{{{
@@ -350,6 +346,10 @@ let g:eregex_force_case = 1
 let g:eregex_forward_delim = '/'
 let g:eregex_backward_delim = '?'
 "}}}
+
+
+Plug 'preservim/vim-indent-guides'
+let g:indent_guides_start_level = 2
 
 
 " ```
