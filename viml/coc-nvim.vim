@@ -98,17 +98,17 @@ function! s:SyncExtensionsFilesystem() abort
           let l:subname = fnamemodify(l:subdir, ':t')
           let l:full_name = l:name . '/' . l:subname
           if index(l:allowed_extensions, l:full_name) == -1
-             call system('rm -rf ' . shellescape(l:subdir))
+             call delete(l:subdir, 'rf')
           endif
         endfor
         " Remove scope dir if empty
         if empty(glob(l:dir . '/*', 1, 1))
-           call system('rm -rf ' . shellescape(l:dir))
+           call delete(l:dir, 'rf')
         endif
       else
         " Normal package
         if index(l:allowed_extensions, l:name) == -1
-           call system('rm -rf ' . shellescape(l:dir))
+           call delete(l:dir, 'rf')
         endif
       endif
     endfor
