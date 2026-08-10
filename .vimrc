@@ -215,7 +215,13 @@ let $NVIM_TUI_ENABLE_CURSOR_SHAPE = 0
 
 " Set color column
 set colorcolumn=80
-syntax on
+" Guard against re-enabling syntax when it's already on (e.g. via
+" $VIMRUNTIME/defaults.vim, sourced earlier). Calling `:syntax on` a second
+" time triggers `:highlight clear`, which makes Vim re-source the active
+" colorscheme file (colors/tokyonight.vim) a second time on every startup.
+if !exists('g:syntax_on')
+  syntax on
+endif
 
 " Set relative line numbers except in insert mode
 " set relativenumber
@@ -304,10 +310,13 @@ catch
 endtry
 
 " Return to last edit position when opening files (You want this!)
-autocmd BufReadPost *
-   \ if line("'\"") > 0 && line("'\"") <= line("$") |
-   \   exe "normal! g`\"" |
-   \ endif
+augroup RestoreCursorPosition
+  autocmd!
+  autocmd BufReadPost *
+     \ if line("'\"") > 0 && line("'\"") <= line("$") |
+     \   exe "normal! g`\"" |
+     \ endif
+augroup END
 
 " Save buffer list. Slows vim dramatically when in big project.
 " Disabled.
@@ -318,7 +327,10 @@ set splitbelow
 set splitright
 
 " Vertically center buffer when entering insert mode
-autocmd InsertEnter * norm zz
+augroup CenterOnInsert
+  autocmd!
+  autocmd InsertEnter * norm zz
+augroup END
 
 "}}}
 
@@ -539,8 +551,11 @@ endfunction
 nnoremap <C-t> :call OpenNetrwInNewTab()<CR>
 
 " Exit netrw on <ESC> or q and return to the previous buffer and tab if they exist
-autocmd FileType netrw nnoremap <buffer> <Esc> :call CloseNetrwAndReturn()<CR>
-autocmd FileType netrw nnoremap <buffer> q :call CloseNetrwAndReturn()<CR>
+augroup NetrwCustom
+  autocmd!
+  autocmd FileType netrw nnoremap <buffer> <Esc> :call CloseNetrwAndReturn()<CR>
+  autocmd FileType netrw nnoremap <buffer> q :call CloseNetrwAndReturn()<CR>
+augroup END
 
 " Define a function to close netrw and return to the previous buffer and tab if they exist
 function! CloseNetrwAndReturn()
@@ -612,25 +627,34 @@ nnoremap <C-d> :tab split<CR>
 " https://vi.stackexchange.com/questions/3177/use-single-ftplugin-for-more-than-one-filetype
 " Easier to apply groupings here
 
-autocmd BufNewFile,BufReadPost *.md set filetype=markdown
-autocmd BufNewFile,BufRead coc-settings.json,*.jsonc set filetype=jsonc
-autocmd BufNewFile,BufRead *.cjs set filetype=javascript
-autocmd BufEnter *.nvim :setlocal filetype=vim
+augroup FiletypeSettings
+  autocmd!
+  " Use setfiletype (not `set filetype=`) so this acts only as a fallback
+  " and doesn't refire the FileType event when vim-markdown's ftdetect
+  " (which runs earlier, on BufRead/BufNewFile) already set it -- the
+  " previous `set filetype=markdown` here fired FileType markdown a second
+  " time for every markdown buffer, doubling markdown/html/css/xml syntax
+  " sourcing cost on every :e of a .md file (~90ms wasted).
+  autocmd BufNewFile,BufReadPost *.md setfiletype markdown
+  autocmd BufNewFile,BufRead coc-settings.json,*.jsonc setfiletype jsonc
+  autocmd BufNewFile,BufRead *.cjs setfiletype javascript
+  autocmd BufEnter *.nvim :setlocal filetype=vim
 
-" Filetype specific syntax highlighting and indentation
-autocmd FileType make setlocal ts=8 sts=8 sw=8 noexpandtab
-autocmd FileType markdown setlocal shiftwidth=2 tabstop=2
-autocmd FileType python,yaml setlocal ts=2 sts=2 sw=2 expandtab
+  " Filetype specific syntax highlighting and indentation
+  autocmd FileType make setlocal ts=8 sts=8 sw=8 noexpandtab
+  autocmd FileType markdown setlocal shiftwidth=2 tabstop=2
+  autocmd FileType python,yaml setlocal ts=2 sts=2 sw=2 expandtab
 
-" Setting foldmethod=marker disables folding
-autocmd Filetype nvim,vim,vimrc,uml
-  \ setlocal foldmethod=marker foldmarker=\"{{{,\"}}} foldlevel=1
-  \ ts=2 sts=2 sw=2 expandtab
+  " Setting foldmethod=marker disables folding
+  autocmd Filetype nvim,vim,vimrc,uml
+    \ setlocal foldmethod=marker foldmarker=\"{{{,\"}}} foldlevel=1
+    \ ts=2 sts=2 sw=2 expandtab
 
-" Set foldlevel to the deepest level of the file
-" See: https://superuser.com/questions/567352/how-can-i-set-foldlevelstart-in-vim-to-just-fold-nothing-initially-still-allowi
-autocmd Filetype javascript,typescript
-  \ let &foldlevel=max(map(range(1, line('$')), 'foldlevel(v:val)'))
+  " Set foldlevel to the deepest level of the file
+  " See: https://superuser.com/questions/567352/how-can-i-set-foldlevelstart-in-vim-to-just-fold-nothing-initially-still-allowi
+  autocmd Filetype javascript,typescript
+    \ let &foldlevel=max(map(range(1, line('$')), 'foldlevel(v:val)'))
+augroup END
 
 "======================================================================
 " => Better Markdown Folding
@@ -689,8 +713,11 @@ function! MarkdownLevel()
 endfunction
 
 
-autocmd Filetype text
-  \ setlocal spell
+augroup FiletypeSpell
+  autocmd!
+  autocmd Filetype text
+    \ setlocal spell
+augroup END
 
 augroup no_filetype
   autocmd!
@@ -718,9 +745,11 @@ if has('persistent_undo')
   let vimDir = has('nvim') ? '$HOME/.config/nvim' : '$HOME/.vim'
   let &runtimepath.=','.vimDir
   let myUndoDir = expand(vimDir . '/undo')
-  " Create dirs
-  call system('mkdir ' . vimDir)
-  call system('mkdir ' . myUndoDir)
+  " Create dirs without spawning a shell (mkdir() is a Vim builtin) and only
+  " when missing -- avoids two process spawns on every single startup.
+  if !isdirectory(myUndoDir)
+    call mkdir(myUndoDir, 'p')
+  endif
   let &undodir = myUndoDir
   set undofile
   set undolevels=1000         " How many undos
