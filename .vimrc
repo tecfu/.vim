@@ -269,6 +269,24 @@ if s:is_wsl && executable(s:clip)
   augroup END
 endif
 
+" 3b. OSC 52 Fallback (headless servers over SSH)
+" -------------------------------------------------------------
+" If no real clipboard tool was found above (xsel/WSL/etc.), emit the OSC 52
+" escape sequence so yanks land on the LOCAL machine's clipboard through the
+" SSH stream. Requires nvim >= 0.10 and a local terminal that supports
+" OSC 52 (kitty, alacritty, wezterm, foot, Windows Terminal, tmux with
+" `set -s set-clipboard on`). VTE terminals (gnome-/xfce4-terminal) ignore it.
+if has('nvim-0.10') && !exists('g:clipboard')
+  lua << EOF
+  local osc52 = require('vim.ui.clipboard.osc52')
+  vim.g.clipboard = {
+    name = 'OSC52',
+    copy = { ['+'] = osc52.copy('+'), ['*'] = osc52.copy('*') },
+    paste = { ['+'] = osc52.paste('+'), ['*'] = osc52.paste('*') },
+  }
+EOF
+endif
+
 " 4. Clipboard Mappings
 " -------------------------------------------------------------
 " Allow pasting from clipboard without autoindenting
