@@ -5,7 +5,11 @@
 - Mac: You will to want to use a terminal that supports Truecolor, like:
   - Alacritty
   - Extraterm
-- Ubuntu: The install script will attempt to install `xsel` for clipboard support. This is preferred over `clipman`.
+- Ubuntu: `xsel` is installed by this setup (see INSTALL.sh) and is **required for clipboard support** (`"+y` / `"+p`). Neovim silently skips clipboard setup when it's missing, so yanking appears to do nothing. Restore it with:
+  ```bash
+  sudo apt-get install -y xsel
+  ```
+  Verify in nvim: `:echo provider#clipboard#Executable()` should print `xsel_override`.
 
 ## Installation for Vim
 
