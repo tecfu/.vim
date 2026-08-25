@@ -1,51 +1,51 @@
-Plug 'neovim/nvim-lspconfig'
+" Tool definitions live in ~/.vim/efm-langserver-config.yaml and are shared
+" with the coc flow (coc-profiles/efm/coc-settings.json). Real language
+" servers come from ~/.vim/lsp-servers.json; if you want those too in this
+" profile, source viml/nvim-lsp-builtin.nvim as well.
+lua << EOF
+local efm_bin = vim.fn.exepath("efm-langserver")
+if efm_bin == "" then
+  efm_bin = vim.fn.expand("~") .. "/go/bin/efm-langserver"
+end
 
-function! SetupLsp()
-  lua << EOF
-local lspconfig = require('lspconfig')
-
--- Enable LSP log level trace (helps for debugging)
-vim.lsp.set_log_level('trace')
-
--- Setup efm-langserver via github.com/tecful/efm-langserver
-local efm_config = {
-  -- NOTE: loglevel is set in the config file
-    cmd = { vim.fn.expand("~") .. "/go/bin/efm-langserver", "-logfile", "/tmp/efm-langserver-nvim.log" },
+-- filetypes mirror the `languages:` keys of efm-langserver-config.yaml;
+-- update both together.
+vim.lsp.config("efm", {
+  cmd = {
+    efm_bin,
+    "-c", vim.fn.expand("~/.vim/efm-langserver-config.yaml"),
+    "-logfile", "/tmp/efm-langserver-nvim.log",
+  },
+  filetypes = {
+    "csharp", "go", "javascript", "json", "jsonc",
+    "markdown", "python", "sh", "sql", "typescript",
+  },
+  settings = {},
   init_options = {
     documentFormatting = true,
     documentRangeFormatting = true,
     hover = true,
     documentSymbol = true,
     codeAction = true,
-    completion = true
-  },    
-  -- push diagnostics even while typing (not just on save/open)
+    completion = true,
+  },
+  -- push diagnostics while typing (not just on save/open)
   handlers = {
     ["textDocument/publishDiagnostics"] = vim.lsp.with(
       vim.lsp.diagnostic.on_publish_diagnostics,
       { update_in_insert = true }
-    )
+    ),
   },
-  on_attach = function(client, bufnr)
-    print("LSP attached to filetype: " ..
-      vim.bo.filetype ..
-      " with client ID: " .. client.id ..
-      " and buffer: " .. bufnr ..
-      " name: " .. client.name)
+})
+
+vim.api.nvim_create_autocmd("LspAttach", {
+  desc = "efm keybindings",
+  callback = function(event)
+    vim.keymap.set("n", "<leader>l", function()
+      vim.lsp.buf.format({ async = true })
+    end, { buffer = event.buf, desc = "Format buffer" })
   end,
-  settings = {},
-  filetypes = { "javascript", "python" },
-}
+})
 
-lspconfig.efm.setup(efm_config)
-lspconfig.efm.setup(efm_config)
-
--- Keybinding to trigger formatting with <leader>l
-vim.api.nvim_set_keymap('n', '<leader>l',
-  '<cmd>lua vim.lsp.buf.formatting()<CR>',
-  { noremap = true, silent = true })
+vim.lsp.enable("efm")
 EOF
-endfunction
-
-" Call SetupLsp after delay on VimEnter
-autocmd VimEnter * call timer_start(200, {-> SetupLsp()})

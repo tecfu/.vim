@@ -15,7 +15,7 @@
     "coc-efm-langserver": {
       "filetypes": ["*"],
       "command": "efm-langserver",
-      "args": [],
+      "args": ["-c", "/home/base/.vim/efm-langserver-config.yaml"],
       //  "command": "nc",
       //  "args": ["localhost", "12345"],
       "rootPatterns": [".git/"],
