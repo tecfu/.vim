@@ -11,40 +11,19 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
-### Check for make
-if ! [ -x "$(which make)" ]; then
-  echo "ERROR: You must install \"make\" prior to installing."
-  exit 1
-fi
+. "$DIR/../lib/common.sh"
 
-### Check for gcc
-if ! [ -x "$(which gcc)" ]; then
-  echo "ERROR: You must install \"gcc\" prior to installing."
-  exit 1
-fi
+### Check build tools (make, gcc), curl, vim, node
+require_dep make build-essential
+require_dep gcc build-essential
+require_dep curl curl
+require_dep vim vim
 
-### Check for curl
-if ! [ -x "$(which curl)" ]; then
-  echo "ERROR: You must install \"curl\" prior to installing."
-  exit 1
-fi
+### xsel: clipboard support (preferred over clipman)
+require_dep xsel xsel
 
-### Check for xsel on Ubuntu
-if [ -f /etc/os-release ]; then
-    . /etc/os-release
-    if [ "$ID" == "ubuntu" ]; then
-        if ! [ -x "$(which xsel)" ]; then
-            echo "Installing xsel for clipboard support (preferred over clipman)..."
-            sudo apt-get update && sudo apt-get install -y xsel
-        fi
-    fi
-fi
-
-### Check for node
-if ! [ -x "$(which node)" ]; then
-  echo "ERROR: You must install \"nodejs\" prior to installing due to coc-vim."
-  exit 1
-fi
+### node (needed by coc-vim): auto-installed by the top-level INSTALL.sh via volta
+require_dep node
 
 # --- Create required config directories if they don't exist ---
 mkdir -p "$HOME/.config/nvim"
@@ -119,7 +98,7 @@ vim +PlugInstall +qall
 
 WARN_MESSAGES=()
 
-WARN_MESSAGES+=("WARN: FOR VIM BE SURE TO INSTALL POWERLINE FONTS: sudo apt-get install fonts-powerline")
+apt_install fonts-powerline || WARN_MESSAGES+=("WARN: FOR VIM BE SURE TO INSTALL POWERLINE FONTS: sudo apt-get install fonts-powerline")
 
 for MESSAGE in "${WARN_MESSAGES[@]}"; do
   echo -e "\033[0;33m$MESSAGE\033[0m"
