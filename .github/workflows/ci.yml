@@ -1,0 +1,149 @@
+name: CI
+
+on:
+  push:
+    branches: [develop, master, main]
+  pull_request:
+    branches: [develop, master, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Fast static checks (JSON/YAML validity, PEP 668 regression, shellcheck)
+  # ---------------------------------------------------------------------------
+  lint:
+    name: Lint & metadata
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install check dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq shellcheck jq
+
+      - name: Shellcheck INSTALL.sh
+        run: |
+          # INSTALL.sh sources ../lib/common.sh (from parent dotfiles repo).
+          # Provide a minimal stub so shellcheck can parse the rest.
+          mkdir -p ../lib
+          cat > ../lib/common.sh << 'STUB'
+          #!/bin/bash
+          apt_install() { echo "apt_install $*"; }
+          require_dep() { command -v "$1" >/dev/null 2>&1 || return 1; }
+          install_skip() { echo "SKIP: $*"; }
+          install_error() { echo "ERROR: $*" >&2; }
+          detect_de() { echo other; }
+          detect_session() { echo unknown; }
+          STUB
+          shellcheck -x -e SC1091,SC2034,SC2086,SC2155 INSTALL.sh || {
+            echo "::warning::shellcheck reported issues (see log)"
+            # Keep the job green for style warnings; fail only on serious errors
+            shellcheck -S error -x -e SC1091 INSTALL.sh
+          }
+
+      - name: Validate installer metadata (PEP 668 / pipx)
+        run: |
+          chmod +x scripts/ci-check-install-metadata.sh
+          ./scripts/ci-check-install-metadata.sh
+
+      - name: Validate lsp-servers.json schema basics
+        run: |
+          jq -e '.servers | type == "array"' lsp-servers.json
+          jq -e 'all(.servers[]; has("name") and has("cmd") and has("filetypes"))' lsp-servers.json
+          echo "lsp-servers.json structure OK"
+
+  # ---------------------------------------------------------------------------
+  # Smoke-test key install paths on a PEP-668-style environment
+  # ---------------------------------------------------------------------------
+  install-smoke:
+    name: Install smoke (Ubuntu ${{ matrix.ubuntu }})
+    runs-on: ubuntu-${{ matrix.ubuntu }}
+    strategy:
+      fail-fast: false
+      matrix:
+        ubuntu: ["22.04", "24.04"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install system deps used by installer
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq \
+            jq curl python3 python3-pip python3-venv \
+            pipx nodejs npm vim-nox
+          # Ensure user local bin is on PATH (pipx default)
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.local/bin:$PATH"
+          pipx ensurepath || true
+
+      - name: Stub parent common.sh (standalone .vim checkout)
+        run: |
+          mkdir -p ../lib
+          cat > ../lib/common.sh << 'STUB'
+          #!/bin/bash
+          apt_install() {
+            echo "INFO: sudo apt-get install -y $*"
+            sudo apt-get install -y "$@"
+          }
+          require_dep() {
+            if ! command -v "$1" >/dev/null 2>&1 && [ -n "${2:-}" ]; then
+              apt_install "$2"
+            fi
+            command -v "$1" >/dev/null 2>&1 && return 0
+            echo "ERROR: dependency \"$1\" is missing" >&2
+            return 1
+          }
+          install_skip() { echo "SKIP: $*"; }
+          install_error() { echo "ERROR: $*" >&2; }
+          detect_de() { echo other; }
+          detect_session() { echo unknown; }
+          STUB
+
+      - name: Run Python LSP install path (pipx)
+        env:
+          # Avoid interactive vim PlugInstall in CI
+          TERM: dumb
+        run: |
+          set -euo pipefail
+          export PATH="$HOME/.local/bin:$PATH"
+
+          # Exercise the same commands the installer uses for Python tools
+          for pkg in basedpyright ruff; do
+            echo ">>> pipx install $pkg"
+            pipx install "$pkg"
+            command -v "$pkg" || command -v "${pkg}-langserver" || true
+          done
+
+          # basedpyright exposes basedpyright-langserver; ruff exposes ruff
+          command -v ruff
+          command -v basedpyright-langserver || command -v basedpyright
+
+          echo "pipx Python LSP tools installed successfully"
+
+      - name: install-lsp-tools.py dry-run
+        run: |
+          pip install pyyaml
+          python3 scripts/install-lsp-tools.py --dry-run || true
+
+      - name: Parse INSTALL.sh LSP loop without full run
+        run: |
+          # Confirm jq extraction of install commands still works
+          jq -r '.servers[] | select(.install) | "\(.name)\t\(.install)"' lsp-servers.json | while IFS=$'\t' read -r name cmd; do
+            echo "would install: $name -> $cmd"
+            manager=$(echo "$cmd" | awk '{print $1}')
+            command -v "$manager" >/dev/null || { echo "missing manager: $manager"; exit 1; }
+          done
+          echo "INSTALL.sh install-command parsing OK"
