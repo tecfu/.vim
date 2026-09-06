@@ -22,7 +22,6 @@
     "orgy": "^2.0.3"
   },
   "dependencies": {
-    "@google/gemini-cli": "^0.18.4",
     "jsdom": "^9.1.0"
   }
 }

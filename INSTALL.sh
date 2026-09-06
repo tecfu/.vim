@@ -11,6 +11,8 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
+. "$DIR/../lib/common.sh"
+
 ### Check for make
 if ! [ -x "$(which make)" ]; then
   if [[ "$(uname -s)" == *"MINGW"* ]] || [[ "$(uname -s)" == *"MSYS"* ]] || [[ "$(uname -s)" == *"CYGWIN"* ]]; then
@@ -18,8 +20,7 @@ if ! [ -x "$(which make)" ]; then
         echo "WARNING: \"make\" (or \"mingw32-make\") not found. Some plugins might not compile."
       fi
   else
-      echo "ERROR: You must install \"make\" prior to installing."
-      exit 1
+      require_dep make "sudo apt-get install build-essential" || true
   fi
 fi
 
@@ -28,15 +29,13 @@ if ! [ -x "$(which gcc)" ]; then
   if [[ "$(uname -s)" == *"MINGW"* ]] || [[ "$(uname -s)" == *"MSYS"* ]] || [[ "$(uname -s)" == *"CYGWIN"* ]]; then
       echo "WARNING: \"gcc\" not found. Some plugins might not compile."
   else
-      echo "ERROR: You must install \"gcc\" prior to installing."
-      exit 1
+      require_dep gcc "sudo apt-get install build-essential" || true
   fi
 fi
 
-### Check for curl
+### Check for curl (needed for vim-plug download; guarded below)
 if ! [ -x "$(which curl)" ]; then
-  echo "ERROR: You must install \"curl\" prior to installing."
-  exit 1
+  require_dep curl "sudo apt-get install curl" || true
 fi
 
 ### Check for xsel on Ubuntu
@@ -50,13 +49,14 @@ if [ -f /etc/os-release ]; then
     fi
 fi
 
-### Check for node
+### Check for node (needed by coc; its config symlink is dep-gated below)
+HAVE_NODE=1
 if ! [ -x "$(which node)" ]; then
   if [[ "$(uname -s)" == *"MINGW"* ]] || [[ "$(uname -s)" == *"MSYS"* ]] || [[ "$(uname -s)" == *"CYGWIN"* ]]; then
     echo "WARNING: \"nodejs\" not found. coc-vim will not work."
+    HAVE_NODE=0
   else
-    echo "ERROR: You must install \"nodejs\" prior to installing due to coc-vim."
-    exit 1
+    require_dep node "sudo apt-get install nodejs" || HAVE_NODE=0
   fi
 fi
 
@@ -91,6 +91,8 @@ mkdir -p "$HOME/.config/efm-langserver"
 
 SYMLINKS=()
 SYMLINKS+=("$DIR $HOME/.vim")
+# coc needs node; skip its config when node is missing and --ignore-missing-deps is set
+[ "$HAVE_NODE" = 1 ] && SYMLINKS+=("$DIR/coc-settings.json $HOME/.config/nvim/coc-settings.json")
 
 if [[ "$DIR" != "$HOME/.vim" ]]; then
   for i in "${SYMLINKS[@]}"; do
@@ -150,11 +152,15 @@ for i in "${SYMLINKS[@]}"; do
   fi
 done
 
-echo "INFO: Download vim-plug package manager to ~/.vim/autoload/plug.vim"
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+if command -v curl >/dev/null 2>&1; then
+  echo "INFO: Download vim-plug package manager to ~/.vim/autoload/plug.vim"
+  curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+      https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-vim +PlugInstall +qall
+  vim +PlugInstall +qall
+else
+  install_skip "curl missing; skipping vim-plug download and plugin install"
+fi
 
 WARN_MESSAGES=()
 

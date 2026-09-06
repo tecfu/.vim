@@ -15,14 +15,14 @@
           }
         }
       },
-      "install": "pip install basedpyright"
+      "install": "pip install --user basedpyright"
     },
     {
       "name": "ruff",
       "filetypes": ["python"],
       "cmd": ["ruff", "server"],
       "root_patterns": [".git", "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt"],
-      "install": "pip install ruff"
+      "install": "pip install --user ruff"
     },
     {
       "name": "ts_ls",
