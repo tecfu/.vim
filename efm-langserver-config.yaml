@@ -9,7 +9,7 @@ log-file: "${HOME}/.vim/efm-langserver.log"
 tools:
   black: &black
     checkInstalled: "which black"
-    install: "pip install black"
+    install: "pipx install black"
     format-command: "black --fast -"
     format-stdin: true
     lint-command: "black --check --diff -"
@@ -71,7 +71,7 @@ tools:
   # Does not support linting stdin (need to save file first)
   mypy_lint: &mypy_lint
     checkInstalled: "which mypy"
-    install: "pip install mypy"
+    install: "pipx install mypy"
     lint-command: "mypy --no-error-summary --show-column-numbers --ignore-missing-imports --disallow-untyped-defs --disallow-incomplete-defs ${INPUT}"
     lint-stdin: true
     lint-formats:
@@ -83,7 +83,7 @@ tools:
   # flake8_lint is used for linting Python code with flake8.
   flake8_lint: &flake8_lint
     checkInstalled: "which flake8"
-    install: "pip install flake8"
+    install: "pipx install flake8"
     lint-command: "flake8 --stdin-display-name ${INPUT} -"
     lint-stdin: true
     lint-formats:
