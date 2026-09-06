@@ -60,21 +60,38 @@ if ! [ -x "$(which node)" ]; then
   fi
 fi
 
+### Ensure pipx is available for Python CLI tools (basedpyright, ruff, black, …).
+### PEP 668 blocks plain `pip install --user` on modern Debian/Ubuntu.
+if ! command -v pipx >/dev/null 2>&1; then
+  if command -v apt-get >/dev/null 2>&1; then
+    echo "INFO: installing pipx (required for Python LSP tools under PEP 668)..."
+    apt_install pipx || true
+    export PATH="$HOME/.local/bin:$PATH"
+    if command -v pipx >/dev/null 2>&1; then
+      pipx ensurepath >/dev/null 2>&1 || true
+    fi
+  else
+    echo "WARNING: pipx not found and apt-get unavailable; Python LSP tools may fail to install."
+  fi
+else
+  export PATH="$HOME/.local/bin:$PATH"
+fi
+
 ### Install LSP servers/linters defined in lsp-servers.json (shared by both
 ### the coc and cmp/native-LSP flows -- see viml/coc-nvim.vim and
 ### viml/nvim-lsp-builtin.nvim). Best-effort: skipped with a warning if jq
-### or the relevant package manager (pip/npm/go) isn't available.
+### or the relevant package manager (pipx/npm/go) isn't available.
 if [ -x "$(which jq)" ]; then
   echo "Installing shared LSP servers from lsp-servers.json..."
   jq -r '.servers[] | select(.install) | "\(.name)\t\(.install)"' "$DIR/lsp-servers.json" |
   while IFS=$'\t' read -r NAME INSTALL_CMD; do
     BIN="$(echo "$INSTALL_CMD" | awk '{print $NF}')"
-    if [ -x "$(which "$BIN" 2>/dev/null)" ] || [ -x "$(which "$NAME" 2>/dev/null)" ]; then
+    if command -v "$BIN" >/dev/null 2>&1 || command -v "$NAME" >/dev/null 2>&1; then
       echo "ALREADY INSTALLED: $NAME"
       continue
     fi
     MANAGER="$(echo "$INSTALL_CMD" | awk '{print $1}')"
-    if ! [ -x "$(which "$MANAGER" 2>/dev/null)" ]; then
+    if ! command -v "$MANAGER" >/dev/null 2>&1; then
       echo "WARNING: \"$MANAGER\" not found. Skipping install of $NAME ($INSTALL_CMD)."
       continue
     fi
@@ -157,7 +174,15 @@ if command -v curl >/dev/null 2>&1; then
   curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-  vim +PlugInstall +qall
+  # Avoid E558 terminfo errors (e.g. TERM=alacritty without a matching entry)
+  # and the resulting "Press ENTER" pause when running non-interactively.
+  # Prefer nvim --headless when available; otherwise force a safe TERM.
+  if command -v nvim >/dev/null 2>&1; then
+    nvim --headless +PlugInstall +qall 2>/dev/null || true
+  else
+    TERM=ansi vim -c 'set nomore' -c 'PlugInstall' -c 'qa!' 2>/dev/null || \
+      TERM=xterm-256color vim -c 'set nomore' -c 'PlugInstall' -c 'qa!' || true
+  fi
 else
   install_skip "curl missing; skipping vim-plug download and plugin install"
 fi
