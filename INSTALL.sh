@@ -156,13 +156,15 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 
 vim +PlugInstall +qall
 
+WARN_MESSAGES=()
+
 # Install missing LSP servers / lint-format tools (metadata lives in
 # lsp-servers.json and efm-langserver-config.yaml).
 if command -v python3 >/dev/null 2>&1; then
   python3 "$DIR/scripts/install-lsp-tools.py" || WARN_MESSAGES+=("WARN: some LSP/lint tools failed to install; rerun scripts/install-lsp-tools.py")
+else
+  WARN_MESSAGES+=("WARN: python3 not found; skipped scripts/install-lsp-tools.py (LSP/lint auto-install)")
 fi
-
-WARN_MESSAGES=()
 
 WARN_MESSAGES+=("WARN: FOR VIM BE SURE TO INSTALL POWERLINE FONTS: sudo apt-get install fonts-powerline")
 
