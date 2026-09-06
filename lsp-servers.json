@@ -37,6 +37,14 @@
       "cmd": ["sql-language-server", "up", "--method", "stdio"],
       "root_patterns": [".git", "package.json"],
       "install": "npm install -g sql-language-server"
+    },
+    {
+      "name": "gopls",
+      "filetypes": ["go", "gomod", "gowork", "gotmpl"],
+      "cmd": ["gopls"],
+      "root_patterns": [".git", "go.mod", "go.work"],
+      "install": "go install golang.org/x/tools/gopls@latest"
     }
   ]
 }
+

@@ -1,6 +1,6 @@
 version: 2
 log-level: 5
-log-file: "/home/base/.vim/efm-langserver.log"
+log-file: "${HOME}/.vim/efm-langserver.log"
 # Do not use top-level root-markers because they will override the rootMarkers in tools.
 #
 # OWNERSHIP SPLIT -- keep this file for lint/format-only tools that need
@@ -52,7 +52,7 @@ tools:
     checkInstalled: "which markdownlint"
     install: "npm install -g markdownlint-cli"
     # The LINT command still uses the wrapper for intelligent config detection.
-    lint-command: '$HOME/.vim/efm-langserver-linter-wrapper.sh --filenames=''.markdownlint.json,.markdownlint.yaml,.markdownlint.yml,.markdownlintrc'' --fallback-config="$HOME/.config/markdownlint/config.json" --filename-arg-prefix='''' --config-flag=''--config'' -- /home/base/.volta/bin/markdownlint ${INPUT}'
+    lint-command: '$HOME/.vim/efm-langserver-linter-wrapper.sh --filenames=''.markdownlint.json,.markdownlint.yaml,.markdownlint.yml,.markdownlintrc'' --fallback-config="$HOME/.config/markdownlint/config.json" --filename-arg-prefix='''' --config-flag=''--config'' -- markdownlint ${INPUT}'
     lint-stdin: false
     lint-after-open: true
     lint-formats:

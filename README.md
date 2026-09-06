@@ -16,7 +16,7 @@
 ### Clone this repository and its submodules into your home directory
 
 ```sh
-git clone --recurse-submodules git://github.com/tecfu/.vim ~/.vim
+git clone --recurse-submodules https://github.com/tecfu/.vim ~/.vim
 ```
 
 ### Run Install Script
