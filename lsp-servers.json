@@ -1,0 +1,50 @@
+{
+  "_comment": "Single source of truth for LSP servers shared between the cmp/native-LSP flow (viml/nvim-lsp-builtin.nvim) and the coc flow (viml/coc-nvim.vim). Each server is registered generically (explicit cmd/args/filetypes) so neither consumer has to duplicate this config. Pure lint/format-only tools that require efm-langserver stay in efm-langserver-config.yaml since that file is efm-specific.",
+  "servers": [
+    {
+      "name": "basedpyright",
+      "filetypes": ["python"],
+      "cmd": ["basedpyright-langserver", "--stdio"],
+      "root_patterns": [".git", "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt"],
+      "settings": {
+        "python": {
+          "analysis": {
+            "autoSearchPaths": true,
+            "useLibraryCodeForTypes": true,
+            "diagnosticMode": "workspace"
+          }
+        }
+      },
+      "install": "pipx install basedpyright"
+    },
+    {
+      "name": "ruff",
+      "filetypes": ["python"],
+      "cmd": ["ruff", "server"],
+      "root_patterns": [".git", "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt"],
+      "install": "pipx install ruff"
+    },
+    {
+      "name": "ts_ls",
+      "filetypes": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+      "cmd": ["typescript-language-server", "--stdio"],
+      "root_patterns": [".git", "package.json", "tsconfig.json"],
+      "install": "npm install -g typescript-language-server typescript"
+    },
+    {
+      "name": "sqlls",
+      "filetypes": ["sql"],
+      "cmd": ["sql-language-server", "up", "--method", "stdio"],
+      "root_patterns": [".git", "package.json"],
+      "install": "npm install -g sql-language-server"
+    },
+    {
+      "name": "gopls",
+      "filetypes": ["go", "gomod", "gowork", "gotmpl"],
+      "cmd": ["gopls"],
+      "root_patterns": [".git", "go.mod", "go.work"],
+      "install": "go install golang.org/x/tools/gopls@latest"
+    }
+  ]
+}
+

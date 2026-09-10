@@ -28,29 +28,23 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "{{{
 function! DetectPlugin(name)
-  "check if plugin found in scriptnames
-  redir @z
-  silent scriptnames
-  redir END
+  " Check if plugin found in scriptnames. Uses execute()'s built-in output
+  " capture and Vim's native regex instead of redir + system() + grep --
+  " spawning a shell/grep process on every call was slow (esp. on Windows)
+  " and its quoting through shellescape()/echo was unreliable, causing
+  " false negatives.
+  if execute('silent scriptnames') =~? a:name
+    return 1
+  endif
 
-  let l:scriptnameFound = system('echo '.shellescape(@z)
-        \.' | grep -ci "'.a:name.'"')
-
-  let l:helpFound = 0
   try
     "we don't care about output here, only whether error is thrown
     silent execute "h ".a:name." | q"
-    let l:helpFound = 1
-  catch
-    let l:helpFound = 0
-  endtry
-
-  if (l:scriptnameFound || l:helpFound)
     return 1
-  else
+  catch
     echoerr 'Plugin '.a:name.' not detected'
     return 0
-  endif
+  endtry
 endfunction
 "}}}
 
@@ -67,6 +61,13 @@ let g:airline_powerline_fonts=1
 
 "airline themed tabs
 "let g:airline#extensions#tabline#enabled = 1
+
+" Avoid shelling out to `git status` for dirty/untracked indicators on every
+" BufEnter (expensive process-spawn cost on Windows). Branch name itself
+" still comes from fugitive's fast .git/HEAD read. Set unconditionally
+" (outside OnLoadAirline/DetectPlugin) since airline reads this lazily and
+" DetectPlugin's shell-based check is not reliable enough to gate this on.
+let g:airline#extensions#branch#vcs_checks = []
 
 function! OnLoadAirline(...)
   if DetectPlugin('airline')
@@ -338,10 +339,6 @@ let g:rbql_meta_language='Javascript'
 Plug 'moll/vim-node'
 
 
-Plug 'nathanaelkane/vim-indent-guides'
-let g:indent_guides_start_level = 2
-
-
 "Must be manually triggered by M:/ when SearchComplete plugin enabled
 Plug 'othree/eregex.vim'
 "{{{
@@ -350,6 +347,10 @@ let g:eregex_force_case = 1
 let g:eregex_forward_delim = '/'
 let g:eregex_backward_delim = '?'
 "}}}
+
+
+Plug 'preservim/vim-indent-guides'
+let g:indent_guides_start_level = 2
 
 
 " ```

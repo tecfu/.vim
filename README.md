@@ -5,14 +5,18 @@
 - Mac: You will to want to use a terminal that supports Truecolor, like:
   - Alacritty
   - Extraterm
-- Ubuntu: The install script will attempt to install `xsel` for clipboard support. This is preferred over `clipman`.
+- Ubuntu: `xsel` is installed by this setup (see INSTALL.sh) and is **required for clipboard support** (`"+y` / `"+p`). Neovim silently skips clipboard setup when it's missing, so yanking appears to do nothing. Restore it with:
+  ```bash
+  sudo apt-get install -y xsel
+  ```
+  Verify in nvim: `:echo provider#clipboard#Executable()` should print `xsel_override`.
 
 ## Installation for Vim
 
 ### Clone this repository and its submodules into your home directory
 
 ```sh
-git clone --recurse-submodules git://github.com/tecfu/.vim ~/.vim
+git clone --recurse-submodules https://github.com/tecfu/.vim ~/.vim
 ```
 
 ### Run Install Script
@@ -73,9 +77,13 @@ export COC_PROFILE=efm
 
 This configuration supports three completion/LSP modes via the `NVIM_CONFIG` environment variable:
 
-1. **`coc`** - Uses `coc.nvim` for completion and language server support
-2. **`cmp-efm`** - Uses `nvim-cmp` for completion with `efm-langserver` for diagnostics
-3. **`cmp-builtin`** (Default) - Uses `nvim-cmp` for completion with builtin language servers
+| `NVIM_CONFIG` value | Mode | Description |
+| --- | --- | --- |
+| `coc` | [CoC](#mode-1-coc-coc) | Uses `coc.nvim` for completion and language server support |
+| `cmp-efm` | [nvim-cmp + EFM](#mode-2-nvim-cmp--efm-cmp-efm) | Uses `nvim-cmp` for completion with `efm-langserver` wrapping linters/formatters |
+| `cmp-builtin` | [nvim-cmp + Builtin](#mode-3-nvim-cmp--builtin-cmp-builtin---default) (Default) | Uses `nvim-cmp` for completion with native Neovim LSP and no `efm-langserver` dependency |
+
+If `NVIM_CONFIG` is unset, empty, or set to any value other than `coc`/`cmp-efm`, it falls back to `cmp-builtin`.
 
 #### Switching Modes
 
@@ -99,21 +107,22 @@ export NVIM_CONFIG=cmp-efm
 
 **Configuration:**
 
-- Language servers are configured via CoC extensions in `~/.vim/coc-profiles/<profile>/extensions.json`
+- Most language servers are configured via CoC extensions in `~/.vim/coc-profiles/<profile>/extensions.json`
 - Settings are in `~/.vim/coc-profiles/<profile>/coc-settings.json`
 - See the [CoC Profiles](#coc-profiles) section above for managing multiple profiles
+- Servers listed in `~/.vim/lsp-servers.json` (shared with `cmp-builtin`, see [Mode 3](#mode-3-nvim-cmp--builtin-cmp-builtin---default)) are registered automatically as generic `languageserver.*` entries at startup — you don't need a CoC extension or a `coc-settings.json` entry for those (e.g. Python's `basedpyright`/`ruff` diagnostics work in `coc` mode without installing `coc-pyright`/`coc-pylsp`)
 
 **Installing language servers:**
 
 ```vim
-:CocInstall coc-tsserver coc-pyright coc-go
+:CocInstall coc-tsserver coc-go
 ```
 
 #### Mode 2: nvim-cmp + EFM (`cmp-efm`)
 
 **What it is:** Uses `nvim-cmp` for completion and `efm-langserver` as a universal language server that wraps linters and formatters.
 
-**When to use:** If you want a single language server that can handle multiple tools (ESLint, Prettier, etc.) with project-specific configurations.
+**When to use:** If you want a single language server that can handle multiple tools (ESLint, Prettier, etc.) with project-specific configurations. Requires `efm-langserver` to be installed and runnable on your machine.
 
 **Configuration:**
 
@@ -128,58 +137,71 @@ export NVIM_CONFIG=cmp-efm
 
 #### Mode 3: nvim-cmp + Builtin (`cmp-builtin`) - Default
 
-**What it is:** Uses `nvim-cmp` for completion and native Neovim LSP with individual language servers.
+**What it is:** Uses `nvim-cmp` for completion and native Neovim LSP (`vim.lsp`), with each language server's `cmd`/`filetypes`/`settings` configured explicitly — no `efm-langserver` required.
 
-**When to use:** For a modern, lightweight setup with direct LSP integration. Recommended for most users.
+**When to use:** For a modern, lightweight setup with direct LSP integration and no external universal-linter dependency. Recommended for most users, and required if you can't run `efm-langserver` on your machine.
 
 **Configuration:**
 
-Language servers are dynamically loaded from `~/.vim/efm-langserver-config.yaml`. This provides a single source of truth for all your development tools.
+Language servers are loaded from `~/.vim/lsp-servers.json`. This is a single, plain-JSON source of truth shared by both `cmp-builtin` and `coc` mode (see [Mode 1](#mode-1-coc-coc)), so a server only needs to be defined once to work in either mode. Pure lint/format-only tools that require `efm-langserver` (e.g. `flake8`, `markdownlint`) stay defined separately in `efm-langserver-config.yaml`, since that file is specific to [`cmp-efm` mode](#mode-2-nvim-cmp--efm-cmp-efm).
 
 **Adding a Language Server:**
 
-To add a new LSP, edit `~/.vim/efm-langserver-config.yaml` and add a tool entry with the `lspconfig_name` field:
+To add a new LSP, edit `~/.vim/lsp-servers.json` and add an entry to the `servers` array:
 
-```yaml
-tools:
-  ts_ls: &ts_ls
-    lspconfig_name: "ts_ls"
-    checkInstalled: "which typescript-language-server"
-    install: "npm install -g typescript-language-server typescript"
-    rootMarkers: [".git/", "package.json", "tsconfig.json"]
-
-  pyright: &pyright
-    lspconfig_name: "pyright"
-    checkInstalled: "which pyright"
-    install: "npm install -g pyright"
-    rootMarkers: [".git/", "requirements.txt"]
+```json
+{
+  "name": "pyright",
+  "filetypes": ["python"],
+  "cmd": ["pyright-langserver", "--stdio"],
+  "root_patterns": [".git", "requirements.txt"],
+  "install": "pip install pyright"
+}
 ```
 
 **Configuration Fields:**
 
-- `lspconfig_name`: (Required) The name of the server in [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md)
-- `checkInstalled`: Command to check if the server is installed
-- `install`: Command to install the server
-- `rootMarkers`: Array of files/directories that indicate the project root (optional, defaults to common markers)
+- `name`: (Required) A unique identifier for the server (used as the CoC `languageserver.<name>` key and the Neovim LSP client name).
+- `filetypes`: (Required) Array of filetypes the server should attach to.
+- `cmd`: (Required) Array — the command and arguments used to launch the server.
+- `root_patterns`: Array of files/directories that indicate the project root (optional, defaults to `[".git"]`).
+- `settings`: Object passed through as LSP `initializationOptions`/`workspace/didChangeConfiguration` settings (optional).
+- `install`: Shell command to install the server binary (optional). Used by `INSTALL.sh` (via `jq`), and by both `coc` and `cmp-builtin` themselves at startup, to auto-install missing servers; also documents how to install it manually.
 
 **Installing language servers:**
 
-You must install the actual language server binaries on your system. Use the `install` command from your YAML config:
+Installation is automatic in both `coc` and `cmp-builtin` mode: on startup, each server in `lsp-servers.json` is checked with `executable()`, and if missing, its `install` command runs in the background (a message is echoed when the install starts/finishes). Restart nvim once it completes so the new binary is picked up.
+
+You can also install everything up front by running `INSTALL.sh` (requires `jq`), or install a server manually using its `install` command, e.g.:
 
 ```sh
 # TypeScript/JavaScript
 npm install -g typescript-language-server typescript
 
 # Python
-npm install -g pyright
-# or: pip install pyright
+pip install basedpyright ruff
 
 # Go
 go install golang.org/x/tools/gopls@latest
-
-# Rust
-rustup component add rust-analyzer
 ```
+
+**Windows: "Installed" but the binary still isn't found (stale `PATH`)**
+
+On Windows, if an install places a new binary in a directory that was just added to `PATH` (e.g. `pip install --user` adding to `%APPDATA%\Python\Python3xx\Scripts`), an already-running terminal/app (and any nvim/VS Code instance spawned from it) **will not see the update** — child processes only inherit `PATH` from their parent at the moment they were spawned, and Windows env var changes are only picked up by processes started fresh after the change (or after a full logoff/logon). Simply opening a new tab in an already-running terminal app does **not** help, since the new tab is a child of that already-running (stale) process.
+
+To confirm this is what's happening, check whether the new directory is missing from the current session:
+
+```powershell
+$env:Path -split ';' | Select-String Python
+```
+
+To fix it without restarting anything, reload `PATH` from the registry into the current session:
+
+```powershell
+$env:Path = [Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [Environment]::GetEnvironmentVariable("Path","User")
+```
+
+Otherwise, fully quit (not just close a tab of) the terminal/app that will launch nvim, or log off and back on.
 
 **Verifying LSP is working:**
 
@@ -201,18 +223,14 @@ export VIM_LOG_LEVEL=3
 
 Then check `:messages` to see the debug output.
 
-**Common language servers:**
+**Servers currently defined in `lsp-servers.json`:**
 
+- Python: `basedpyright` (type-checking), `ruff` (linting)
 - JavaScript/TypeScript: `ts_ls`
-- Python: `pyright`, `basedpyright`, or `ruff`
 - Go: `gopls`
-- Rust: `rust_analyzer`
-- C/C++: `clangd`
-- Lua: `lua_ls`
 - SQL: `sqlls`
-- C#: `csharp_ls`
 
-See the [full list of available servers](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md).
+See the [full list of available servers in nvim-lspconfig](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md) for reference `cmd`/`filetypes` values when adding new entries (note: `cmp-builtin` mode no longer depends on nvim-lspconfig's own server definitions — `lsp-servers.json` is self-contained).
 
 ## Installation for Neovim
 

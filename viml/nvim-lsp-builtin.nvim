@@ -43,105 +43,155 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end
 })
 
--- 3. Configuration Parser (Your existing logic, untouched)
-local function get_efm_lsps()
-  local efm_config_path = vim.fn.expand('~/.vim/efm-langserver-config.yaml')
-  debug_log("Reading config from " .. efm_config_path)
-  
-  local f = io.open(efm_config_path, "r")
+-- 3. Shared LSP Server Registry
+-- Servers are defined once in ~/.vim/lsp-servers.json and shared with the
+-- coc flow (see viml/coc-nvim.vim) so server cmd/filetypes/settings aren't
+-- duplicated between the two. Pure lint/format-only tools that require
+-- efm-langserver stay in efm-langserver-config.yaml (efm-specific).
+local function get_shared_lsp_servers()
+  local json_path = vim.fn.expand('~/.vim/lsp-servers.json')
+  debug_log("Reading config from " .. json_path)
+
+  local f = io.open(json_path, "r")
   if not f then
-    debug_log("ERROR - Could not open " .. efm_config_path)
+    debug_log("ERROR - Could not open " .. json_path)
     return {}
   end
 
-  local lsps = {}
-  local in_tools = false
-  local current_tool = nil
-  local current_lsp_config = nil
-  local in_root_markers = false
-
-  for line in f:lines() do
-    if line:match("^tools:") then
-      in_tools = true
-    elseif line:match("^%S") and not line:match("^tools:") then
-      if current_lsp_config and current_lsp_config.name then
-        table.insert(lsps, current_lsp_config)
-      end
-      in_tools = false
-      current_tool = nil
-      current_lsp_config = nil
-      in_root_markers = false
-    end
-
-    if in_tools then
-      local tool_name = line:match("^%s+(%w+):%s*&")
-      if tool_name then
-        if current_lsp_config and current_lsp_config.name then
-          table.insert(lsps, current_lsp_config)
-        end
-        current_tool = tool_name
-        current_lsp_config = { root_markers = {} }
-        in_root_markers = false
-      end
-      
-      if current_tool and current_lsp_config then
-        local lsp_name = line:match("^%s+lspconfig_name:%s*[\"']?([%w_]+)[\"']?")
-        if lsp_name then
-          current_lsp_config.name = lsp_name
-        end
-        
-        if line:match("^%s+rootMarkers:") then
-          in_root_markers = true
-        elseif in_root_markers then
-          local marker = line:match("^%s+%-%s+[\"']?([^\"']+)[\"']?%s*$")
-          if marker then
-            table.insert(current_lsp_config.root_markers, marker)
-          else
-            in_root_markers = false
-          end
-        end
-      end
-    end
-  end
-  
-  if current_lsp_config and current_lsp_config.name then
-    table.insert(lsps, current_lsp_config)
-  end
+  local content = f:read("*a")
   f:close()
-  return lsps
+
+  local ok, decoded = pcall(vim.json.decode, content)
+  if not ok or not decoded then
+    debug_log("ERROR - Could not parse " .. json_path)
+    return {}
+  end
+
+  return decoded.servers or {}
 end
 
--- 4. Server Setup
-local servers = get_efm_lsps()
-local setup_servers = {}
+-- 4. Auto-install missing servers
+-- If a server's binary isn't executable yet, kick off its `install` command
+-- (from lsp-servers.json) asynchronously so nvim startup isn't blocked. The
+-- server is still registered/enabled below so it becomes active on the next
+-- restart once the binary is on PATH.
 
-for _, lsp_config_data in ipairs(servers) do
-  local name = lsp_config_data.name
-  
-  if not setup_servers[name] then
-    debug_log("Configuring " .. name)
-    
-    -- Determine root markers
-    local roots = lsp_config_data.root_markers
-    if #roots == 0 then
-      roots = {'.git', 'package.json', 'pyproject.toml', 'go.mod'}
-    end
-
-    -- Update the configuration in Neovim's registry
-    -- In Nvim 0.11, root_markers is a native option (no need for root_dir function)
-    vim.lsp.config(name, {
-      capabilities = capabilities,
-      root_markers = roots, 
-      single_file_support = true,
-    })
-
-    -- Enable the server globally
-    -- This automatically sets up the FileType autocmds based on the defaults
-    -- provided by nvim-lspconfig
-    vim.lsp.enable(name)
-    
-    setup_servers[name] = true
+-- Wrap the install string in a native shell invocation rather than a plain
+-- argv split: on Windows, tools like npm/go are ".cmd"/".bat" shims that
+-- can't be spawned directly, and relying on the user's own 'shell' option
+-- is unsafe (it may be overridden to a path containing spaces, e.g. Git
+-- Bash). Using cmd.exe/sh directly sidesteps both problems on each OS.
+local function shell_wrap(cmd_str)
+  if vim.fn.has('win32') == 1 then
+    return { 'cmd.exe', '/c', cmd_str }
+  else
+    return { '/bin/sh', '-c', cmd_str }
   end
+end
+
+-- On Windows, npm/pip/go install thin ".cmd"/".ps1"/".bat" shims rather than
+-- a real ".exe" for many CLI tools (e.g. typescript-language-server,
+-- sql-language-server). vim.lsp spawns the configured cmd directly via
+-- libuv (not through a shell), and libuv's Windows spawn logic can fail to
+-- resolve a bare extensionless name to one of those shims, producing
+-- "failed" / ENOENT-style errors even though the tool is on PATH. Resolve
+-- to the full, extensioned path (using Vim's own PATHEXT-aware executable
+-- search) up front so libuv gets an unambiguous, directly-spawnable path.
+local function resolve_cmd(cmd)
+  if vim.fn.has('win32') == 0 or not cmd or not cmd[1] then
+    return cmd
+  end
+  local bin = cmd[1]
+  local resolved = nil
+  -- npm installs both an extensionless POSIX shebang script (unusable by
+  -- CreateProcess on Windows) and a ".cmd"/".ps1"/".bat" shim alongside it.
+  -- vim.fn.exepath() can return that unusable extensionless file since it
+  -- exists on disk, so explicitly prefer a PATHEXT match over it.
+  for _, ext in ipairs({ '.cmd', '.bat', '.exe' }) do
+    local candidate = vim.fn.exepath(bin .. ext)
+    if candidate ~= "" then
+      resolved = candidate
+      break
+    end
+  end
+  if not resolved then
+    local fallback = vim.fn.exepath(bin)
+    if fallback ~= "" then
+      resolved = fallback
+    end
+  end
+  if not resolved then
+    return cmd
+  end
+  local new_cmd = vim.deepcopy(cmd)
+  new_cmd[1] = resolved
+  return new_cmd
+end
+
+local installing = {}
+local function ensure_installed(server)
+  local bin = server.cmd and server.cmd[1]
+  if not bin or vim.fn.executable(bin) == 1 then
+    return
+  end
+  if not server.install then
+    debug_log("WARNING - '" .. bin .. "' not executable and no install command for " .. server.name)
+    return
+  end
+  if installing[server.name] then
+    return
+  end
+  installing[server.name] = true
+
+  vim.schedule(function()
+    vim.notify("Installing missing LSP server '" .. server.name .. "': " .. server.install, vim.log.levels.INFO)
+  end)
+
+  vim.fn.jobstart(shell_wrap(server.install), {
+    on_exit = function(_, code)
+      vim.schedule(function()
+        -- Exit code 0 only means the install command ran without error; it
+        -- doesn't guarantee the binary is now reachable (PATH may not be
+        -- refreshed for this process, or the command may have silently
+        -- targeted the wrong Python/Node install). Re-check before
+        -- claiming success so the message isn't misleading.
+        if code == 0 and vim.fn.executable(bin) == 1 then
+          vim.notify("Installed '" .. server.name .. "'. Restart Neovim to use it.", vim.log.levels.INFO)
+        elseif code == 0 then
+          vim.notify("Ran install command for '" .. server.name .. "', but '" .. bin ..
+            "' is still not executable. The install may have targeted the wrong environment, " ..
+            "or its install directory may not be on PATH: " .. server.install, vim.log.levels.WARN)
+        else
+          vim.notify("Failed to install '" .. server.name .. "' (exit " .. code .. "): " .. server.install, vim.log.levels.ERROR)
+        end
+      end)
+    end,
+  })
+end
+
+-- 5. Server Setup
+local servers = get_shared_lsp_servers()
+
+for _, server in ipairs(servers) do
+  debug_log("Configuring " .. server.name)
+
+  ensure_installed(server)
+
+  -- In Nvim 0.11, root_markers is a native option (no need for root_dir function)
+  vim.lsp.config(server.name, {
+    cmd = resolve_cmd(server.cmd),
+    filetypes = server.filetypes,
+    root_markers = (server.root_patterns and #server.root_patterns > 0)
+      and server.root_patterns or { '.git' },
+    settings = server.settings,
+    capabilities = capabilities,
+    single_file_support = true,
+  })
+
+  -- Enable the server globally
+  -- This automatically sets up the FileType autocmds based on the defaults
+  -- provided by nvim-lspconfig
+  vim.lsp.enable(server.name)
 end
 
 debug_log("Setup complete")

@@ -167,7 +167,11 @@ lua << EOF
     completion = { autocomplete = false },
   })
 
-  vim.notify("nvim-cmp setup with C-Enter using shared Copilot logic complete.", vim.log.levels.INFO)
+  -- Deferred so it doesn't trigger a "Press ENTER to continue" prompt
+  -- by colliding with other startup messages in the echo area.
+  vim.schedule(function()
+    vim.notify("nvim-cmp setup with C-Enter using shared Copilot logic complete.", vim.log.levels.INFO)
+  end)
 EOF
 endfunction
 

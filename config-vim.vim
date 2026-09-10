@@ -75,9 +75,6 @@ call plug#begin('~/.vim/plugins-vim')
   endif
   source $HOME/.vim/viml/coc-nvim.vim
 
-  " - AI
-  source $HOME/.vim/viml/copilot.vim
-
   " - Makes Gvim only colorschems work in term / nc with neovim
   Plug 'godlygeek/csapprox'
 
@@ -94,9 +91,17 @@ call plug#begin('~/.vim/plugins-vim')
   " ```
   " - WIDGET: Terminal/ Vimshell
   " ```
-  Plug 'Shougo/vimproc', {
-      \ 'do' : 'make'
-      \ }
+  if executable('mingw32-make')
+    Plug 'Shougo/vimproc', {
+        \ 'do' : 'mingw32-make -f make_mingw32.mak'
+        \ }
+  elseif executable('make')
+    Plug 'Shougo/vimproc', {
+        \ 'do' : 'make'
+        \ }
+  else
+    Plug 'Shougo/vimproc'
+  endif
 
 
   Plug 'Shougo/vimshell'
