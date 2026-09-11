@@ -58,6 +58,15 @@ jobs:
           chmod +x scripts/ci-check-install-metadata.sh
           ./scripts/ci-check-install-metadata.sh
 
+      - name: Installer regression tests
+        run: python3 -B -m unittest discover -s scripts -p 'test_installers.py' -v
+
+      - name: Installer shell syntax
+        run: |
+          for script in INSTALL.sh UNINSTALL.sh scripts/config-links.sh; do
+            bash -n "$script"
+          done
+
       - name: Validate lsp-servers.json schema basics
         run: |
           jq -e '.servers | type == "array"' lsp-servers.json
@@ -82,7 +91,7 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq \
-            jq curl python3 python3-pip python3-venv \
+            jq curl python3 python3-pip python3-venv python3-yaml \
             pipx nodejs npm vim-nox
           # Ensure user local bin is on PATH (pipx default)
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
@@ -134,13 +143,14 @@ jobs:
           echo "pipx Python LSP tools installed successfully"
 
       - name: install-lsp-tools.py dry-run
-        run: |
-          pip install pyyaml
-          python3 scripts/install-lsp-tools.py --dry-run || true
+        run: python3 scripts/install-lsp-tools.py --dry-run
 
-      - name: Parse INSTALL.sh LSP loop without full run
+      - name: Vim startup and Bash terminal regression
+        run: vim -Nu NONE -i NONE -n -es -V1 -S scripts/test-startup.vim
+
+      - name: Validate shared install-command metadata
         run: |
-          # Confirm jq extraction of install commands still works
+          # Confirm declared install commands have available package managers.
           jq -r '.servers[] | select(.install) | "\(.name)\t\(.install)"' lsp-servers.json | while IFS=$'\t' read -r name cmd; do
             echo "would install: $name -> $cmd"
             manager=$(echo "$cmd" | awk '{print $1}')

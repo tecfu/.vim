@@ -1,4 +1,8 @@
 "Load nvim config from vim
+if (has('win32') || has('win64')) && $HOME =~# '^/\a/'
+  " Native Windows Neovim cannot resolve an inherited MSYS /c/Users/... home.
+  let $HOME = substitute($HOME, '^/\(\a\)/', '\1:/', '')
+endif
 set runtimepath^=~/.vim runtimepath+=~/.vim/after
 let &packpath = &runtimepath
 if has('nvim')

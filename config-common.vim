@@ -420,6 +420,8 @@ Plug 'scrooloose/vim-slumlord'
 
 " YankRing interferes with remapping default register for `p` in visual mode
 Plug 'tecfu/YankRing.vim'
+" Avoid clipboard reads and history writes on startup/focus; keep yank tracking.
+let g:yankring_clipboard_monitor = get(g:, 'yankring_clipboard_monitor', 0)
 
 
 " ```

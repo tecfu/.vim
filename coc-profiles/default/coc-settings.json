@@ -1,7 +1,7 @@
 // For unknown reasons this file will always be noexpandtab in nvim
 {
   "diagnostic.virtualTextCurrentLineOnly": false,
-  "diagnostic.messageTarget": "echo",
+  "diagnostic.messageTarget": "float",
   "diagnostic.virtualText": true,
   "diagnostic.checkCurrentLine": true,
   "diagnostic.enable": true,

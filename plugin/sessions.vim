@@ -15,9 +15,13 @@ set fileformats=unix,dos,mac
 
 " Keep undo history across sessions by storing it in a file
 if has('persistent_undo')
-  let vimDir = has('nvim') ? '$HOME/.config/nvim' : '$HOME/.vim'
-  let &runtimepath.=','.vimDir
-  let myUndoDir = expand(vimDir . '/undo')
+  let vimDir = has('nvim') ? stdpath('config') : expand('$HOME/.vim')
+  let &runtimepath .= ',' . escape(vimDir, ',')
+  let myUndoDir = vimDir . '/undo'
+  " Keep existing history when switching to native Windows/XDG config paths.
+  if has('nvim') && isdirectory(expand('$HOME/.config/nvim/undo'))
+    let myUndoDir = expand('$HOME/.config/nvim/undo')
+  endif
   " Create dirs without spawning a shell (mkdir() is a Vim builtin) and only
   " when missing -- avoids two process spawns on every single startup.
   if !isdirectory(myUndoDir)
@@ -37,4 +41,3 @@ endif
 " Always show the status line
 set laststatus=2
 "}}}
-

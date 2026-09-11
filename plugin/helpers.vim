@@ -81,8 +81,19 @@ function! <SID>BufcloseCloseIt()
 endfunction
 
 " Stringify JSON
-command! -range=% StringifyJSON <line1>,<line2>!jq -r tostring | sed 's/\"/\\"/g' | echo "\"$(cat)\""
-vnoremap <silent> <leader>s :!jq -r tostring \| sed 's/"/\\"/g' \| echo "\"$(cat)\""<CR>
+function! s:StringifyJSON() range abort
+  " Native JSON support avoids the POSIX pipeline when Windows uses cmd.exe.
+  let l:input = join(getline(a:firstline, a:lastline), "\n")
+  let l:value = json_decode(l:input)
+  " Keep numeric tokens intact: Vim's numeric conversions can lose precision.
+  let l:text = type(l:value) == v:t_string ? l:value : l:input
+  call setline(a:firstline, json_encode(l:text))
+  if a:lastline > a:firstline
+    call deletebufline(bufnr(), a:firstline + 1, a:lastline)
+  endif
+endfunction
+command! -range=% StringifyJSON <line1>,<line2>call s:StringifyJSON()
+vnoremap <silent> <leader>s :StringifyJSON<CR>
 
 "}}}
 
@@ -218,9 +229,6 @@ augroup END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "{{{
 " Remove the Windows ^M - when the encodings gets messed up noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
-" Never run in vi-compatible mode
-set nocompatible
-
 " Enable tab autocomplete of commands in command mode"
 set wildmode=longest,list,full
 

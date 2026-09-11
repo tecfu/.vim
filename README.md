@@ -25,6 +25,55 @@ git clone --recurse-submodules https://github.com/tecfu/.vim ~/.vim
 . ~/.vim/INSTALL.sh
 ```
 
+### Windows configuration and startup
+
+Run the installer from Git Bash. It honors an existing `XDG_CONFIG_HOME`;
+otherwise native Windows Neovim uses `%LOCALAPPDATA%\nvim`. The installer
+does not change your persistent environment variables. Enable Windows
+Developer Mode or use an elevated shell for real symlinks; the installer
+warns when a destination is only a copy and will not track repository edits.
+Existing files are backed up as `.saved`, `.saved.1`, and so on without
+overwriting older backups. `UNINSTALL.sh` uses the same configuration paths,
+removes only matching managed symlinks, and restores the latest backup.
+
+Windows keeps its native default shell for plugin commands. Use `:Bash`
+for an interactive Git Bash terminal, or `:Bash <command>` for a Bash command.
+MSYS-style home paths are normalized when loading native Windows Neovim.
+
+YankRing still tracks ordinary yanks, but automatic clipboard ingestion on
+startup/focus is disabled. To restore it, set
+`let g:yankring_clipboard_monitor = 1` before loading this configuration.
+The default CoC profile displays diagnostic messages in floating windows.
+`:StringifyJSON` and visual `<leader>s` use native JSON escaping rather than
+a Unix shell pipeline, preserving the original numeric precision and JSON
+layout inside the resulting string.
+
+### Language-server and formatter installation
+
+`INSTALL.sh` runs `scripts/install-lsp-tools.py` with a working Python 3
+interpreter (`python3`, falling back to `python`). It reads shared LSP metadata,
+EFM tool metadata, and runnable CoC profile `sources`, checks the declared
+executables, and deduplicates install commands. Python CLI tools use `pipx`
+to avoid system-Python restrictions on modern Ubuntu.
+EFM metadata selects the `tecfu/efm-langserver` fork required for in-place
+Markdown formatting and checks auxiliary formatters such as `prettierd`
+independently of the EFM executable.
+
+PyYAML is needed to read EFM metadata; if missing, the installer warns and
+continues with LSP and CoC metadata. On Ubuntu, install it with
+`sudo apt-get install python3-yaml`; elsewhere, install PyYAML in the Python
+environment used for the script.
+
+Preview missing tools without running installation commands:
+
+```sh
+python3 scripts/install-lsp-tools.py --dry-run
+```
+
+The root `install-lsp-tools.py` remains a compatibility entry point to the
+same implementation. Missing tools with manual-only sources are reported
+rather than guessed.
+
 ### coc.nvim
 
 > Why use coc.nvim?

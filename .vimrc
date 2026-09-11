@@ -1,3 +1,6 @@
+" Set this before sourcing anything: compatible mode changes Vimscript parsing.
+set nocompatible
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "
 " Entry point. Everything else lives in runtimepath-native locations:
@@ -39,9 +42,8 @@ if has('win32') || has('win64')
   " This is a message to confirm the block is running. You can remove it later.
   echom "Configuring shell for Windows..."
 
-  " Locate a real bash.exe to use as &shell (needed by plugins like
-  " vim-airline that shell out for git status, etc.) Don't hardcode a
-  " single install path -- Git for Windows may be installed per-machine
+  " Locate Git Bash for :Bash, without slowing every system() call by
+  " replacing the native shell. Git may be installed per-machine
   " (e.g. "C:/Program Files/Git") or per-user (e.g. under
   " "AppData/Local/Programs/Git"), so derive it from wherever `git` itself
   " resolves on PATH, falling back to common install locations.
@@ -72,17 +74,10 @@ if has('win32') || has('win64')
 
   let s:git_bash = s:FindGitBash()
   if !empty(s:git_bash)
-    " 1. Set the shell executable. Use forward slashes.
-    let &shell = s:git_bash
-
-    " 2. Set the flag to execute a command string.
-    let &shellcmdflag = '-c'
-
-    " 3. CRITICAL: Tell Neovim NOT to add extra quotes around the command.
-    " This fixes the ""git ..."" error.
-    let &shellxquote = ''
+    let g:git_bash = s:git_bash
+    command! -nargs=* Bash call vimrc#bash(<q-args>)
   else
-    echom "WARNING: Could not find Git Bash (bash.exe) on this machine. Leaving 'shell' at its default; some plugins (e.g. vim-airline git status) may not work."
+    echom "WARNING: Could not find Git Bash (bash.exe). The :Bash command will be unavailable."
   endif
 endif
 
@@ -141,5 +136,4 @@ endif
 " vim-plug unexpectedly configures indentation. undo this
 " https://vi.stackexchange.com/questions/10124/what-is-the-difference-between-filetype-plugin-indent-on-and-filetype-indent
 "}}}
-
 

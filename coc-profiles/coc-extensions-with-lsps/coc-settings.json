@@ -86,7 +86,7 @@
         "completion": true
       },
       "sources": [
-        "go install github.com/mattn/efm-langserver@latest",
+        "go install github.com/tecfu/efm-langserver@latest",
         "npm install -g eslint_d"
       ],
       "rationale": "efm-langserver:eslint_d.js for linting+formatting.",
@@ -123,7 +123,7 @@
       },
       "rationale": "efm-langserver:prettierd for formatting.",
       "sources": [
-        "go install github.com/mattn/efm-langserver@latest",
+        "go install github.com/tecfu/efm-langserver@latest",
         "npm install -g @fsouza/prettierd"
       ],
       "alternatives": ["coc-json"]

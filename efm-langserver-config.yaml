@@ -7,6 +7,15 @@ log-file: "${HOME}/.vim/efm-langserver.log"
 # efm-langserver. Real language servers live in ~/.vim/lsp-servers.json
 # (shared by the coc and native-nvim flows); do not re-add servers here.
 tools:
+  # Installer metadata for the EFM host and auxiliary profile formatter.
+  efm_langserver:
+    checkInstalled: "which efm-langserver"
+    install: "go install github.com/tecfu/efm-langserver@latest"
+
+  prettierd:
+    checkInstalled: "which prettierd"
+    install: "npm install -g @fsouza/prettierd"
+
   black: &black
     checkInstalled: "which black"
     install: "pipx install black"
