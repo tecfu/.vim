@@ -25,6 +25,12 @@ git clone --recurse-submodules https://github.com/tecfu/.vim ~/.vim
 . ~/.vim/INSTALL.sh
 ```
 
+The installer returns a nonzero status when required configuration links,
+plugin installation, or attempted LSP/tool installations fail, and summarizes
+the failed steps. Plugin output is retained in `.install-plugins.log` and is
+printed on failure. Missing optional build tools, fonts, or Python/PyYAML
+support are reported as warnings rather than hidden.
+
 ### Windows configuration and startup
 
 Run the installer from Git Bash. It honors an existing `XDG_CONFIG_HOME`;

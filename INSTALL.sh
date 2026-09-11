@@ -4,6 +4,8 @@
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 WINDOWS=0
 case "$(uname -s)" in MINGW*|MSYS*|CYGWIN*) WINDOWS=1 ;; esac
+. "$DIR/scripts/install-status.sh"
+INSTALL_FAILURES=()
 
 # The surrounding dotfiles checkout supplies these helpers when available.
 if [ -f "$DIR/../lib/common.sh" ]; then
@@ -39,8 +41,10 @@ else
   require_dep make build-essential || true
   require_dep gcc build-essential || true
 fi
-require_dep curl curl || true
-command -v nvim >/dev/null 2>&1 || require_dep vim vim || true
+install_step "curl dependency" require_dep curl curl
+if ! command -v nvim >/dev/null 2>&1; then
+  install_step "Vim dependency" require_dep vim vim
+fi
 [ "$WINDOWS" = 1 ] || require_dep xsel xsel || true
 require_dep node nodejs || true
 
@@ -55,22 +59,21 @@ fi
 
 . "$DIR/scripts/config-links.sh"
 config_paths
-mkdir -p "$NVIM_CONFIG_DIR" "$EFM_CONFIG"
-link_config "$DIR" "$HOME/.vim" || true
-link_config "$DIR/.vimrc" "$HOME/.vimrc" || true
-link_config "$DIR/init.vim" "$NVIM_CONFIG_DIR/init.vim" || true
-link_config "$DIR/efm-langserver-config.yaml" "$EFM_CONFIG/config.yaml" || true
-link_config "$DIR/efm-langserver-linter-wrapper.sh" "$EFM_CONFIG/efm-langserver-linter-wrapper.sh" || true
+install_step "configuration directories" mkdir -p "$NVIM_CONFIG_DIR" "$EFM_CONFIG"
+install_step "repository link" link_config "$DIR" "$HOME/.vim"
+install_step "Vim configuration link" link_config "$DIR/.vimrc" "$HOME/.vimrc"
+install_step "Neovim configuration link" link_config "$DIR/init.vim" "$NVIM_CONFIG_DIR/init.vim"
+install_step "EFM configuration link" link_config "$DIR/efm-langserver-config.yaml" "$EFM_CONFIG/config.yaml"
+install_step "EFM wrapper link" link_config "$DIR/efm-langserver-linter-wrapper.sh" "$EFM_CONFIG/efm-langserver-linter-wrapper.sh"
 
 if command -v curl >/dev/null 2>&1; then
   echo "INFO: Download vim-plug package manager to ~/.vim/autoload/plug.vim"
-  if curl -fLo "$HOME/.vim/autoload/plug.vim" --create-dirs \
+  if install_step "vim-plug download" curl -fLo "$HOME/.vim/autoload/plug.vim" --create-dirs \
       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim; then
     if command -v nvim >/dev/null 2>&1; then
-      nvim --headless +PlugInstall +qall 2>/dev/null || true
+      install_step "Neovim plugins" install_plugins nvim "$DIR/scripts/install-plugins.vim" "$DIR/.install-plugins.log"
     elif command -v vim >/dev/null 2>&1; then
-      TERM=ansi vim -c 'set nomore' -c 'PlugInstall' -c 'qa!' 2>/dev/null || \
-        TERM=xterm-256color vim -c 'set nomore' -c 'PlugInstall' -c 'qa!' || true
+      install_step "Vim plugins" install_plugins vim "$DIR/scripts/install-plugins.vim" "$DIR/.install-plugins.log"
     fi
   fi
 else
@@ -87,7 +90,7 @@ for candidate in python3 python; do
   fi
 done
 if [ -n "$PY" ]; then
-  "$PY" "$DIR/scripts/install-lsp-tools.py" || WARN_MESSAGES+=("WARN: some LSP/lint tools failed; rerun scripts/install-lsp-tools.py")
+  install_step "LSP/lint tools" "$PY" "$DIR/scripts/install-lsp-tools.py"
 else
   WARN_MESSAGES+=("WARN: Python 3 (python3/python) not found; skipped LSP/lint auto-install")
 fi
@@ -95,3 +98,4 @@ apt_install fonts-powerline || WARN_MESSAGES+=("WARN: Install Powerline fonts ma
 for MESSAGE in "${WARN_MESSAGES[@]}"; do
   printf '\033[0;33m%s\033[0m\n' "$MESSAGE"
 done
+install_summary
