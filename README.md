@@ -135,7 +135,7 @@ This configuration supports three completion/LSP modes via the `NVIM_CONFIG` env
 | `NVIM_CONFIG` value | Mode | Description |
 | --- | --- | --- |
 | `coc` | [CoC](#mode-1-coc-coc) | Uses `coc.nvim` for completion and language server support |
-| `cmp-efm` | [nvim-cmp + EFM](#mode-2-nvim-cmp--efm-cmp-efm) | Uses `nvim-cmp` for completion with `efm-langserver` wrapping linters/formatters |
+| `cmp-efm` | [nvim-cmp + EFM](#mode-2-nvim-cmp--efm-cmp-efm) | EFM-only lint/format mode; does not start the shared real language servers |
 | `cmp-builtin` | [nvim-cmp + Builtin](#mode-3-nvim-cmp--builtin-cmp-builtin---default) (Default) | Uses `nvim-cmp` for completion with native Neovim LSP and no `efm-langserver` dependency |
 
 If `NVIM_CONFIG` is unset, empty, or set to any value other than `coc`/`cmp-efm`, it falls back to `cmp-builtin`.
@@ -175,9 +175,21 @@ export NVIM_CONFIG=cmp-efm
 
 #### Mode 2: nvim-cmp + EFM (`cmp-efm`)
 
-**What it is:** Uses `nvim-cmp` for completion and `efm-langserver` as a universal language server that wraps linters and formatters.
+**What it is:** Uses `nvim-cmp` as the completion UI and `efm-langserver` to wrap linters and formatters. This mode is intentionally **EFM-only**: it does not load the real language servers from `lsp-servers.json`.
 
 **When to use:** If you want a single language server that can handle multiple tools (ESLint, Prettier, etc.) with project-specific configurations. Requires `efm-langserver` to be installed and runnable on your machine.
+
+Switching from `cmp-builtin` to `cmp-efm` stops configuring servers such as
+`basedpyright`, `gopls`, and `typescript-language-server`. EFM does not replace
+their semantic completion, go-to-definition, references, or rename support.
+Buffer/path completion remains available through `nvim-cmp`; linting and
+formatting depend on the tools declared in the EFM configuration.
+
+| Capability | `coc` | `cmp-builtin` | `cmp-efm` |
+| --- | --- | --- | --- |
+| Shared real language servers | Yes | Yes | No |
+| Semantic navigation/completion | From configured servers/extensions | From configured servers | Not supplied by EFM |
+| EFM lint/format tools | With an EFM-enabled CoC profile | No | Yes |
 
 **Configuration:**
 
