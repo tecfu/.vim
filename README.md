@@ -199,8 +199,8 @@ formatting depend on the tools declared in the EFM configuration.
 
 **Installing language servers:**
 
-- EFM-langserver itself: Install from [github.com/mattn/efm-langserver](https://github.com/mattn/efm-langserver)
-- Individual tools (ESLint, Prettier, etc.): Install via npm/pip as needed
+- EFM-langserver itself: Use the [tecfu fork](https://github.com/tecfu/efm-langserver) selected by `efm-langserver-config.yaml`; Markdown formatting requires its `format-inplace` support.
+- Individual tools: Run `python3 scripts/install-lsp-tools.py`, or use the explicit installation commands in the metadata. Python CLI tools use `pipx`, not system `pip`.
 
 #### Mode 3: nvim-cmp + Builtin (`cmp-builtin`) - Default
 
@@ -221,10 +221,12 @@ To add a new LSP, edit `~/.vim/lsp-servers.json` and add an entry to the `server
   "name": "pyright",
   "filetypes": ["python"],
   "cmd": ["pyright-langserver", "--stdio"],
-  "root_patterns": [".git", "requirements.txt"],
-  "install": "pip install pyright"
+  "root_patterns": [".git", "requirements.txt"]
 }
 ```
+
+This example assumes `pyright-langserver` is already installed. Add an
+`install` command only after selecting and recording a reviewed package version.
 
 **Configuration Fields:**
 
@@ -232,29 +234,29 @@ To add a new LSP, edit `~/.vim/lsp-servers.json` and add an entry to the `server
 - `filetypes`: (Required) Array of filetypes the server should attach to.
 - `cmd`: (Required) Array — the command and arguments used to launch the server.
 - `root_patterns`: Array of files/directories that indicate the project root (optional, defaults to `[".git"]`).
-- `settings`: Object passed through as LSP `initializationOptions`/`workspace/didChangeConfiguration` settings (optional).
-- `install`: Shell command to install the server binary (optional). Used by `INSTALL.sh` (via `jq`), and by both `coc` and `cmp-builtin` themselves at startup, to auto-install missing servers; also documents how to install it manually.
+- `settings`: Server configuration settings (optional); distinct from LSP initialization options.
+- `install`: Explicit shell command to install the server binary (optional). Consumed by `scripts/install-lsp-tools.py` and by the `coc`/`cmp-builtin` startup installers. Follow the dependency version policy when adding a command.
 
 **Installing language servers:**
 
 Installation is automatic in both `coc` and `cmp-builtin` mode: on startup, each server in `lsp-servers.json` is checked with `executable()`, and if missing, its `install` command runs in the background (a message is echoed when the install starts/finishes). Restart nvim once it completes so the new binary is picked up.
 
-You can also install everything up front by running `INSTALL.sh` (requires `jq`), or install a server manually using its `install` command, e.g.:
+You can also install declared tools up front by running `INSTALL.sh` or the
+Python installer directly. Neither installation path requires `jq`; that tool
+is used only by additional CI metadata assertions. Python 3 is required, and
+PyYAML enables EFM metadata support.
 
 ```sh
-# TypeScript/JavaScript
-npm install -g typescript-language-server typescript
+# Preview commands and missing executables without installing anything
+python3 scripts/install-lsp-tools.py --dry-run
 
-# Python
-pip install basedpyright ruff
-
-# Go
-go install golang.org/x/tools/gopls@latest
+# Install using the versions declared in the shared metadata
+python3 scripts/install-lsp-tools.py
 ```
 
 **Windows: "Installed" but the binary still isn't found (stale `PATH`)**
 
-On Windows, if an install places a new binary in a directory that was just added to `PATH` (e.g. `pip install --user` adding to `%APPDATA%\Python\Python3xx\Scripts`), an already-running terminal/app (and any nvim/VS Code instance spawned from it) **will not see the update** — child processes only inherit `PATH` from their parent at the moment they were spawned, and Windows env var changes are only picked up by processes started fresh after the change (or after a full logoff/logon). Simply opening a new tab in an already-running terminal app does **not** help, since the new tab is a child of that already-running (stale) process.
+On Windows, if an install places a new binary in a directory that was just added to `PATH` (for example, the executable directory reported by `pipx environment`), an already-running terminal/app (and any nvim/VS Code instance spawned from it) **will not see the update** — child processes only inherit `PATH` from their parent at the moment they were spawned, and Windows env var changes are only picked up by processes started fresh after the change (or after a full logoff/logon). Simply opening a new tab in an already-running terminal app does **not** help, since the new tab is a child of that already-running (stale) process.
 
 To confirm this is what's happening, check whether the new directory is missing from the current session:
 
@@ -301,7 +303,9 @@ See the [full list of available servers in nvim-lspconfig](https://github.com/ne
 
 ## Installation for Neovim
 
-- Add the following to ~.config/nvim/init.vim:
+- Prefer `INSTALL.sh`, which selects the native Windows or XDG configuration
+  directory. For a manual installation, put the following in Neovim's
+  `stdpath('config')` `init.vim` (`~/.config/nvim/init.vim` on Unix by default):
 
 ```sh
 set runtimepath^=~/.vim runtimepath+=~/.vim/after
