@@ -24,3 +24,27 @@ function! vimrc#bash(command) abort
     echoerr 'This Vim build does not support terminals.'
   endif
 endfunction
+
+function! vimrc#diffprev(revision) abort
+  if a:revision !~# '^\d\+$'
+    echoerr 'Gdiffprev requires a non-negative revision number.'
+    return
+  endif
+  if empty(expand('%'))
+    echoerr 'Gdiffprev requires a named file.'
+    return
+  endif
+  let l:command = 'git -C ' . shellescape(expand('%:p:h'))
+        \ . ' log -1 --skip=' . a:revision . ' --format=%H -- '
+        \ . shellescape(expand('%:t'))
+  let l:hash = trim(system(l:command))
+  if v:shell_error
+    echoerr 'Gdiffprev: ' . l:hash
+    return
+  endif
+  if empty(l:hash)
+    echoerr 'Gdiffprev: no matching revision for this file.'
+    return
+  endif
+  execute 'Gdiffsplit' l:hash
+endfunction

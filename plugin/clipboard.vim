@@ -16,7 +16,8 @@ endif
 " -------------------------------------------------------------
 " Fixes truncation/race conditions on Linux (XFCE/Gnome)
 " Only runs if NOT in WSL, NOT on Mac, and xsel is present.
-if has("unix") && !has("macunix") && !s:is_wsl && executable("xsel")
+if !exists('g:clipboard') && has("unix") && !has("macunix") && !s:is_wsl
+      \ && !empty($DISPLAY) && empty($WAYLAND_DISPLAY) && executable("xsel")
   let g:clipboard = {
     \   'name': 'xsel_override',
     \   'copy': {
@@ -42,23 +43,8 @@ if s:is_wsl && executable(s:clip)
   augroup END
 endif
 
-" 3b. OSC 52 Fallback (headless servers over SSH)
-" -------------------------------------------------------------
-" If no real clipboard tool was found above (xsel/WSL/etc.), emit the OSC 52
-" escape sequence so yanks land on the LOCAL machine's clipboard through the
-" SSH stream. Requires nvim >= 0.10 and a local terminal that supports
-" OSC 52 (kitty, alacritty, wezterm, foot, Windows Terminal, tmux with
-" `set -s set-clipboard on`). VTE terminals (gnome-/xfce4-terminal) ignore it.
-if has('nvim-0.10') && !exists('g:clipboard')
-  lua << EOF
-  local osc52 = require('vim.ui.clipboard.osc52')
-  vim.g.clipboard = {
-    name = 'OSC52',
-    copy = { ['+'] = osc52.copy('+'), ['*'] = osc52.copy('*') },
-    paste = { ['+'] = osc52.paste('+'), ['*'] = osc52.paste('*') },
-  }
-EOF
-endif
+" Otherwise leave provider selection to Neovim: native tools take precedence
+" over its terminal-aware OSC52 fallback. Respect explicit g:clipboard settings.
 
 " 4. Clipboard Mappings
 " -------------------------------------------------------------
@@ -77,5 +63,4 @@ xnoremap <expr> P (v:register ==# '"' ? '"0' : '') . 'P'
 " Paste from clipboard in Insert mode
 inoremap <C-v> <C-O>:set noai<CR> <C-R>+ <C-O>:set ai<CR>
 "}}}
-
 

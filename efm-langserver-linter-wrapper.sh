@@ -29,6 +29,11 @@
 #                               config file (e.g., "-c", "--config").
 #   --filename-arg-prefix=<p> (Optional) The prefix for the filename arg.
 #                               Omit this for project-wide linters.
+#                               Empty means exactly one positional argument;
+#                               other arguments must be switches or --key=value.
+#                               Use -- before it if options take separate values.
+#                               A flag accepts --flag=value or --flag value.
+#                               Other prefixes are matched literally.
 #
 # -----------------------------------------------------------------------------
 
@@ -84,22 +89,61 @@ fi
 # --- Core Logic ---
 SEARCH_START_DIR=""
 if [ "$FILENAME_ARG_PREFIX_SET" = true ]; then
-  FILE_TO_LINT=""
-  for arg in "${LINTER_COMMAND_AND_ARGS[@]}"; do
-    if [[ "$arg" == "$FILENAME_ARG_PREFIX"* ]]; then
-      FILE_TO_LINT="${arg#"$FILENAME_ARG_PREFIX"}"
+  MATCHED_FILES=()
+  POSITIONAL_ONLY=false
+  POSITIONAL_START=1
+  if [ -z "$FILENAME_ARG_PREFIX" ]; then
+    # An explicit separator makes preceding option values unambiguous.
+    for ((i=1; i<${#LINTER_COMMAND_AND_ARGS[@]}; i++)); do
+      if [[ "${LINTER_COMMAND_AND_ARGS[i]}" == -- ]]; then
+        POSITIONAL_START=$((i + 1))
+        POSITIONAL_ONLY=true
+        break
+      fi
+    done
+  fi
+  for ((i=POSITIONAL_START; i<${#LINTER_COMMAND_AND_ARGS[@]}; i++)); do
+    arg="${LINTER_COMMAND_AND_ARGS[i]}"
+    if [ -z "$FILENAME_ARG_PREFIX" ]; then
+      if [ "$POSITIONAL_ONLY" = true ] || [[ "$arg" != -* ]]; then
+        MATCHED_FILES+=("$arg")
+      fi
+    elif [[ "$arg" == -- ]]; then
       break
+    elif [[ "$arg" == "$FILENAME_ARG_PREFIX" ]]; then
+      if [[ "$FILENAME_ARG_PREFIX" != -* || "$FILENAME_ARG_PREFIX" == *[=:] ]]; then
+        MATCHED_FILES+=("")
+      elif ((i + 1 < ${#LINTER_COMMAND_AND_ARGS[@]})) && [[ "${LINTER_COMMAND_AND_ARGS[i+1]}" != -* ]]; then
+        i=$((i + 1))
+        MATCHED_FILES+=("${LINTER_COMMAND_AND_ARGS[i]}")
+      else
+        log_error "Missing filename after '$FILENAME_ARG_PREFIX'."
+        exit 1
+      fi
+    elif [[ "$FILENAME_ARG_PREFIX" == -* && "$FILENAME_ARG_PREFIX" != *= && "$arg" == "$FILENAME_ARG_PREFIX="* ]]; then
+      MATCHED_FILES+=("${arg#"$FILENAME_ARG_PREFIX="}")
+    elif [[ "$FILENAME_ARG_PREFIX" != --* || "$FILENAME_ARG_PREFIX" == *[=:] ]]; then
+      if [[ "$arg" == "$FILENAME_ARG_PREFIX"* ]]; then
+        MATCHED_FILES+=("${arg#"$FILENAME_ARG_PREFIX"}")
+      fi
     fi
   done
-  if [ -z "$FILE_TO_LINT" ]; then
-    log_error "Could not find filename in linter arguments using prefix '$FILENAME_ARG_PREFIX'."
-    exec "${LINTER_COMMAND_AND_ARGS[@]}"
+  if [ ${#MATCHED_FILES[@]} -ne 1 ] || [ -z "${MATCHED_FILES[0]}" ]; then
+    log_error "Expected exactly one filename in linter arguments using prefix '$FILENAME_ARG_PREFIX'; found ${#MATCHED_FILES[@]}."
+    exit 1
   fi
+  FILE_TO_LINT="${MATCHED_FILES[0]}"
   log_info "Identified file to lint: $FILE_TO_LINT"
-  SEARCH_START_DIR=$(dirname "$FILE_TO_LINT")
+  if command -v cygpath >/dev/null 2>&1; then
+    FILE_TO_LINT=$(cygpath -u "$FILE_TO_LINT")
+  fi
+  if ! SEARCH_START_DIR=$(cd -- "$(dirname -- "$FILE_TO_LINT")" && pwd -P); then
+    log_error "Cannot resolve directory for filename '$FILE_TO_LINT'."
+    exit 1
+  fi
 else
   log_info "No filename prefix provided; assuming project-wide linter."
-  SEARCH_START_DIR=$(pwd)
+  SEARCH_START_DIR=$(pwd -P)
 fi
 log_info "Using search root: $SEARCH_START_DIR"
 IFS=',' read -r -a FILENAMES_ARRAY <<< "$FILENAMES"
@@ -111,13 +155,17 @@ check_dir_for_config() {
   return 1
 }
 find_native_config() {
-  local dir="$1"
-  while [ "$dir" != "/" ] && [ "$dir" != "." ]; do
+  local dir="$1" parent
+  while :; do
     if check_dir_for_config "$dir"; then
       log_info "Found project-local config in '$dir'."
       return 0
     fi
-    dir=$(dirname "$dir")
+    parent=$(dirname -- "$dir")
+    if [[ "$parent" == "$dir" || "$parent" == "." ]]; then break; fi
+    # MSYS drive roots are mount points, not children of the MSYS root.
+    if [[ "$dir" =~ ^/[a-zA-Z]$ ]] && command -v cygpath >/dev/null 2>&1; then break; fi
+    dir="$parent"
   done
   return 1
 }

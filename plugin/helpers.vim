@@ -217,8 +217,8 @@ nnoremap <leader>tf :call TableFormat()<CR>
 augroup SetWorkingDirectoryForShell
   autocmd!
   " Use BufEnter with specific file patterns for a reliable trigger.
+  " Use a safe execution method to handle paths with spaces.
   autocmd BufEnter COMMIT_EDITMSG,MERGE_MSG,TAG_EDITMSG,*.tmp,*/tmp/*
-        " Use a safe execution method to handle paths with spaces.
         \ if $PWD != ''
         \ | silent! execute 'lcd' fnameescape($PWD)
         \ | endif

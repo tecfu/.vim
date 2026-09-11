@@ -33,20 +33,12 @@ function! SetLocationList()
   for diagnostic in diagnostics
     " Get the LSP source name, defaulting to 'LSP' if not available
     let source = get(diagnostic, 'source', 'LSP')
-    let lsp_name = get(diagnostic, 'client_name', '')
 
     " Construct the message with LSP name and diagnostic text
     let message = '[' . source . ']: ' . diagnostic.message
 
     " Determine the type based on diagnostic severity
-    let type = 'E'
-    if diagnostic.severity == 'Warning'
-      let type = 'W'
-    elseif diagnostic.severity == 'Information'
-      let type = 'I'
-    elseif diagnostic.severity == 'Hint'
-      let type = 'H'
-    endif
+    let type = get(['', 'E', 'W', 'I', 'H'], get(diagnostic, 'severity', 1), 'E')
 
     " Prepare item for the location list
     let item = {

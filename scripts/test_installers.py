@@ -259,11 +259,9 @@ class ShellInstallerTests(WorkspaceTest):
         ''')
         self.assertIn("paths-ok", output)
 
-    def test_node_gates_the_only_coc_link(self):
+    def test_installer_does_not_link_nonexistent_root_coc_settings(self):
         script = (ROOT / "INSTALL.sh").read_text(encoding="utf-8")
-        self.assertEqual(script.count('link_config "$DIR/coc-settings.json"'), 1)
-        self.assertIn('if [ "$HAVE_NODE" = 1 ]; then\n'
-                      '  link_config "$DIR/coc-settings.json"', script)
+        self.assertNotIn('link_config "$DIR/coc-settings.json"', script)
         self.assertNotIn("setx", script)
 
     def test_backup_numbers_increase_even_with_gaps(self):

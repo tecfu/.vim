@@ -42,8 +42,7 @@ fi
 require_dep curl curl || true
 command -v nvim >/dev/null 2>&1 || require_dep vim vim || true
 [ "$WINDOWS" = 1 ] || require_dep xsel xsel || true
-HAVE_NODE=1
-require_dep node nodejs || HAVE_NODE=0
+require_dep node nodejs || true
 
 # PEP 668 blocks pip install --user on modern Debian/Ubuntu.
 export PATH="$HOME/.local/bin:$PATH"
@@ -60,9 +59,6 @@ mkdir -p "$NVIM_CONFIG_DIR" "$EFM_CONFIG"
 link_config "$DIR" "$HOME/.vim" || true
 link_config "$DIR/.vimrc" "$HOME/.vimrc" || true
 link_config "$DIR/init.vim" "$NVIM_CONFIG_DIR/init.vim" || true
-if [ "$HAVE_NODE" = 1 ]; then
-  link_config "$DIR/coc-settings.json" "$NVIM_CONFIG_DIR/coc-settings.json" || true
-fi
 link_config "$DIR/efm-langserver-config.yaml" "$EFM_CONFIG/config.yaml" || true
 link_config "$DIR/efm-langserver-linter-wrapper.sh" "$EFM_CONFIG/efm-langserver-linter-wrapper.sh" || true
 

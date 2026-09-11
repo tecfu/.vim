@@ -465,24 +465,10 @@ endfunction
 command! -range=% GremoveConflictMarkers <line1>,<line2>call RemoveConflictMarkers()
 
 "Diff the current file against n revision (instead of n commit)
-function! DiffPrev(...)
-
-  let a:target = @%
-
-  "check argument count
-  if a:0 == 0
-    "no revision number specified
-    let a:revnum=0
-  else
-    "revision number specified
-    let a:revnum=a:1
-  endif
-
-  let a:hash = system('git log -1 --skip='.a:revnum.' --pretty=format:"%h" ' . a:target)
-  execute 'Gdiffsplit ' . a:hash
-  "echom a:hash
+function! DiffPrev(...) abort
+  call vimrc#diffprev(a:0 ? a:1 : 0)
 endfunction
-command! -nargs=1 Gdiffprev call DiffPrev(<f-args>)
+command! -nargs=? Gdiffprev call DiffPrev(<f-args>)
 " You will probably not realize that Gdiff is actually equal to Gdiffsplit
 " and therefore be confused when Vim spits `ambiguous user defined command`
 " So we're going to make Gdiff explicitly equal to Gdiffsplit
