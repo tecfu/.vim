@@ -36,22 +36,60 @@ class ToolInstallerTests(WorkspaceTest):
         self.write("coc-profiles/default/coc-settings.json",
                    json.dumps({"languageserver": servers}))
 
-    def invoke(self, dry_run=False, present=(), root=None):
+    def invoke(self, dry_run=False, present=(), root=None, args=()):
         output = io.StringIO()
+        argv = list(args)
+        if dry_run:
+            argv.append("--dry-run")
         with patch.object(INSTALLER.shutil, "which",
                           side_effect=lambda binary: binary if binary in present else None), \
                 patch.object(INSTALLER.subprocess, "run", return_value=Mock(returncode=0)) as run, \
                 redirect_stdout(output), redirect_stderr(output):
-            code = INSTALLER.main(["--dry-run"] if dry_run else [],
+            code = INSTALLER.main(argv,
                                   root=self.work if root is None else root)
         return code, output.getvalue(), run
 
     def test_repo_metadata_uses_required_efm_fork(self):
-        code, _, run = self.invoke(root=ROOT)
+        code, _, run = self.invoke(root=ROOT, args=("--with-go",))
         self.assertEqual(code, 0)
         commands = [call.args[0] for call in run.call_args_list]
         self.assertEqual(commands.count("go install github.com/tecfu/efm-langserver@latest"), 1)
         self.assertFalse(any("github.com/mattn/efm-langserver" in cmd for cmd in commands))
+
+    def test_go_and_dotnet_tools_are_opt_in(self):
+        self.write("efm-langserver-config.yaml", "ignored by mock")
+        metadata = {"tools": {
+            "go_formatter": {
+                "checkInstalled": "which gofmt",
+                "install": "go install example.invalid/gofmt@latest",
+            },
+            "dotnet_formatter": {
+                "checkInstalled": "which csharpier",
+                "install": "dotnet tool install -g csharpier",
+            },
+            "node_formatter": {
+                "checkInstalled": "which prettierd",
+                "install": "npm install -g @fsouza/prettierd",
+            },
+        }}
+        with patch.object(INSTALLER, "yaml", Mock(safe_load=Mock(return_value=metadata))):
+            code, output, run = self.invoke()
+        self.assertEqual(code, 0)
+        run.assert_called_once_with("npm install -g @fsouza/prettierd", shell=True)
+        self.assertIn("Skipping optional go tool 'go_formatter'", output)
+        self.assertIn("Skipping optional dotnet tool 'dotnet_formatter'", output)
+
+        with patch.object(INSTALLER, "yaml", Mock(safe_load=Mock(return_value=metadata))):
+            code, _, run = self.invoke(args=("--with-go", "--with-dotnet"))
+        self.assertEqual(code, 0)
+        self.assertEqual(
+            [call.args[0] for call in run.call_args_list],
+            [
+                "dotnet tool install -g csharpier",
+                "go install example.invalid/gofmt@latest",
+                "npm install -g @fsouza/prettierd",
+            ],
+        )
 
     def test_repo_installs_prettierd_even_when_efm_is_present(self):
         code, _, run = self.invoke(root=ROOT, present={"efm-langserver"})
@@ -150,7 +188,7 @@ class ToolInstallerTests(WorkspaceTest):
         self.profile({"efm": {"command": "efm-langserver", "sources": [
             "go install github.com/mattn/efm-langserver@latest", "npm install -g eslint_d"]}})
         with patch.object(INSTALLER, "yaml", Mock(safe_load=Mock(return_value=metadata))):
-            code, _, run = self.invoke(present={"eslint_d"})
+            code, _, run = self.invoke(present={"eslint_d"}, args=("--with-go",))
         self.assertEqual(code, 0)
         run.assert_called_once_with("go install github.com/mattn/efm-langserver@latest", shell=True)
 
@@ -263,6 +301,13 @@ class ShellInstallerTests(WorkspaceTest):
         script = (ROOT / "INSTALL.sh").read_text(encoding="utf-8")
         self.assertNotIn('link_config "$DIR/coc-settings.json"', script)
         self.assertNotIn("setx", script)
+
+    def test_installer_forwards_optional_toolchain_flags(self):
+        script = (ROOT / "INSTALL.sh").read_text(encoding="utf-8")
+        self.assertIn("--with-go) INSTALL_GO_TOOLS=1", script)
+        self.assertIn("--with-dotnet) INSTALL_DOTNET_TOOLS=1", script)
+        self.assertIn("TOOL_ARGS+=(--with-go)", script)
+        self.assertIn("TOOL_ARGS+=(--with-dotnet)", script)
 
     def test_backup_numbers_increase_even_with_gaps(self):
         self.bash('''

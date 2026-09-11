@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Install missing tools from shared LSP, EFM and coc profile metadata.
 
-Usage: python scripts/install-lsp-tools.py [--dry-run]
+Usage: python scripts/install-lsp-tools.py [--dry-run] [--with-go] [--with-dotnet]
 Only explicit install commands are used; package names never imply binaries.
 Dry-run performs no subprocess calls. Exit status 1 indicates invalid metadata
-or a failed install. Missing PyYAML skips EFM metadata with a warning.
+or a failed install. Go and .NET tool installation is opt-in. Missing PyYAML
+skips EFM metadata with a warning.
 """
 import argparse
 import json
@@ -83,6 +84,15 @@ def actionable_source(command):
     return any(parts[:len(prefix)] == prefix for prefix in prefixes)
 
 
+def optional_toolchain(command):
+    parts = install_key(command)
+    if parts[:2] == ("go", "install"):
+        return "go"
+    if parts[:3] == ("dotnet", "tool", "install"):
+        return "dotnet"
+    return None
+
+
 def tool_metadata(root):
     """Yield (label, executable, explicit installation command)."""
     path = root / "lsp-servers.json"
@@ -137,6 +147,10 @@ def profile_metadata(root):
 def main(argv=None, root=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--with-go", action="store_true",
+                        help="install tools that use 'go install'")
+    parser.add_argument("--with-dotnet", action="store_true",
+                        help="install tools that use 'dotnet tool install'")
     args = parser.parse_args(argv)
     root = Path(root) if root is not None else VIM_DIR
     try:
@@ -153,8 +167,17 @@ def main(argv=None, root=None):
 
     attempted = set()
     failures = []
+    enabled_toolchains = {
+        "go": args.with_go,
+        "dotnet": args.with_dotnet,
+    }
     for name, binary, command in tools:
         if shutil.which(expand_binary(binary)):
+            continue
+        toolchain = optional_toolchain(command)
+        if toolchain and not enabled_toolchains[toolchain]:
+            print(f"Skipping optional {toolchain} tool '{name}' (missing {binary}); "
+                  f"use --with-{toolchain} to install it.")
             continue
         key = install_key(command)
         if key in attempted:
@@ -178,7 +201,7 @@ def main(argv=None, root=None):
         print("Failed: " + ", ".join(failures), file=sys.stderr)
         return 1
     if not attempted:
-        print("No missing tools with runnable install metadata.")
+        print("No enabled missing tools with runnable install metadata.")
     return 0
 
 

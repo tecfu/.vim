@@ -6,6 +6,35 @@ WINDOWS=0
 case "$(uname -s)" in MINGW*|MSYS*|CYGWIN*) WINDOWS=1 ;; esac
 . "$DIR/scripts/install-status.sh"
 INSTALL_FAILURES=()
+INSTALL_GO_TOOLS=0
+INSTALL_DOTNET_TOOLS=0
+
+install_usage() {
+  cat <<'EOF'
+Usage: INSTALL.sh [--with-go] [--with-dotnet]
+
+  --with-go       Install missing tools whose installer uses "go install".
+  --with-dotnet   Install missing tools whose installer uses "dotnet tool install".
+  -h, --help      Show this help.
+EOF
+}
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --with-go) INSTALL_GO_TOOLS=1 ;;
+    --with-dotnet) INSTALL_DOTNET_TOOLS=1 ;;
+    -h|--help)
+      install_usage
+      return 0 2>/dev/null || exit 0
+      ;;
+    *)
+      echo "ERROR: Unknown option: $1" >&2
+      install_usage >&2
+      return 2 2>/dev/null || exit 2
+      ;;
+  esac
+  shift
+done
 
 # The surrounding dotfiles checkout supplies these helpers when available.
 if [ -f "$DIR/../lib/common.sh" ]; then
@@ -90,7 +119,10 @@ for candidate in python3 python; do
   fi
 done
 if [ -n "$PY" ]; then
-  install_step "LSP/lint tools" "$PY" "$DIR/scripts/install-lsp-tools.py"
+  TOOL_ARGS=()
+  [ "$INSTALL_GO_TOOLS" = 1 ] && TOOL_ARGS+=(--with-go)
+  [ "$INSTALL_DOTNET_TOOLS" = 1 ] && TOOL_ARGS+=(--with-dotnet)
+  install_step "LSP/lint tools" "$PY" "$DIR/scripts/install-lsp-tools.py" "${TOOL_ARGS[@]}"
 else
   WARN_MESSAGES+=("WARN: Python 3 (python3/python) not found; skipped LSP/lint auto-install")
 fi

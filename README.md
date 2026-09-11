@@ -65,6 +65,19 @@ EFM metadata selects the `tecfu/efm-langserver` fork required for in-place
 Markdown formatting and checks auxiliary formatters such as `prettierd`
 independently of the EFM executable.
 
+Go- and .NET-based tools are skipped by default. Opt in when running the
+installer if those ecosystems are needed:
+
+```sh
+. ~/.vim/INSTALL.sh --with-go
+. ~/.vim/INSTALL.sh --with-dotnet
+. ~/.vim/INSTALL.sh --with-go --with-dotnet
+```
+
+The same flags are supported when invoking `scripts/install-lsp-tools.py`
+directly. They enable tool installation through an existing Go or .NET SDK;
+they do not install the SDK itself.
+
 PyYAML is needed to read EFM metadata; if missing, the installer warns and
 continues with LSP and CoC metadata. On Ubuntu, install it with
 `sudo apt-get install python3-yaml`; elsewhere, install PyYAML in the Python
