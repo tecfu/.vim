@@ -189,8 +189,7 @@ for _, server in ipairs(servers) do
   })
 
   -- Enable the server globally
-  -- This automatically sets up the FileType autocmds based on the defaults
-  -- provided by nvim-lspconfig
+  -- This sets up FileType autocmds from the configuration registered above.
   vim.lsp.enable(server.name)
 end
 

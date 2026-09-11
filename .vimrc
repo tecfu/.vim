@@ -1,6 +1,11 @@
 " Set this before sourcing anything: compatible mode changes Vimscript parsing.
 set nocompatible
 
+if has('nvim') && !has('nvim-0.11.6')
+  echoerr 'This configuration requires Neovim 0.11.6 or newer.'
+  finish
+endif
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "
 " Entry point. Everything else lives in runtimepath-native locations:

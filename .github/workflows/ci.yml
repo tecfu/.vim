@@ -58,12 +58,12 @@ jobs:
           chmod +x scripts/ci-check-install-metadata.sh
           ./scripts/ci-check-install-metadata.sh
 
-      - name: Installer regression tests
-        run: python3 -B -m unittest discover -s scripts -p 'test_installers.py' -v
+      - name: Installer and linter-wrapper regression tests
+        run: python3 -B -m unittest discover -s scripts -p 'test_*.py' -v
 
       - name: Installer shell syntax
         run: |
-          for script in INSTALL.sh UNINSTALL.sh scripts/config-links.sh; do
+          for script in INSTALL.sh UNINSTALL.sh efm-langserver-linter-wrapper.sh scripts/*.sh; do
             bash -n "$script"
           done
 
@@ -72,6 +72,84 @@ jobs:
           jq -e '.servers | type == "array"' lsp-servers.json
           jq -e 'all(.servers[]; has("name") and has("cmd") and has("filetypes"))' lsp-servers.json
           echo "lsp-servers.json structure OK"
+
+  # No user startup or live plugin/package installs: real editor/LSP APIs with
+  # isolated external-plugin APIs and a deterministic local stdio LSP peer.
+  editor:
+    name: ${{ matrix.editor }} (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest]
+        editor: [vim, nvim]
+    env:
+      # Minimum supported release: native EFM uses the Neovim 0.11 LSP API.
+      NVIM_VERSION: "0.11.6"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Vim (Linux)
+        if: runner.os == 'Linux' && matrix.editor == 'vim'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq vim-nox
+
+      - name: Locate Git Bash Vim (Windows)
+        if: runner.os == 'Windows' && matrix.editor == 'vim'
+        shell: pwsh
+        run: |
+          $gitRoot = Split-Path (Split-Path (Get-Command git).Source)
+          $vim = Join-Path $gitRoot 'usr\bin\vim.exe'
+          if (!(Test-Path $vim)) { throw "Git Bash Vim is missing: $vim" }
+          "EDITOR_EXECUTABLE=$vim" >> $env:GITHUB_ENV
+          (Join-Path $gitRoot 'usr\bin') >> $env:GITHUB_PATH
+
+      - name: Install pinned Neovim (Linux)
+        if: runner.os == 'Linux' && matrix.editor == 'nvim'
+        run: |
+          mkdir -p .ci-nvim
+          curl --fail --location --retry 3 \
+            "https://github.com/neovim/neovim/releases/download/v${NVIM_VERSION}/nvim-linux-x86_64.tar.gz" \
+            --output .ci-nvim/nvim.tar.gz
+          tar -xzf .ci-nvim/nvim.tar.gz -C .ci-nvim
+          echo "$GITHUB_WORKSPACE/.ci-nvim/nvim-linux-x86_64/bin" >> "$GITHUB_PATH"
+
+      - name: Install pinned Neovim (Windows)
+        if: runner.os == 'Windows' && matrix.editor == 'nvim'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path .ci-nvim -Force | Out-Null
+          Invoke-WebRequest `
+            "https://github.com/neovim/neovim/releases/download/v$env:NVIM_VERSION/nvim-win64.zip" `
+            -OutFile .ci-nvim\nvim.zip
+          Expand-Archive .ci-nvim\nvim.zip -DestinationPath .ci-nvim
+          "$env:GITHUB_WORKSPACE\.ci-nvim\nvim-win64\bin" >> $env:GITHUB_PATH
+          $gitRoot = Split-Path (Split-Path (Get-Command git).Source)
+          (Join-Path $gitRoot 'usr\bin') >> $env:GITHUB_PATH
+
+      - name: Run isolated editor regressions (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          ${{ matrix.editor }} --version | head -3
+          python -B scripts/run-editor-tests.py --editor ${{ matrix.editor }}
+
+      - name: Run isolated editor regressions (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $editor = '${{ matrix.editor }}'
+          $executable = $env:EDITOR_EXECUTABLE
+          if (!$executable) { $executable = (Get-Command $editor).Source }
+          & $executable --version | Select-Object -First 3
+          python -B scripts\run-editor-tests.py --editor $editor --executable $executable
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
   # ---------------------------------------------------------------------------
   # Smoke-test key install paths on a PEP-668-style environment
@@ -129,12 +207,28 @@ jobs:
           set -euo pipefail
           export PATH="$HOME/.local/bin:$PATH"
 
-          # Exercise the same commands the installer uses for Python tools
-          for pkg in basedpyright ruff; do
-            echo ">>> pipx install $pkg"
-            pipx install "$pkg"
-            command -v "$pkg" || command -v "${pkg}-langserver" || true
-          done
+          # Read the exact shared commands instead of duplicating package metadata.
+          python3 - <<'PY'
+          import importlib.util
+          from pathlib import Path
+          import shlex
+          import subprocess
+          spec = importlib.util.spec_from_file_location("installer", "scripts/install-lsp-tools.py")
+          installer = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(installer)
+          targets = {"basedpyright-langserver", "ruff"}
+          commands = {
+              binary: command
+              for _, binary, command in installer.tool_metadata(Path.cwd())
+              if binary in targets
+          }
+          assert commands.keys() == targets, "Python smoke targets missing from shared metadata"
+          for binary, command in sorted(commands.items()):
+              argv = shlex.split(command)
+              assert argv[:2] == ["pipx", "install"], command
+              print(f">>> {binary}: {command}", flush=True)
+              subprocess.run(argv, check=True)
+          PY
 
           # basedpyright exposes basedpyright-langserver; ruff exposes ruff
           command -v ruff
@@ -144,9 +238,6 @@ jobs:
 
       - name: install-lsp-tools.py dry-run
         run: python3 scripts/install-lsp-tools.py --dry-run
-
-      - name: Vim startup and Bash terminal regression
-        run: vim -Nu NONE -i NONE -n -es -V1 -S scripts/test-startup.vim
 
       - name: Validate shared install-command metadata
         run: |
