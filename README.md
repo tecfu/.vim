@@ -45,6 +45,10 @@ removes only matching managed symlinks, and restores the latest backup.
 Windows keeps its native default shell for plugin commands. Use `:Bash`
 for an interactive Git Bash terminal, or `:Bash <command>` for a Bash command.
 MSYS-style home paths are normalized when loading native Windows Neovim.
+Neovim defers Telescope, Swagger preview, completion, native LSP, and
+Git-sign initialization until the corresponding command or buffer needs them.
+Language servers and Git signs start on the next event-loop tick so the first
+screen can render before Windows launches their background processes.
 
 YankRing still tracks ordinary yanks, but automatic clipboard ingestion on
 startup/focus is disabled. To restore it, set
@@ -252,7 +256,11 @@ This example assumes `pyright-langserver` is already installed. Add an
 
 **Installing language servers:**
 
-Installation is automatic in both `coc` and `cmp-builtin` mode: on startup, each server in `lsp-servers.json` is checked with `executable()`, and if missing, its `install` command runs in the background (a message is echoed when the install starts/finishes). Restart nvim once it completes so the new binary is picked up.
+Installation is automatic in both `coc` and `cmp-builtin` mode. CoC checks the
+shared registry during its initialization; native LSP waits until the first
+supported filetype is opened. Each missing server with an enabled install
+command is installed in the background. Restart Neovim once installation
+completes so the new binary is picked up.
 
 You can also install declared tools up front by running `INSTALL.sh` or the
 Python installer directly. Neither installation path requires `jq`; that tool

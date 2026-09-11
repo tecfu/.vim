@@ -2,6 +2,9 @@
 Plug 'hrsh7th/cmp-nvim-lsp', { 'on': [] }
 
 function! SetupLspBuiltin()
+  if get(g:, 'lsp_builtin_setup_done', 0)
+    return
+  endif
   call plug#load('cmp-nvim-lsp')
   lua << EOF
 -- 1. Setup Logging
@@ -191,10 +194,37 @@ for _, server in ipairs(servers) do
   -- Enable the server globally
   -- This sets up FileType autocmds from the configuration registered above.
   vim.lsp.enable(server.name)
+
+  -- Neovim 0.11 does not revisit the FileType event that triggered this
+  -- deferred setup. Start matching servers for that first buffer explicitly;
+  -- later buffers are handled by vim.lsp.enable().
+  if vim.tbl_contains(server.filetypes or {}, vim.bo.filetype) then
+    local bufnr = vim.api.nvim_get_current_buf()
+    local server_name = server.name
+    local server_config = vim.lsp.config[server_name]
+    vim.schedule(function()
+      if vim.api.nvim_buf_is_valid(bufnr)
+          and #vim.lsp.get_clients({ bufnr = bufnr, name = server_name }) == 0 then
+        vim.lsp.start(server_config, { bufnr = bufnr })
+      end
+    end)
+  end
 end
 
 debug_log("Setup complete")
 EOF
+  let g:lsp_builtin_setup_done = 1
 endfunction
 
-autocmd VimEnter * call SetupLspBuiltin()
+function! ScheduleLspBuiltin() abort
+  if get(g:, 'lsp_builtin_setup_done', 0) || get(g:, 'lsp_builtin_setup_scheduled', 0)
+    return
+  endif
+  let g:lsp_builtin_setup_scheduled = 1
+  call timer_start(1, { -> SetupLspBuiltin() })
+endfunction
+
+augroup DeferredLspBuiltinSetup
+  autocmd!
+  autocmd FileType python,go,gomod,gowork,gotmpl,javascript,javascriptreact,typescript,typescriptreact,sql call ScheduleLspBuiltin()
+augroup END

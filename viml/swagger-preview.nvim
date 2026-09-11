@@ -5,15 +5,33 @@ function! SwaggerPreviewHook()
     endif
 endfunction
 
-Plug 'vinnymeller/swagger-preview.nvim', { 'do': { -> SwaggerPreviewHook() } }
+Plug 'vinnymeller/swagger-preview.nvim', {
+      \ 'on': [],
+      \ 'do': { -> SwaggerPreviewHook() },
+      \ }
 
 function! SetupSwaggerPreview()
+  if get(g:, 'swagger_preview_setup_done', 0)
+    return
+  endif
 lua << EOF
 require("swagger-preview").setup({
     port = 20001,
     host = "localhost",
 })
 EOF
+  let g:swagger_preview_setup_done = 1
 endfunction
 
-autocmd VimEnter * call SetupSwaggerPreview()
+function! s:LoadSwaggerPreview(command) abort
+  delcommand SwaggerPreview
+  delcommand SwaggerPreviewStop
+  delcommand SwaggerPreviewToggle
+  call plug#load('swagger-preview.nvim')
+  call SetupSwaggerPreview()
+  execute a:command
+endfunction
+
+command! SwaggerPreview call <SID>LoadSwaggerPreview('SwaggerPreview')
+command! SwaggerPreviewStop call <SID>LoadSwaggerPreview('SwaggerPreviewStop')
+command! SwaggerPreviewToggle call <SID>LoadSwaggerPreview('SwaggerPreviewToggle')

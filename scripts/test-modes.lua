@@ -66,19 +66,30 @@ function ModeTests.run()
   else
     assert(not vim.lsp.is_enabled('efm'))
     for _, server in ipairs(registry) do
-      assert(vim.lsp.is_enabled(server.name), 'Server not enabled: ' .. server.name)
-      local config = vim.lsp.config[server.name]
-      assert(vim.deep_equal(config.filetypes, server.filetypes))
-      assert(vim.deep_equal(config.settings or {}, server.settings or {}))
-      assert(config.capabilities.textDocument.completion.completionItem.snippetSupport)
+      assert(not vim.lsp.is_enabled(server.name),
+        'Native LSP must remain disabled until a supported FileType')
     end
   end
 
-  for _, language in ipairs({ 'python', 'go' }) do
+  for index, language in ipairs({ 'python', 'go' }) do
     local extension = language == 'python' and 'py' or 'go'
     vim.cmd.edit(vim.fn.fnameescape(vim.env.VIM_TEST_PROJECT .. '/example.' .. extension))
     local buf = vim.api.nvim_get_current_buf()
     assert(vim.bo[buf].filetype == language)
+    if mode ~= 'cmp-efm' and index == 1 then
+      assert(vim.wait(10000, function()
+        return vim.g.lsp_builtin_setup_done == 1
+      end, 20), 'Native LSP setup timer never ran')
+      assert(vim.g.lsp_builtin_setup_done == 1,
+        'Native LSP must initialize on the first supported FileType')
+      for _, server in ipairs(registry) do
+        assert(vim.lsp.is_enabled(server.name), 'Server not enabled: ' .. server.name)
+        local config = vim.lsp.config[server.name]
+        assert(vim.deep_equal(config.filetypes, server.filetypes))
+        assert(vim.deep_equal(config.settings or {}, server.settings or {}))
+        assert(config.capabilities.textDocument.completion.completionItem.snippetSupport)
+      end
+    end
     local expected = {}
     if mode == 'cmp-efm' then
       expected.efm = true

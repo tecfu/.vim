@@ -58,6 +58,11 @@ Plug 'bling/vim-airline'
 "{{{
 "let g:airline_theme='colors/mango.vim'
 let g:airline_powerline_fonts=1
+if has('nvim') && $NVIM_CONFIG !=# 'coc'
+  let g:airline_extensions = ['quickfix', 'branch', 'nvimlsp']
+else
+  let g:airline_extensions = ['quickfix', 'branch', 'coc']
+endif
 
 "airline themed tabs
 "let g:airline#extensions#tabline#enabled = 1

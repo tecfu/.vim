@@ -1,8 +1,11 @@
-Plug 'nvim-telescope/telescope.nvim'
-Plug 'fannheyward/telescope-coc.nvim'
-Plug 'nvim-telescope/telescope-live-grep-args.nvim'
+Plug 'nvim-telescope/telescope.nvim', { 'on': 'Telescope' }
+Plug 'fannheyward/telescope-coc.nvim', { 'on': 'Telescope' }
+Plug 'nvim-telescope/telescope-live-grep-args.nvim', { 'on': 'Telescope' }
 
 function! SetupTelescopeCoc()
+  if get(g:, 'telescope_setup_done', 0)
+    return
+  endif
 lua << EOF
 local actions = require('telescope.actions')
 local action_state = require('telescope.actions.state')
@@ -292,9 +295,13 @@ end
 require('telescope').setup(telescope_setup)
 require('telescope').load_extension('live_grep_args')
 EOF
+  let g:telescope_setup_done = 1
 endfunction
 
-autocmd VimEnter * call SetupTelescopeCoc()
+augroup DeferredTelescopeSetup
+  autocmd!
+  autocmd User telescope.nvim call SetupTelescopeCoc()
+augroup END
 
 nnoremap <leader>fs <cmd>Telescope lsp_workspace_symbols<cr>
 nnoremap <leader>ff <cmd>Telescope find_files<cr>

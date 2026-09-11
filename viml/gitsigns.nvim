@@ -1,6 +1,10 @@
-Plug 'lewis6991/gitsigns.nvim'
+Plug 'lewis6991/gitsigns.nvim', { 'on': [] }
 
 function! SetupGitsigns()
+  if get(g:, 'gitsigns_setup_done', 0)
+    return
+  endif
+  call plug#load('gitsigns.nvim')
   lua << EOF
 require('gitsigns').setup{
   on_attach = function(bufnr)
@@ -68,6 +72,22 @@ require('gitsigns').setup{
   end
 }
 EOF
+  let g:gitsigns_setup_done = 1
 endfunction
 
-autocmd VimEnter * call SetupGitsigns()
+function! s:SetupGitsignsForBuffer() abort
+  if get(g:, 'gitsigns_setup_done', 0) || get(g:, 'gitsigns_setup_scheduled', 0)
+        \ || &buftype !=# '' || empty(expand('%:p'))
+    return
+  endif
+  let l:directory = expand('%:p:h')
+  if !empty(finddir('.git', l:directory . ';')) || !empty(findfile('.git', l:directory . ';'))
+    let g:gitsigns_setup_scheduled = 1
+    call timer_start(1, { -> SetupGitsigns() })
+  endif
+endfunction
+
+augroup DeferredGitsignsSetup
+  autocmd!
+  autocmd BufReadPost,BufNewFile * call <SID>SetupGitsignsForBuffer()
+augroup END
