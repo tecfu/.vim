@@ -124,7 +124,9 @@ Plug 'bullets-vim/bullets.vim'
 Plug 'danro/rename.vim'
 
 
-Plug 'dhruvasagar/vim-table-mode'
+Plug 'dhruvasagar/vim-table-mode', {
+      \ 'on': ['TableModeToggle', 'TableModeEnable', 'TableModeDisable', 'TableModeRealign'],
+      \ }
 function! s:isAtStartOfLine(mapping)
  let text_before_cursor = getline('.')[0 : col('.')-1]
   let mapping_pattern = '\V' . escape(a:mapping, '\')
@@ -172,7 +174,7 @@ Plug 'goatslacker/mango.vim'
 " ```
 " - FORMATTING: Create a table
 " ```
-Plug 'godlygeek/tabular'
+Plug 'godlygeek/tabular', { 'on': 'Tabularize' }
 "{{{
 function s:VIMRC_CustomTabular() range
     call inputsave()
@@ -197,7 +199,10 @@ vnoremap <leader>tz :call <SID>VIMRC_CustomTabular()<CR><ESC>
 " - Markdown Previewer (vim || nvim)
 " ```
 " @todo - this is not working on Mac nivm brew install
-Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && npx --yes yarn install' }
+Plug 'iamcco/markdown-preview.nvim', {
+      \ 'for': 'markdown',
+      \ 'do': 'cd app && npx --yes yarn install',
+      \ }
 " set to 1, nvim will open the preview window after entering the Markdown buffer
 " default: 0
 let g:mkdp_auto_start = 0
@@ -219,7 +224,7 @@ Plug 'inkarkat/vim-ArgsAndMore'
 " ```
 " - WIDGET: Calendar
 " ```
-Plug 'itchyny/calendar.vim'
+Plug 'itchyny/calendar.vim', { 'on': 'Calendar' }
 
 
 " ```
@@ -357,7 +362,12 @@ let g:indent_guides_start_level = 2
 " - TEXT SEARCH
 " ```
 " Recommended: sudo -S apt-get install silversearcher-ag
-Plug 'mileszs/ack.vim'
+Plug 'mileszs/ack.vim', {
+      \ 'on': [
+      \   'Ack', 'AckAdd', 'AckFromSearch', 'AckFile', 'AckHelp', 'AckWindow',
+      \   'LAck', 'LAckAdd', 'LAckHelp', 'LAckWindow',
+      \ ],
+      \ }
 if executable('ag')
  "let g:ackprg = 'ag --vimgrep'
  let g:ackprg = 'ag --nogroup --nocolor --column'
@@ -367,7 +377,9 @@ endif
 " ```
 " - UNDO
 " ```
-Plug 'mbbill/undotree'
+Plug 'mbbill/undotree', {
+      \ 'on': ['UndotreeToggle', 'UndotreeHide', 'UndotreeShow', 'UndotreeFocus'],
+      \ }
 nnoremap <leader>u :UndotreeToggle<cr>
 
 

@@ -24,7 +24,7 @@ let g:vim_markdown_folding_disabled = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Startup Profiling (opt-in via $VIM_PROFILE)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if exists('$VIM_PROFILE')
+if !empty($VIM_PROFILE)
   source $HOME/.vim/viml/startup-profile.vim
 endif
 
@@ -41,6 +41,14 @@ set fileencoding=utf8
 if has('win32') || has('win64')
   " This is a message to confirm the block is running. You can remove it later.
   echom "Configuring shell for Windows..."
+
+  " Native Neovim inherits Git Bash's SHELL, but keeps cmd.exe flags. Besides
+  " breaking commands, that starts an MSYS process for every system() call.
+  let &shell = empty($COMSPEC) ? 'cmd.exe' : $COMSPEC
+  let &shellcmdflag = '/s /c'
+  let &shellquote = ''
+  let &shellxquote = '"'
+  let &shellredir = '>%s 2>&1'
 
   " Locate Git Bash for :Bash, without slowing every system() call by
   " replacing the native shell. Git may be installed per-machine
@@ -136,4 +144,3 @@ endif
 " vim-plug unexpectedly configures indentation. undo this
 " https://vi.stackexchange.com/questions/10124/what-is-the-difference-between-filetype-plugin-indent-on-and-filetype-indent
 "}}}
-

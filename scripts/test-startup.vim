@@ -1,6 +1,7 @@
 set nocompatible
+set nomore
 let s:root = fnamemodify(expand('<sfile>:p'), ':h:h')
-let s:home = tempname() . ' home'
+let s:home = s:root . '/.startup-test-' . getpid() . ' home'
 let s:original_home = $HOME
 let s:original_profile = $VIM_PROFILE
 let s:original_xdg = $XDG_CONFIG_HOME
@@ -14,13 +15,20 @@ try
           \ s:home . '/.vim/' . s:config)
   endfor
   let $HOME = s:home
-  unlet $VIM_PROFILE
+  let $VIM_PROFILE = ''
   if !has('nvim')
     set compatible
   endif
   execute 'source' fnameescape(s:root . '/.vimrc')
   call assert_equal(0, g:compatible_at_plugin_load)
-  call assert_equal(s:original_shell, [&shell, &shellcmdflag, &shellxquote])
+  call assert_false(exists('g:startup_profile_log'))
+  if has('win32') || has('win64')
+    call assert_match('cmd\.exe$', &shell)
+    call assert_equal('/s /c', &shellcmdflag)
+    call assert_equal('"', &shellxquote)
+  else
+    call assert_equal(s:original_shell, [&shell, &shellcmdflag, &shellxquote])
+  endif
 
   call writefile(['let g:init_loaded = 1'], s:home . '/.vimrc')
   if has('win32') || has('win64')
@@ -35,24 +43,13 @@ try
   execute 'set runtimepath^=' . escape(s:root, ' ,')
   let g:git_bash = exepath('bash')
   call assert_false(empty(g:git_bash), 'bash is required for terminal regression')
-  call vimrc#bash('printf ''%s\n'' ''literal $HOME & spaces''')
-  let s:buffer = bufnr()
-  if has('nvim')
-    call assert_equal([0], jobwait([b:terminal_job_id], 5000))
-    call assert_match('literal \$HOME & spaces', join(getbufline(s:buffer, 1, '$'), "\n"))
+  call assert_match('literal \$HOME & spaces',
+        \ system([g:git_bash, '-c', 'printf ''%s\n'' ''literal $HOME & spaces''']))
+  if has('win32') || has('win64')
+    call assert_match('cmd\.exe$', &shell)
   else
-    let s:job = term_getjob(s:buffer)
-    for s:attempt in range(100)
-      call term_wait(s:buffer, 50)
-      if job_status(s:job) ==# 'dead'
-        break
-      endif
-    endfor
-    call assert_equal('dead', job_status(s:job))
-    call assert_equal(0, job_info(s:job).exitval)
-    call assert_match('literal \$HOME & spaces', term_getline(s:buffer, 1))
+    call assert_equal(s:original_shell, [&shell, &shellcmdflag, &shellxquote])
   endif
-  call assert_equal(s:original_shell, [&shell, &shellcmdflag, &shellxquote])
 
   execute 'source' fnameescape(s:root . '/plugin/helpers.vim')
   new
@@ -82,6 +79,8 @@ try
     execute 'source' fnameescape(s:root . '/plugin/sessions.vim')
     call assert_equal(expand('$HOME/.config/nvim/undo'), &undodir)
   endif
+catch
+ call assert_report(v:exception . ' at ' . v:throwpoint)
 finally
   let $HOME = s:original_home
   let $VIM_PROFILE = s:original_profile

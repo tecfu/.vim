@@ -1,18 +1,30 @@
 " nvim-cmp: A completion engine plugin for Neovim. It provides an extensible and customizable framework for text completion.
-Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/nvim-cmp', { 'on': [] }
 " cmp-buffer: A buffer source for nvim-cmp. It provides completion items from the current and other open buffers.
-Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-buffer', { 'on': [] }
 " cmp-path: A file path source for nvim-cmp. It provides completion for file paths.
-Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-path', { 'on': [] }
 " cmp-cmdline: A command line source for nvim-cmp. It provides completion for command line mode.
-Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/cmp-cmdline', { 'on': [] }
 " copilot-cmp: A completion source for nvim-cmp that integrates with copilot.lua.
-Plug 'zbirenbaum/copilot-cmp'
+Plug 'zbirenbaum/copilot-cmp', { 'on': [] }
 " luasnip (if you use it for snippets, highly recommended with nvim-cmp)
-Plug 'L3MON4D3/LuaSnip'
-Plug 'saadparwaiz1/cmp_luasnip' " Snippet source for nvim-cmp
+Plug 'L3MON4D3/LuaSnip', { 'on': [] }
+Plug 'saadparwaiz1/cmp_luasnip', { 'on': [] } " Snippet source for nvim-cmp
 
 function! SetupCmp()
+  if get(g:, 'cmp_setup_done', 0)
+    return
+  endif
+  call plug#load([
+        \ 'nvim-cmp',
+        \ 'cmp-buffer',
+        \ 'cmp-path',
+        \ 'cmp-cmdline',
+        \ 'copilot-cmp',
+        \ 'LuaSnip',
+        \ 'cmp_luasnip',
+        \ ])
 lua << EOF
   local copilot_status_ok, copilot = pcall(require, "copilot")
   if copilot_status_ok then
@@ -173,6 +185,10 @@ lua << EOF
     vim.notify("nvim-cmp setup with C-Enter using shared Copilot logic complete.", vim.log.levels.INFO)
   end)
 EOF
+  let g:cmp_setup_done = 1
 endfunction
 
-autocmd VimEnter * call SetupCmp()
+augroup DeferredCmpSetup
+  autocmd!
+  autocmd InsertEnter,CmdlineEnter * call SetupCmp()
+augroup END
