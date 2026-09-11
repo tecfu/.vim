@@ -1,5 +1,8 @@
 set nomore
-let s:failed = 0
+let s:failed = !empty(v:errmsg)
+if s:failed
+  echom 'Configuration failed before plugin installation: ' . v:errmsg
+endif
 try
   if !exists(':PlugInstall')
     throw 'PlugInstall is unavailable; configuration did not load successfully.'

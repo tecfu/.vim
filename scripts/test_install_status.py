@@ -77,12 +77,14 @@ class InstallStatusTests(unittest.TestCase):
 
     @unittest.skipUnless(shutil.which("vim"), "Vim is required")
     def test_vim_plug_report_controls_exit_status(self):
-        for failed in (False, True):
-            with self.subTest(failed=failed), tempfile.TemporaryDirectory(
+        for failed, startup_error in ((False, False), (True, False), (False, True)):
+            with self.subTest(failed=failed, startup_error=startup_error), tempfile.TemporaryDirectory(
                     prefix=".plugin-report-", dir=ROOT) as work:
                 driver = Path(work) / "driver.vim"
                 driver.write_text(
                     "set nocompatible\n"
+                    + ("call MissingConfigurationFunction()\n" if startup_error else "")
+                    +
                     "function! FixtureReport()\n"
                     "  enew\n"
                     "  file [Plugins]\n"
@@ -106,8 +108,12 @@ class InstallStatusTests(unittest.TestCase):
                     ''',
                     env=env, text=True, capture_output=True, timeout=30,
                 )
-                self.assertEqual(result.returncode, 1 if failed else 0,
-                                 result.stdout + result.stderr)
+                if failed or startup_error:
+                    self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+                else:
+                    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                if startup_error:
+                    self.assertIn("Configuration failed before plugin installation", result.stderr)
 
 
 if __name__ == "__main__":
