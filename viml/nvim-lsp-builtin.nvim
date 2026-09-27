@@ -224,7 +224,25 @@ function! ScheduleLspBuiltin() abort
   call timer_start(1, { -> SetupLspBuiltin() })
 endfunction
 
+" Trigger the deferred setup on every filetype the shared registry mentions,
+" so adding a server to lsp-servers.json is enough - no second list to update.
+function! LspBuiltinFiletypes() abort
+  let l:path = expand('~/.vim/lsp-servers.json')
+  if !filereadable(l:path)
+    return 'python'
+  endif
+  let l:fts = []
+  try
+    for l:server in get(json_decode(join(readfile(l:path), "\n")), 'servers', [])
+      call extend(l:fts, get(l:server, 'filetypes', []))
+    endfor
+  catch
+    return 'python'
+  endtry
+  return join(uniq(sort(l:fts)), ',')
+endfunction
+
 augroup DeferredLspBuiltinSetup
   autocmd!
-  autocmd FileType python,go,gomod,gowork,gotmpl,javascript,javascriptreact,typescript,typescriptreact,sql call ScheduleLspBuiltin()
+  execute 'autocmd FileType ' . LspBuiltinFiletypes() . ' call ScheduleLspBuiltin()'
 augroup END

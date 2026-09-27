@@ -32,6 +32,19 @@
       "install": "npm install -g typescript-language-server typescript"
     },
     {
+      "name": "jsonls",
+      "filetypes": ["json", "jsonc"],
+      "cmd": ["vscode-json-language-server", "--stdio"],
+      "root_patterns": [".git"],
+      "settings": {
+        "json": {
+          "format": { "enable": true },
+          "validate": { "enable": true }
+        }
+      },
+      "install": "npm install -g vscode-langservers-extracted"
+    },
+    {
       "name": "sqlls",
       "filetypes": ["sql"],
       "cmd": ["sql-language-server", "up", "--method", "stdio"],
